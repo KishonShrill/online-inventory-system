@@ -1,0 +1,25 @@
+.inventory {
+  display: flex;
+  height: 100vh; // Tailwind's h-screen
+  background-color: #f7fafc; // Tailwind's bg-gray-100
+  font-family: sans-serif; // Tailwind's font-sans
+}
+
+.content-container {
+  flex: 1 1 0%;        // Tailwind's flex-1
+  display: flex;       // Tailwind's flex
+  flex-direction: column; // Tailwind's flex-col
+  overflow: hidden;    // Tailwind's overflow-hidden
+}
+
+.main-container {
+  flex: 1 1 0%; // flex-1
+  overflow-x: hidden; // overflow-x-hidden
+  overflow-y: auto; // overflow-y-auto
+  background-color: #f3f4f6; // bg-gray-100
+  padding: 1rem; // p-4
+
+  @media (min-width: 640px) { // sm:p-6
+    padding: 1.5rem;
+  }
+}
