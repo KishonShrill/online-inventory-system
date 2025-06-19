@@ -1,12 +1,51 @@
-# React + Vite
+# CDIIS Online Inventory System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+Welcome to the GitHub repository for the **CDIIS Online Inventory System**! This project aims to develop a robust and user-friendly web-based platform for managing inventory efficiently. The system will provide tools for tracking and managing equipment information and handling incoming and outgoing items.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Project Status
 
-## Expanding the ESLint configuration
+This repository is currently in its **initial commit phase**. There's no functional code or system implemented yet. This README serves as a foundational document for the project's vision, goals, and planned development.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Vision
+
+Our vision is to create a reliable and intuitive inventory management solution that streamlines operations, reduces manual errors, and provides real-time insights into inventory status for businesses or organizations of all sizes.
+
+## Key Features (Planned)
+
+While still in the planning stages, the CDIIS Online Inventory System is envisioned to include the following core functionalities:
+
+* **User Authentication & Authorization:** Secure login and role-based access control.
+* **Product Management:** Add, edit, delete, and view product details (SKU, name, description, price, etc.).
+* **Inbound/Outbound Transactions:** Record and manage incoming (e.g., borrowers) and outgoing (e.g., lenders) inventory movements.
+* **Search & Filtering:** Efficiently search and filter inventory data.
+* **Dashboard:** An overview of key inventory metrics.
+
+---
+
+## Technologies (Planned)
+
+The specific technologies to be used will be determined during the design phase. However, we anticipate using a modern web development stack. Potential technologies may include:
+
+* **Frontend:** HTML, CSS, JavaScript (MERN Stack)
+* **Backend:** Node.js (Express)
+* **Database:** MongoDB
+* **Deployment:** Vercel
+
+## Getting Started
+
+As this is an initial commit, there are no setup instructions yet. Once development begins, this section will be updated with:
+
+* Prerequisites
+* Installation steps
+* Configuration details
+* How to run the application
+
+## Support
+
+For any inquiries or support, please open an issue in the GitHub repository.
+
+## License
+
+This project will be released under the **[MIT License](./LICENSE)**. For example, the MIT License or Apache 2.0 License. The `LICENSE` file will be added in a future commit.
