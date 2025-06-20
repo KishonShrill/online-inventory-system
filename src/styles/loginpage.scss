@@ -1,0 +1,156 @@
+@use 'utils/variables';
+@use 'sass:color';
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+    width: 100vw;
+    background-color: rgba(variables.$dark, 0.9);
+}
+
+
+.login-form {
+    max-width: 420px;
+    width: 100%;
+    padding: 40px;
+    background: rgba(variables.$light, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(variables.$dark, 0.1);
+    animation: fadeIn 1.5s ease-out;
+    }
+
+.form-heading {
+    text-align: center;
+    color: variables.$dark;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+
+    .label {
+        position: absolute;
+        top: -16px;
+        left: 12px;
+        font-size: 12px;
+        color: variables.$sidebar;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        opacity: 0.7;
+    }
+
+    input {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 1rem;
+        color: variables.$dark;
+        background-color: color.adjust(variables.$sidebar, $lightness: 70%);
+        border: 2px solid color.adjust(variables.$sidebar, $lightness: 40%);
+        border-radius: 10px;
+        outline: none;
+        transition: all 0.3s ease;
+
+        &:focus {
+        border-color: variables.$sidebar;
+        box-shadow: 0 0 10px rgba(25, 59, 53, 0.4); // Hardcoded fallback if rgba(var) causes issues
+        }
+
+        &:focus + .label {
+        top: -20px;
+        font-size: 11px;
+        color: variables.$sidebar;
+        opacity: 1;
+        }
+    }
+
+    .field-error {
+        color: red;
+        font-size: 0.875rem;
+        margin-top: 4px;
+    }
+}
+
+.forgot-password {
+    text-align: right;
+    margin-bottom: 20px;
+
+    a {
+        font-size: 14px;
+        color: variables.$sidebar;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+        color: color.adjust(variables.$sidebar, $lightness: 10%);
+        }
+    }
+}
+
+.submit {
+    width: 100%;
+    padding: 15px;
+    background-color: variables.$sidebar;
+    color: variables.$light;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: color.adjust(variables.$sidebar, $lightness: 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(25, 59, 53, 0.3); // Same here: fallback for rgba
+    }
+}
+
+.signup-link {
+    text-align: center;
+    font-size: 14px;
+    color: variables.$dark;
+
+    a {
+        color: variables.$sidebar;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+
+        &:hover {
+        color: color.adjust(variables.$sidebar, $lightness: 10%);
+        }
+    }
+}
+
+.field-error,
+.text-danger {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+
+@media (max-width: 480px) {
+    .login-form {
+        padding: 30px;
+        width: 90%;
+    }
+}

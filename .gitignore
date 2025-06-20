@@ -34,6 +34,15 @@ sketch
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
+# Editor directories and files
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 # Local History for Visual Studio Code
 .history/
 
