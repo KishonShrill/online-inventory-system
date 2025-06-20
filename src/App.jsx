@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import Records from './pages/Records';
 import Settings from './pages/Settings'
+import LoginPage from './pages/LoginPage';
 
 const queryClient = new QueryClient()
 const DEVELOPEMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
@@ -36,7 +37,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Homepage />} />
+            <Route path='/' element={<LoginPage />} />
             <Route element={<InventoryLayout />} >
               <Route path='/dashboard' element={<Dashboard initialInventory={initialInventory} initialBorrowRecords={initialBorrowRecords} />} />
               <Route path='/inventory' element={<Inventory initialInventory={initialInventory} />} />
