@@ -7,19 +7,20 @@ import { Provider } from 'react-redux';
 // import viteLogo from '/vite.svg'
 import './App.css'
 
-import Homepage from './pages/Homepage';
-import InventoryLayout from './pages/MasterLayout/InventoryLayout';
-import Dashboard from './pages/Dashboard';
-import Inventory from './pages/Inventory';
-import Records from './pages/Records';
-import Settings from './pages/Settings'
-import LoginPage from './pages/LoginPage';
+// import Homepage from './pages/Homepage';
+import Authpage from './pages/Authpage';
+const InventoryLayout = lazy(() => import('./pages/MasterLayout/InventoryLayout'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Inventory = lazy(() => import('./pages/Inventory'));
+const Records = lazy(() => import('./pages/Records'));
+const Settings = lazy(() => import('./pages/Settings'));
 
 const queryClient = new QueryClient()
-const DEVELOPEMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
 
 
 function App() {
+
   const initialInventory = [
     { id: 'EQP-001', name: 'Laptop', description: '15-inch Pro Laptop', dateAdded: '2023-10-26', color: 'Silver', category: 'Electronics' },
     { id: 'EQP-002', name: 'Keyboard', description: 'Mechanical Keyboard', dateAdded: '2023-10-25', color: 'Black', category: 'Accessories' },
@@ -37,7 +38,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<LoginPage />} />
+            <Route path='/' element={<Authpage />} />
             <Route element={<InventoryLayout />} >
               <Route path='/dashboard' element={<Dashboard initialInventory={initialInventory} initialBorrowRecords={initialBorrowRecords} />} />
               <Route path='/inventory' element={<Inventory initialInventory={initialInventory} />} />
@@ -46,6 +47,7 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
+        {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position='bottom-right' />}
       </QueryClientProvider>
     </>
   )
