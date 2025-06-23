@@ -12,7 +12,8 @@
     }
 }
 
-.login-page {
+// Master Layout
+.auth-page {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,7 +22,7 @@
     background-color: rgba(variables.$dark, 0.9);
 }
 
-
+// Login Page
 .login-form {
     max-width: 420px;
     width: 100%;
@@ -124,6 +125,7 @@
 }
 
 .signup-link {
+    margin-top: 1rem;
     text-align: center;
     font-size: 14px;
     color: variables.$dark;
@@ -132,10 +134,10 @@
         color: variables.$sidebar;
         text-decoration: none;
         font-weight: 600;
-        transition: color 0.3s ease;
+        // transition: color 0.3s ease;
 
         &:hover {
-        color: color.adjust(variables.$sidebar, $lightness: 10%);
+        color: color.adjust(variables.$sidebar, $lightness: 20%);
         }
     }
 }
