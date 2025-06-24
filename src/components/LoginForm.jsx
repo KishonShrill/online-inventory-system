@@ -72,7 +72,6 @@ const LoginForm = () => {
                 <div className="brand-overlay"></div>
                 <div className="brand-content">
                     <div className="brand-header">
-                        {/*  */}
                         <h1 className="brand-title">CDIIS</h1>
                         <p className="brand-subtitle">Center for Digital Iligan, Innovation & Sustainability </p>
                     </div>
@@ -101,7 +100,7 @@ const LoginForm = () => {
                             <p>Please sign in to your account</p>
                         </div>
 
-                        <div className="login-form">
+                        <form className="login-form" onSubmit={handleSubmit}>
                             {error && (
                                 <div className="error-alert">
                                     {error}
@@ -152,6 +151,7 @@ const LoginForm = () => {
                                         type="button"
                                         className="password-toggle"
                                         onClick={() => setShowPassword(!showPassword)}
+                                        tabIndex={-1}
                                     >
                                         {showPassword ? (
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,7 +179,7 @@ const LoginForm = () => {
                             </div>
 
                             <button
-                                type="button"
+                                type="submit"
                                 onClick={handleSubmit}
                                 disabled={loading}
                                 className="submit-btn"
@@ -203,7 +203,7 @@ const LoginForm = () => {
                                     <a href="/signup" className="signup-btn">Sign up</a>
                                 </p>
                             </div>
-                        </div>
+                        </form>
                     </div>
 
                     {/* Footer */}

@@ -119,7 +119,7 @@ const Signup = () => {
                                     onChange={handleChange}
                                     required
                                 />
-                                <button className="view-button" type="button" onClick={() => setShowPassword(!showPassword)}>
+                                <button className="view-button" type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                                     <img src={showPassword ? viewOffIcon : viewIcon} alt={showPassword ? "Hide password" : "Show password"} width={20} height={20} />
                                 </button>
                             </div>
@@ -137,7 +137,8 @@ const Signup = () => {
                                     onChange={handleChange}
                                     required
                                 />
-                                <button className="view-button" type="button" onClick={() => setShowConfirm(!showConfirm)}>
+                                <button className="view-button" type="button" onClick={() => setShowConfirm(!showConfirm)}
+                                    tabIndex={-1}>
                                     <img src={showConfirm ? viewOffIcon : viewIcon} alt={showConfirm ? "Hide password" : "Show password"} width={20} height={20} />
                                 </button>
                             </div>
