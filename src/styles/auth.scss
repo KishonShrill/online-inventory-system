@@ -391,9 +391,9 @@ $text-lighter: #9ca3af;
                 text-decoration: none;
                 transition: color 0.2s ease;
                 
-                &:hover {
-                    color: darken($primary-blue, 10%);
-                }
+                    &:hover {
+                        color: adjust($primary-blue, -10%);
+                    }
                 }
             }
             
@@ -411,8 +411,7 @@ $text-lighter: #9ca3af;
                 margin-bottom: 1.5rem;
                 
                 &:hover:not(:disabled) {
-                background: linear-gradient(135deg, darken($primary-blue, 5%) 0%, darken($primary-purple, 5%) 100%);
-                transform: translateY(-1px);
+                background: linear-gradient(135deg, adjust($primary-blue, -5%) 0%, adjust($primary-purple,-5%) 100%);
                 box-shadow: 0 10px 20px rgba($primary-blue, 0.2);
                 }
                 
@@ -467,7 +466,7 @@ $text-lighter: #9ca3af;
                 transition: color 0.2s ease;
                 
                 &:hover {
-                    color: darken($primary-blue, 10%);
+                    color: adjust($primary-blue, 10%);
                 }
                 }
             }

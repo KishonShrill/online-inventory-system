@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import viewIcon from '../assets/view-on.svg';
 import viewOffIcon from '../assets/view-off.svg';
+import { validateEmail, validatePassword } from "../helpers/validate";
 import '../styles/signup.scss';
 
 const postURL = import.meta.env.VITE_DEVELOPMENT === 'true'
