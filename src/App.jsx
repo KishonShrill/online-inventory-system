@@ -41,11 +41,11 @@ function App() {
           <Routes>
             <Route path='/' element={<Authpage />} />
             <Route path='/signup' element={<Signup />} />
-            <Route element={<InventoryLayout />} >
-              <Route path='/dashboard' element={<Dashboard initialInventory={initialInventory} initialBorrowRecords={initialBorrowRecords} />} />
-              <Route path='/inventory' element={<Inventory initialInventory={initialInventory} />} />
-              <Route path='/records' element={<Records initialBorrowRecords={initialBorrowRecords} />} />
-              <Route path='/settings' element={<Settings />} />
+            <Route path='/' element={<InventoryLayout />} >
+              <Route path='dashboard' element={<Dashboard initialInventory={initialInventory} initialBorrowRecords={initialBorrowRecords} />} />
+              <Route path='inventory' element={<Inventory initialInventory={initialInventory} />} />
+              <Route path='records' element={<Records initialBorrowRecords={initialBorrowRecords} />} />
+              <Route path='settings' element={<Settings />} />
             </Route>
           </Routes>
         </BrowserRouter>

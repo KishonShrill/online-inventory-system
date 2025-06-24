@@ -1,12 +1,20 @@
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom"
+import { Outlet, Navigate } from "react-router-dom"
+import Cookies from 'universal-cookie';
 
 import Sidebar from "../../components/Navigation";
 import Header from "../../components/Header";
 
 import '../../styles/master-layout.scss'
 
+
 const InventoryLayout = () => {
+    const cookies = new Cookies()
+
+    if (!cookies.get('CDIIS-OIS')) {
+        alert("You are not logged in!")
+        return <Navigate to="/" replace />;
+    }
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     return (
