@@ -17,6 +17,7 @@ const allowedOrigins = process.env.VITE_DEVELOPMENT
         'http://localhost:4173',
         'http://192.168.1.10:5173',
         `http://${DEVELOPMENT}:5173`,
+        `https://cdiis-ois.vercel.app/`,
     ]
     : `https://cdiis-ois.vercel.app/`;
 
