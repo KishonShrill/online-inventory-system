@@ -14,6 +14,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Inventory = lazy(() => import('./pages/Inventory'));
 const Records = lazy(() => import('./pages/Records'));
 const Settings = lazy(() => import('./pages/Settings'));
+const Signup = lazy(() => import('./pages/Signup'));
 
 const queryClient = new QueryClient()
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
@@ -39,6 +40,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<Authpage />} />
+            <Route path='/signup' element={<Signup />} />
             <Route element={<InventoryLayout />} >
               <Route path='/dashboard' element={<Dashboard initialInventory={initialInventory} initialBorrowRecords={initialBorrowRecords} />} />
               <Route path='/inventory' element={<Inventory initialInventory={initialInventory} />} />
