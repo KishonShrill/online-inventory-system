@@ -1,8 +1,17 @@
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'universal-cookie';
 import { ChevronRight } from "lucide-react"
 
 import '../styles/header.scss'
 
+
 const Header = ({ isSidebarOpen, setIsSidebarOpen }) => {
+    const cookies = new Cookies()
+    const token = cookies.get("CDIIS-OIS")
+    const decoded = jwtDecode(token);
+
+    console.log(decoded)
+    
     return (
         <header className="header">
              <div className="header-container">
@@ -13,7 +22,7 @@ const Header = ({ isSidebarOpen, setIsSidebarOpen }) => {
                  )}
             </div>
             <div className="header-container">
-                 <p className="header-title">Welcome, Admin!</p>
+                 <p className="header-title">Welcome, {decoded.userName}!</p>
             </div>
         </header>
     )

@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
+import Cookies from "universal-cookie";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import {validateEmail, validatePassword} from '../helpers/validate.js';
 import { Link } from 'react-router-dom';
+
+const cookies = new Cookies();
+
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
@@ -9,6 +15,7 @@ const LoginForm = () => {
     const [error, setError] = useState('');
     const [fieldErrors, setFieldErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -44,25 +51,57 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (!validateForm()) {
             return;
         }
         setLoading(true);
         setError('');
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            if (email === 'admin@gmail.com' && password === 'password123456') {
-                // Simulate navigation to dashboard
-                alert('Login successful! Redirecting to dashboard...');
-            } else {
-                setError('Invalid email or password');
-            }
-        } catch (err) {
-            console.error(err);
-            setError('Server error. Please try again.');
-        } finally {
-            setLoading(false);
-        }
+
+        const postURL = import.meta.env.VITE_DEVELOPMENT === 'true'
+            ? `http://localhost:5000/api/login`
+            : `https://cdiis-ois-server.vercel.app/api/login`;
+
+        const configuration = {
+            method: "post",
+            url: postURL,
+            data: {
+                email,
+                password,
+            },
+        };
+
+        axios(configuration)
+            .then((result) => {
+                setLoading(false);
+                // emailRef.current.style.borderColor = "green";
+                // passwordRef.current.style.borderColor = "green";
+                // logRef.current.style.color = "green";
+                console.log(result.data.token)
+                cookies.set("CDIIS-OIS", result.data.token, {
+                    path: "/",
+                });
+                navigate('/dashboard')
+            })
+            .catch((error) => {
+                console.error(error);
+                setLoading(false);
+                // emailRef.current.style.borderColor = "red";
+                // passwordRef.current.style.borderColor = "red";
+                // logRef.current.textContent = "Email or Password does not exist";
+                // logRef.current.style.color = "red";
+                // submitRef.current.style.background = "#ee4d2d";
+            });
+
+        // await new Promise(resolve => setTimeout(resolve, 1500));
+        // if (email === 'admin@gmail.com' && password === 'password123456') {
+        //     // Simulate navigation to dashboard
+        //     setLoading(false);
+        //     alert('Login successful! Redirecting to dashboard...');
+        // } else {
+        //     setLoading(false);
+        //     setError('Invalid email or password');
+        // }
     };
 
     return (
