@@ -76,7 +76,6 @@ const LoginForm = () => {
                         <p className="brand-subtitle">Center for Digital Iligan, Innovation & Sustainability </p>
                     </div>
                     <div className="brand-welcome">
-                        <h2>Welcome Back</h2>
                         <p>Access your dashboard and manage your items with our powerful inventory platform.</p>
                     </div>
                 </div>
