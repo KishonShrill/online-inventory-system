@@ -1,0 +1,113 @@
+@use 'utils/classes';
+.settings {
+    &__title {
+        @extend .title;
+        margin-bottom: 1.5rem;
+    }
+
+    &__info {
+        &-container {
+            background-color: white;
+            padding: 2rem;                  /* p-8 = 32px */
+            border-radius: 0.5rem;          /* rounded-lg = 8px */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                        0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md */
+            max-width: 42rem;               /* max-w-2xl = 672px */
+        }
+        &-title {
+            font-size: 1.25rem;        /* text-xl = 20px */
+            font-weight: 600;          /* font-semibold */
+            margin-bottom: 1rem;       /* mb-4 = 16px */
+        }
+        &-label {
+            display: block;
+            color: #374151;          /* text-gray-700 */
+            font-size: 0.875rem;     /* text-sm = 14px */
+            font-weight: 700;        /* font-bold */
+            margin-bottom: 0.5rem;   /* mb-2 = 8px */
+        }
+        &-input {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Tailwind's base shadow */
+            appearance: none;              /* Removes default browser styling */
+            border: 1px solid #d1d5db;     /* Tailwind's default border = gray-300 */
+            border-radius: 0.25rem;        /* rounded = 4px */
+            width: 100%;
+            padding: 0.5rem 0.75rem;       /* py-2 = 8px, px-3 = 12px */
+            font-size: 1rem;
+            color: #374151;                /* text-gray-700 */
+        }
+        &-updateBtn {
+            background-color: #2563EB;     /* Tailwind's blue-600 */
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;              /* font-bold */
+            padding: 0.5rem 1rem;          /* py-2 = 8px, px-4 = 16px */
+            border-radius: 0.25rem;        /* rounded = 4px */
+            transition: background-color 0.2s ease-in-out;
+
+            &:hover {background-color: #1D4ED8;     /* Tailwind's blue-700 */}
+        }
+    }
+
+    &__actions {
+        &-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        
+            & > span {
+                color: #374151;
+            }
+        }
+    }
+}
+
+// Utils
+.space-y-4 > * + * {margin-top: 1rem; /* 4 × 0.25rem = 16px */}
+.my-8 {margin-block: 2rem;}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+input:checked + .slider {
+    background-color: #2196F3;
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+.slider.round {
+    border-radius: 34px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}

@@ -33,6 +33,7 @@
   font-weight: bold;        // font-bold
   white-space: nowrap;      // whitespace-nowrap
   overflow: hidden;         // overflow-hidden
+  color: white;
 
   &.hidden {display: none;}
 }

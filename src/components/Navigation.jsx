@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Home, Package, Users, Settings } from "lucide-react";
-import '../styles/navigation.scss'
+import '../styles/sidebar.scss'
 import { current } from "@reduxjs/toolkit";
 
 // Sidebar Component
