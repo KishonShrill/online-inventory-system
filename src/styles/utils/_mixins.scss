@@ -1,3 +1,35 @@
+// Screen breakpoints for responsive design
+// Screen breakpoints for responsive design
+// Screen breakpoints for responsive design
+$breakpoints: (
+  "mobile": 375px,
+  "tablet": 768px,
+  "laptop": 1024px
+);
+
+@mixin respond-max($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (max-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints.";
+  }
+}
+
+@mixin respond-min($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints.";
+  }
+}
+
+// Essential styles for designs
+// Essential styles for designs
+// Essential styles for designs
 @mixin text-hover($color, $hover-color) {
   color: $color;
   transition: color 0.2s ease-in-out;

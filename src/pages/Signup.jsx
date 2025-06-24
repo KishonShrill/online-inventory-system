@@ -1,7 +1,13 @@
-import React, {useState} from "react";
+import {useState} from "react";
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 import viewIcon from '../assets/view-on.svg';
 import viewOffIcon from '../assets/view-off.svg';
 import '../styles/signup.scss';
+
+const postURL = import.meta.env.VITE_DEVELOPMENT === 'true'
+    ? `http://localhost:5000/api/register`
+    : `https://cdiis-ois-server.vercel.app/api/register`;
 
 const Signup = () => {
     const [formData, setFormData] = useState ({
@@ -15,6 +21,7 @@ const Signup = () => {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value});
@@ -27,24 +34,22 @@ const Signup = () => {
         if (formData.password !== formData.confirmPassword){
             return setError('Passwords do not match');
         }
-        // TODO: Send data to backend API
         try{
-            const res = await fetch('http://localhost:5000/api/signup', {
-                method:'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
+            const res = await axios.post(postURL, {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                secret_code: formData.secretCode,
             });
 
-            const data = await res.json();
-            if (!res.ok){
-                throw new Error(data.message || 'Signup failed');
-            }
-            //? Debug: Notify User
+            console.log(res.data)
+
             alert('Signup successful');
+            navigate('/');
+
         } catch (err){
-            setError(err.message);
+            console.log(err)
+            setError(err.response.data.message);
         }
     };
     
@@ -148,7 +153,7 @@ const Signup = () => {
                             <label htmlFor="secretCode">Secret Code</label>
                             <input 
                                 id="secretCode"
-                                type="text" 
+                                type="password" 
                                 name="secretCode"
                                 placeholder="Enter your secret code"
                                 value={formData.secretCode}
