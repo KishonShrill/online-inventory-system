@@ -16,11 +16,11 @@ Our vision is to create a reliable and intuitive inventory management solution t
 
 While still in the planning stages, the CDIIS Online Inventory System is envisioned to include the following core functionalities:
 
-* **User Authentication & Authorization:** Secure login and role-based access control.
-* **Product Management:** Add, edit, delete, and view product details (SKU, name, description, price, etc.).
-* **Inbound/Outbound Transactions:** Record and manage incoming (e.g., borrowers) and outgoing (e.g., lenders) inventory movements.
-* **Search & Filtering:** Efficiently search and filter inventory data.
-* **Dashboard:** An overview of key inventory metrics.
+- [*] **User Authentication & Authorization:** Secure login and role-based access control.
+- [ ] **Product Management:** Add, edit, delete, and view product details (SKU, name, description, price, etc.).
+- [ ] **Inbound/Outbound Transactions:** Record and manage incoming (e.g., borrowers) and outgoing (e.g., lenders) inventory movements.
+- [ ] **Search & Filtering:** Efficiently search and filter inventory data.
+- [ ] **Dashboard:** An overview of key inventory metrics.
 
 ---
 

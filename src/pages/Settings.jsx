@@ -1,6 +1,12 @@
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'universal-cookie';
 import '../styles/settings.scss'
 
 const Settings = () => {
+    const cookies = new Cookies()
+    const token = cookies.get("CDIIS-OIS")
+    const decoded = jwtDecode(token)
+
     return (
         <>
             <title>CDIIS OIS - Settings</title>
@@ -11,11 +17,11 @@ const Settings = () => {
                     <div className="space-y-4">
                         <div>
                             <label className="settings__info-label">Username</label>
-                            <input className="settings__info-input" readOnly defaultValue="Admin"/>
+                            <input className="settings__info-input" readOnly defaultValue={decoded.userName} />
                         </div>
                         <div>
                             <label className="settings__info-label">Email</label>
-                            <input className="settings__info-input" readOnly defaultValue="admin@inventory.com"/>
+                            <input className="settings__info-input" readOnly defaultValue={decoded.userEmail} />
                         </div>
                         <button className="settings__info-updateBtn">Update Profile</button>
                     </div>
