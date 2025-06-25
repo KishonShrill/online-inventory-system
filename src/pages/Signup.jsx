@@ -28,13 +28,22 @@ const Signup = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value});
     };
 
+    const isProperName = (name) => {
+        return /^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/.test(name.trim());
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validation
+        if (!isProperName(formData.name)) return setError("Name must be properly capitalized (e.g., 'John Doe')");
+        if (!validateEmail(formData.email)) return setError("Please use a valid email...")
+        if (!validatePassword(formData.password).isFullyValid) return setError("Password should be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character.") 
+
         if (formData.password !== formData.confirmPassword){
             return setError('Passwords do not match');
         }
+
         try{
             const res = await axios.post(postURL, {
                 name: formData.name,
@@ -42,8 +51,6 @@ const Signup = () => {
                 password: formData.password,
                 secret_code: formData.secretCode,
             });
-
-            console.log(res.data)
 
             alert('Signup successful');
             navigate('/');
