@@ -30,6 +30,82 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-const User = mongoose.model('Authentication', userSchema, 'users');
+// Item Schema
+const itemSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, "Please provide a name!"],
+        unique: [true, "This name is already used!"],
+    },
+    quantity: {
+        type: mongoose.Schema.Types.Int32,
+        required: [true, "Please provide how many!"],
+    },
+    description: {
+        type: String,
+    },
+    category: {
+        type: String,
+        required: [true, "Please provide what category!"],
+    },
+    color: {
+        type: String,
+        required: [true, "What color is this item?"]
+    },
+    type: {
+        type: String,
+        required: [true, "Please provide what type!"],
+    },
+    date_added: {
+        type: Date,
+        required: [true, "Please input the date it was added!"]
+    }
+});
 
-export { User };
+// Record Schema
+const recordSchema = new mongoose.Schema({
+    start_date: {
+        type: Date,
+        required: [true, "Please input starting date!"],
+    },
+    due_date: {
+        type: Date,
+        required: [true, "Please input due date!"],
+    },
+    user: {
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+        },
+        name: {
+            type: String,
+            required: true,
+        }
+    },
+    items: [
+        {
+            id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Item',
+                required: true,
+            },
+            name: {
+                type: String,
+                required: true,
+            },
+            quantity: {
+                type: mongoose.Schema.Types.Int32,
+                required: true,
+            }
+        }
+    ]
+})
+
+
+
+const User = mongoose.model('User', userSchema, 'users');
+const Item = mongoose.model('Item', itemSchema, 'items');
+const Record = mongoose.model('Record', recordSchema, 'records');
+
+export { User, Item, Record };
