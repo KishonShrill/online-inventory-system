@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import { PlusCircle, Search, Edit, Trash2 } from "lucide-react";
 
 import '../styles/inventory.scss'
 
-const Inventory = ({ initialInventory }) => {
-    const [inventory, setInventory] = useState(initialInventory);
+const Inventory = () => {
+    const inventory = useSelector(state => state.inventory);
+    const dispatch = useDispatch();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
@@ -39,13 +42,13 @@ const Inventory = ({ initialInventory }) => {
                         </thead>
                         <tbody>
                             {inventory.map((item) => (
-                                <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
+                                <tr key={item._id} className="border-b border-gray-200 hover:bg-gray-50">
                                     <td className="inventory__data-content-column">{item.id}</td>
                                     <td className="inventory__data-content-column">{item.name}</td>
                                     <td className="inventory__data-content-column">
                                         <span className={`category`}>{item.category}</span>
                                     </td>
-                                    <td className="inventory__data-content-column">{item.dateAdded}</td>
+                                    <td className="inventory__data-content-column">{item.date_added}</td>
                                     <td className="inventory__data-content-column actions">
                                         <button className="inventory__actions-edit"><Edit size={18}/></button>
                                         <button className="inventory__actions-delete"><Trash2 size={18}/></button>

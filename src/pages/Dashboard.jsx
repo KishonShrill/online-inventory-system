@@ -1,13 +1,19 @@
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import useFetchItems from '../hooks/useFetchItems';
+
 import '../styles/dashboard.scss'
 
-const Dashboard = ({ initialInventory, initialBorrowRecords }) => {
+const Dashboard = ({ initialBorrowRecords }) => {
+    const inventory = useSelector(state => state.inventory);
+
     return (
         <>
             <title>CDIIS OIS - Dashboard</title>
             <div className="dashboard-grid">
                 <div className="dashboard-card">
                     <h3 className="card-title">Total Items</h3>
-                    <p className="card-value text-blue">{initialInventory.length}</p>
+                    <p className="card-value text-blue">{inventory.length}</p>
                 </div>
                 <div className="dashboard-card">
                     <h3 className="card-title">Items Borrowed</h3>
@@ -20,7 +26,7 @@ const Dashboard = ({ initialInventory, initialBorrowRecords }) => {
                 <div className="dashboard-card">
                     <h3 className="card-title">Categories</h3>
                     <p className="card-value text-green">
-                    {[...new Set(initialInventory.map(i => i.category))].length}
+                    {[...new Set(inventory.map(i => i.category))].length}
                     </p>
                 </div>
             </div>
