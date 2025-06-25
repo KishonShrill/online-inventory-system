@@ -1,26 +1,37 @@
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Home, Package, Users, Settings } from "lucide-react";
 import '../styles/sidebar.scss'
-import { current } from "@reduxjs/toolkit";
+import { useSelector, useDispatch } from "react-redux";
+import { openSidebar, closeSidebar } from "../redux/actions/sidebarActions";
 
 // Sidebar Component
-const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+const Sidebar = () => {
+    const isSidebarOpen = useSelector(state => state.sidebar.isOpen);
+    const dispatch = useDispatch();
+
+    const handleToggle = () => {
+        if (isSidebarOpen) {
+            dispatch(closeSidebar());
+        } else {
+            dispatch(openSidebar());
+        }
+    };
 
     const currentPage = useLocation().pathname
-    console.log(currentPage)
+    // console.log(currentPage)
 
     const navItems = [
-        { name: 'Dashboard', link: '/dashboard' , icon: Home },
-        { name: 'Inventory', link: '/inventory' , icon: Package },
-        { name: 'Borrow Records', link: '/records' , icon: Users },
-        { name: 'Settings', link: '/settings' , icon: Settings },
+        { name: 'Dashboard', link: '/app/dashboard' , icon: Home },
+        { name: 'Inventory', link: '/app/inventory' , icon: Package },
+        { name: 'Borrow Records', link: '/app/records' , icon: Users },
+        { name: 'Settings', link: '/app/settings' , icon: Settings },
     ];
 
     return (
         <aside className={`sidebar ${isSidebarOpen ? 'open' : 'close'}`}>
             <div className="sidebar-header-container">
                  <h1 className={`sidebar-header-title ${!isSidebarOpen && 'hidden'}`}>Inventory</h1>
-                 <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="sidebar-button">
+                 <button onClick={() => handleToggle()} className="sidebar-button">
                     {isSidebarOpen ? <ChevronLeft size={24}/> : <ChevronRight size={24} />}
                 </button>
             </div>
