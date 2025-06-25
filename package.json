@@ -8,7 +8,7 @@
     "dev": "vite",
     "server": "node ./server/server.mjs",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite preview --host\" \"node ./server/server.mjs\"",
     "lint": "eslint .",
     "test": "vitest"
   },
