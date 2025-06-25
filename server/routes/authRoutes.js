@@ -4,11 +4,16 @@ import jwt from 'jsonwebtoken';
 
 import { User } from '../models/models.js';
 
+const SECRET_CODE = process.env.SECRET_CODE;
 const router = e.Router();
 
 router.post('/api/register', async (req, res) => {
-    if (!req.body || !req.body.email || !req.body.password || !req.body.secret_code) {
+    if (!req.body || !req.body.email || !req.body.password) {
         return res.status(400).json({ message: "Email and password required" });
+    }
+
+    if (req.body.secret_code !== SECRET_CODE) {
+        return res.status(400).json({ message: "Your secret code doesn't match with our records. Contact the administrator for the secret code!" })
     }
 
     try {

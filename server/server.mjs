@@ -11,7 +11,7 @@ config();
 const PORT = process.env.PORT || 5000;
 const DEVELOPMENT = process.env.LOCALHOST || 'localhost';
 
-const allowedOrigins = process.env.VITE_DEVELOPMENT
+const allowedOrigins = process.env.DEVELOPMENT
     ? [
         'http://localhost:5173',
         'http://localhost:4173',
