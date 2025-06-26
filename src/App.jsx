@@ -41,8 +41,8 @@ function App() {
             <Route path='/' element={<Authpage />} />
             <Route path='/signup' element={<Signup />} />
             <Route path='/app' element={<InventoryLayout />} >
-              <Route path='dashboard' element={<Dashboard setInitialInventory={setInitialInventory} initialInventory={initialInventory} initialBorrowRecords={initialBorrowRecords} />} />
-              <Route path='inventory' element={<Inventory initialInventory={initialInventory} />} />
+              <Route path='dashboard' element={<Dashboard initialBorrowRecords={initialBorrowRecords} />} />
+              <Route path='inventory' element={<Inventory />} />
               <Route path='records' element={<Records initialBorrowRecords={initialBorrowRecords} />} />
               <Route path='settings' element={<Settings />} />
             </Route>

@@ -6,9 +6,6 @@ import viewOffIcon from '../assets/view-off.svg';
 import { validateEmail, validatePassword } from "../helpers/validate";
 import '../styles/signup.scss';
 
-const postURL = import.meta.env.VITE_DEVELOPMENT === 'true'
-    ? `http://localhost:5000/api/register`
-    : `https://cdiis-ois-server.vercel.app/api/register`;
 
 const Signup = () => {
     const [formData, setFormData] = useState ({
@@ -29,6 +26,7 @@ const Signup = () => {
     };
 
     const isProperName = (name) => {
+        // 
         return /^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/.test(name.trim());
     };
 
@@ -44,21 +42,31 @@ const Signup = () => {
             return setError('Passwords do not match');
         }
 
-        try{
-            const res = await axios.post(postURL, {
+        const postURL = import.meta.env.VITE_DEVELOPMENT === 'true'
+            ? `http://localhost:5000/api/register`
+            : `https://cdiis-ois-server.vercel.app/api/register`;
+
+        const confirguation = {
+            method: 'post',
+            url: postURL,
+            data: {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
                 secret_code: formData.secretCode,
-            });
-
-            alert('Signup successful');
-            navigate('/');
-
-        } catch (err){
-            console.log(err)
-            setError(err.response.data.message);
+            }
         }
+
+        axios(confirguation)
+            .then((res) => {
+                console.log(res)
+                alert(res.message);
+                navigate('/');
+            })
+            .catch((err) => {
+                console.log(err)
+                setError(err.response.data.message);
+            });
     };
     
     return(

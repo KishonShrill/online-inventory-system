@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import useFetchItems from '../hooks/useFetchItems';
+import { useSelector } from 'react-redux';
 
 import '../styles/dashboard.scss'
 

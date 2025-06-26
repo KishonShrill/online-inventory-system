@@ -8,9 +8,10 @@ const auth = async (req, res, next) => {
         req.user = user;
         next();
 
-    } catch (error) {
+    } catch (err) {
         res.status(401).json({
             error: new Error("Invalid request!"),
+            message: err.message,
         });
     }
 };

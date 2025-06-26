@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { PlusCircle, Search, Edit, Trash2 } from "lucide-react";
 
 import '../styles/inventory.scss'
 
 const Inventory = () => {
     const inventory = useSelector(state => state.inventory);
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -59,7 +59,7 @@ const Inventory = () => {
                     </table>
                 </div>
 
-                {isModalOpen && <AddItemModal onClose={() => setIsModalOpen(false)} initialInventory={initialInventory} />}
+                {isModalOpen && <AddItemModal onClose={() => setIsModalOpen(false)} initialInventory={inventory} />}
             </main>
         </>
     )

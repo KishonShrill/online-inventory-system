@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Outlet, Navigate } from "react-router-dom"
 import Cookies from 'universal-cookie';
 import { useDispatch } from 'react-redux';
-import { addInventory, removeInventory, setInventory } from '../../redux/actions/inventoryActions';
+import { setInventory } from '../../redux/actions/inventoryActions';
 
 import Sidebar from "../../components/Navigation";
 import Header from "../../components/Header";
@@ -14,25 +14,30 @@ import '../../styles/master-layout.scss'
 
 const InventoryLayout = () => {
 
-    const dispatch = useDispatch();
     const cookies = new Cookies()
-    const prevDataRef = useRef(null); // store previous data to compare
-
-    if (!cookies.get('CDIIS-OIS')) {
+    const token = cookies.get('CDIIS-OIS')
+    
+    // Early return, no unnecessary fetch call to Database if user is not logged in
+    if (!token) {
         alert("You are not logged in!")
         return <Navigate to="/" replace />;
     }
-
-    const { isLoading, data, isError, error, isFetching } = useFetchItems();
+    
+    const dispatch = useDispatch();
+    const prevDataRef = useRef(null); // store previous data to compare
+    const { data } = useFetchItems();
 
     useEffect(() => {
-        if (data?.data && JSON.stringify(prevDataRef.current) !== JSON.stringify(data.data)) {
+        if (
+            data?.data && 
+            JSON.stringify(prevDataRef.current) !== JSON.stringify(data.data)
+        ) {
             console.log("🔁 Inventory updated");
-            console.log(JSON.stringify(data?.data))
+            // console.log(JSON.stringify(data?.data))
             dispatch(setInventory(data.data));
             prevDataRef.current = data.data;
         }
-    }, [data]);
+    }, [data, dispatch]);
 
     return (
         <div className="inventory">
