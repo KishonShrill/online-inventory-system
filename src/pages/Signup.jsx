@@ -1,6 +1,7 @@
 import {useState} from "react";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import Cookies from "universal-cookie";
 import viewIcon from '../assets/view-on.svg';
 import viewOffIcon from '../assets/view-off.svg';
 import { validateEmail, validatePassword } from "../helpers/validate";
@@ -8,6 +9,15 @@ import '../styles/signup.scss';
 
 
 const Signup = () => {
+    const cookies = new Cookies()
+    const token = cookies.get('CDIIS-OIS')
+    
+    // Early return, no unnecessary fetch call to Database if user is not logged in
+    if (token) {
+        alert("You are logged in!")
+        return <Navigate to="/app/dashboard" replace />;
+    }
+
     const [formData, setFormData] = useState ({
         name: '',
         email: '',

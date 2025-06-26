@@ -6,11 +6,12 @@ import { openSidebar, closeSidebar } from "../redux/actions/sidebarActions";
 
 import '../styles/header.scss'
 
-const cookies = new Cookies()
-const token = cookies.get("CDIIS-OIS")
-const decoded = jwtDecode(token);
 
 const Header = () => {
+    const cookies = new Cookies()
+    const token = cookies.get("CDIIS-OIS")
+    const decoded = jwtDecode(token);
+    
     const isSidebarOpen = useSelector(state => state.sidebar.isOpen);
     const dispatch = useDispatch();
 
