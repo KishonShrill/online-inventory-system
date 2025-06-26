@@ -4,7 +4,7 @@ import Cookies from 'universal-cookie';
 import { useDispatch } from 'react-redux';
 import { setInventory } from '../../redux/actions/inventoryActions';
 
-import Sidebar from "../../components/Navigation";
+import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import useFetchItems from "../../hooks/useFetchItems";
 
