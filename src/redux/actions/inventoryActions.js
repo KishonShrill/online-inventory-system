@@ -1,6 +1,7 @@
 export const ADD = 'ADD';
 export const SET = 'SET';
 export const REMOVE = 'REMOVE';
+export const EDIT = 'EDIT';
 
 export const addInventory = (item) => {
     return {
@@ -8,6 +9,13 @@ export const addInventory = (item) => {
         payload: item,
     }
 };
+
+export const editInventory = (item) => {
+    return {
+        type: EDIT,
+        payload: item,
+    }
+}
 
 export const setInventory = (items) => {
     return {

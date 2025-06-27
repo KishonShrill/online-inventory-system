@@ -27,19 +27,23 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a password!"],
         unique: false,
+    },
+    role: {
+        type: String,
+        // required: [true, "Please provide this user a role!"],
     }
 });
 
 // Item Schema
 const itemSchema = new mongoose.Schema({
+    id: {
+        type: String,
+        unique: [true, "This ID is already taken!"],
+    },
     name: {
         type: String,
         required: [true, "Please provide a name!"],
         unique: [true, "This name is already used!"],
-    },
-    quantity: {
-        type: mongoose.Schema.Types.Int32,
-        required: [true, "Please provide how many!"],
     },
     description: {
         type: String,
@@ -52,15 +56,11 @@ const itemSchema = new mongoose.Schema({
         type: String,
         required: [true, "What color is this item?"]
     },
-    type: {
-        type: String,
-        required: [true, "Please provide what type!"],
-    },
     date_added: {
         type: Date,
         required: [true, "Please input the date it was added!"]
     }
-});
+}, { strict: false });
 
 // Record Schema
 const recordSchema = new mongoose.Schema({

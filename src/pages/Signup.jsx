@@ -36,7 +36,6 @@ const Signup = () => {
     };
 
     const isProperName = (name) => {
-        // 
         return /^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/.test(name.trim());
     };
 
@@ -53,7 +52,7 @@ const Signup = () => {
         }
 
         const postURL = import.meta.env.VITE_DEVELOPMENT === 'true'
-            ? `http://localhost:5000/api/register`
+            ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/register`
             : `https://cdiis-ois-server.vercel.app/api/register`;
 
         const confirguation = {
