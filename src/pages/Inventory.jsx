@@ -20,9 +20,17 @@ const Inventory = () => {
   const inventory = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
 
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mode, setMode] = useState("ADD");
   const [itemId, setItemId] = useState("");
+
+  const filteredInventory = inventory.filter(item =>
+    item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.category?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
 
   function handleAdd() {
     setItemId("");
@@ -66,6 +74,8 @@ const Inventory = () => {
               type="text"
               placeholder="Search inventory..."
               className="inventory__search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
@@ -82,7 +92,7 @@ const Inventory = () => {
               </tr>
             </thead>
             <tbody>
-              {inventory.map((item) => (
+              {filteredInventory.map((item) => (
                 <tr
                   key={item?._id}
                   className="border-b border-gray-200 hover:bg-gray-50"
@@ -159,11 +169,40 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
     }
   }, [mode]);
 
+    // A real implementation would use a proper QR code library
+  const generateQrCode = (id) =>
+    `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${id}`;
+
+  const getEQPId = (state) => {
+    if (typeof state == "string") {
+      return state;
+    }
+
+    if (!state.length) {
+      return 'EQP-001';
+    }
+
+    const sorted = [...state].sort((a, b) => {
+      const numA = parseInt(a.id?.split('-')[1] || '0', 10);
+      const numB = parseInt(b.id?.split('-')[1] || '0', 10);
+      return numB - numA; // descending
+    });
+
+    const highestId = parseInt(sorted[0].id?.split('-')[1] || '0', 10);
+    const nextIdNum = highestId + 1;
+
+    return `EQP-${String(nextIdNum).padStart(4, '0')}`;
+  };
+
+  let newItemId = '';
+
   // Initialize Modal
   switch (mode) {
     case Mode.ADD:
       title = "Add New Item";
       submitBtnText = "Create";
+
+      newItemId = `${String(getEQPId(initialInventory))}`
 
       break;
 
@@ -186,6 +225,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
         color: item.color ?? "N/A",
         category: item.category,
       };
+      newItemId = `${String(getEQPId(item.id))}`
       break;
 
     case Mode.DELETE:
@@ -197,6 +237,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
         color: item.color ?? "N/A",
         category: item.category,
       };
+      newItemId = `${String(getEQPId(item.id))}`
       break;
 
     default:
@@ -204,21 +245,21 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
       return;
   }
 
-  // A real implementation would use a proper QR code library
-  const generateQrCode = (id) =>
-    `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${id}`;
-  const newItemId = `EQP-${String(initialInventory.length + 1).padStart(
-    3,
-    "0"
-  )}`;
+  const toProperCase = (str) =>
+  str
+    .toLowerCase()
+    .split(' ')
+    .filter(Boolean)
+    .map(word => word[0].toUpperCase() + word.slice(1))
+    .join(' ');
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    const name = nameRef.current.value.trim();
-    const description = descRef.current.value.trim();
-    const color = colorRef.current.value.trim();
-    const category = categoryRef.current.value.trim();
+    const name = toProperCase(nameRef.current.value.trim());
+    const description = toProperCase(descRef.current.value.trim());
+    const color = toProperCase(colorRef.current.value.trim());
+    const category = toProperCase(categoryRef.current.value.trim());
 
     if (!name || !color || !category) {
       alert("Name, Color, and Category are required.");
