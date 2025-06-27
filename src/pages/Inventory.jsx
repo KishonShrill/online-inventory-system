@@ -31,6 +31,9 @@ const Inventory = () => {
     item.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const LoginPage = ({ setCurrentView, setAuth }) => { return( <AuthLayout> <div className="text-center mb-8"> <h2 className="text-3xl font-bold text-gray-800">Welcome Back!</h2> <p className="text-gray-500 mt-2">Log in to manage your inventory</p> </div> <form> <div className="mb-4"> <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email Address</label> <input className="shadow-inner appearance-none border rounded-lg w-full py-3 px-4 text-gray-700" id="email" type="email" placeholder="you@example.com" /> </div> <div className="mb-6"> <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label> <input className="shadow-inner appearance-none border rounded-lg w-full py-3 px-4 text-gray-700" id="password" type="password" placeholder="••••••••••" /> </div> <button onClick={() => setAuth(true)} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg"> Log In </button> <p className="text-center text-gray-500 text-sm mt-6"> Don't have an account?{' '} <button onClick={() => setCurrentView('register')} className="font-bold text-blue-600 hover:text-blue-800"> Sign Up </button> </p> </form> </AuthLayout> );}
+
+
 
   function handleAdd() {
     setItemId("");

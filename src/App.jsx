@@ -11,6 +11,7 @@ import Authpage from './pages/Authpage';
 const InventoryLayout = lazy(() => import('./pages/MasterLayout/InventoryLayout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Inventory = lazy(() => import('./pages/Inventory'));
+const ItemCheck = lazy(() => import('./pages/ItemCheck'));
 const Records = lazy(() => import('./pages/Records'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Signup = lazy(() => import('./pages/Signup'));
@@ -43,6 +44,7 @@ function App() {
             <Route path='/app' element={<InventoryLayout />} >
               <Route path='dashboard' element={<Dashboard initialBorrowRecords={initialBorrowRecords} />} />
               <Route path='inventory' element={<Inventory />} />
+              <Route path='item-check' element={<ItemCheck />} />
               <Route path='records' element={<Records initialBorrowRecords={initialBorrowRecords} />} />
               <Route path='settings' element={<Settings />} />
             </Route>
