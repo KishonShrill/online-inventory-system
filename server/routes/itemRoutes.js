@@ -20,7 +20,7 @@ router.get('/api/items', async (req, res) => {
 
 router.post('/api/items', async (req, res) => {
     try {
-        const { id, name, description, category, color, date_added, type, _id } = req.body;
+        const { id, name, description, category, color, date_added, type, _id, items } = req.body;
 
         console.log(type)
 
@@ -28,7 +28,7 @@ router.post('/api/items', async (req, res) => {
             // Update the existing item by _id
             const updated = await Item.findByIdAndUpdate(
                 _id, // You need to pass _id from the frontend
-                { description, category, color, date_added },
+                { description, category, color, date_added, items},
                 { new: true } // Return the updated document
             );
 
@@ -50,7 +50,8 @@ router.post('/api/items', async (req, res) => {
             description,
             category,
             color,
-            date_added
+            date_added,
+            items: Array.isArray(items) ? items : [] // fallback in case when empty
         });
 
         const result = await item.save();

@@ -59,7 +59,20 @@ const itemSchema = new mongoose.Schema({
     date_added: {
         type: Date,
         required: [true, "Please input the date it was added!"]
-    }
+    },
+    items: [
+        {
+            _id: false, // ← prevents automatic _id generation for each component
+            name: {
+                type: String,
+                required: true,
+            },
+            quantity: {
+                type: mongoose.Schema.Types.Int32,
+                required: true,
+            }
+        }
+    ]
 }, { strict: false });
 
 // Record Schema

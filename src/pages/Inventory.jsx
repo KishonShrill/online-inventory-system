@@ -5,7 +5,7 @@ import {
   editInventory,
   removeInventory,
 } from "../redux/actions/inventoryActions";
-import { PlusCircle, Search, Edit, Trash2 } from "lucide-react";
+import { PlusCircle, Search, Edit, Trash2, Trash } from "lucide-react";
 import axios from "axios";
 
 import "../styles/inventory.scss";
@@ -143,6 +143,7 @@ const Inventory = () => {
 
 const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
   const [removeMode, setRemoveMode] = useState(false);
+  const [components, setComponents] = useState([]);
   const nameRef = useRef();
   const descRef = useRef();
   const colorRef = useRef();
@@ -168,6 +169,13 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
       setRemoveMode(true);
     }
   }, [mode]);
+
+  // OPTIONAL: Pre-fill components on edit
+  useEffect(() => {
+    if ((mode === Mode.UPDATE || mode === Mode.DELETE) && item?.items) {
+      setComponents(item.items.map(({ name, quantity }) => ({ name, quantity })));
+    }
+  }, [item, mode]);
 
     // A real implementation would use a proper QR code library
   const generateQrCode = (id) =>
@@ -253,6 +261,22 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
     .map(word => word[0].toUpperCase() + word.slice(1))
     .join(' ');
 
+  const handleAddComponent = () => {
+    setComponents([...components, { name: '', quantity: '' }]);
+  };
+
+  const handleRemoveComponent = (index) => {
+    const newComponents = [...components];
+    newComponents.splice(index, 1);
+    setComponents(newComponents);
+  };
+
+  const handleComponentChange = (index, field, value) => {
+    const newComponents = [...components];
+    newComponents[index][field] = field === 'quantity' ? parseInt(value) || '' : value;
+    setComponents(newComponents);
+  };
+
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -260,6 +284,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
     const description = toProperCase(descRef.current.value.trim());
     const color = toProperCase(colorRef.current.value.trim());
     const category = toProperCase(categoryRef.current.value.trim());
+    const validComponents = components.filter(comp => comp.name.trim() && comp.quantity > 0);
 
     if (!name || !color || !category) {
       alert("Name, Color, and Category are required.");
@@ -303,6 +328,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
             color: color,
             date_added: new Date().toISOString(),
             type: mode,
+            items: validComponents,
           },
         };
 
@@ -410,6 +436,45 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
                   }
                 />
               </div>
+            </div>
+
+            <div className="modal-input-container">
+              <label className="inventory__modal-label">Item Components</label>
+              {components.map((comp, index) => (
+                <div key={index} className="grid-5-cols modal-input-container">
+                  <input
+                    type="text"
+                    placeholder="Component Name"
+                    value={comp.name}
+                    onChange={(e) => handleComponentChange(index, 'name', e.target.value)}
+                    className="inventory__modal-input input"
+                    style={{gridColumnStart: 1, gridColumnEnd: 4, ...(mode === Mode.DELETE ? { cursor: "not-allowed" } : null)}}
+                    required={comp.quantity > 0}
+                  />
+                  <input
+                    type="number"
+                    placeholder="##"
+                    min="1"
+                    value={comp.quantity}
+                    onChange={(e) => handleComponentChange(index, 'quantity', e.target.value)}
+                    className="inventory__modal-input input"
+                    style={mode === Mode.DELETE ? { cursor: "not-allowed" } : null}
+                    required={comp.name.trim() !== ''}
+                  />
+                  {!removeMode && (
+                    <button
+                      type="button"
+                      className="modal-actions-danger"
+                      onClick={() => handleRemoveComponent(index)}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button type="button" className="modal-actions-add justify-self-end" onClick={handleAddComponent}>
+                + Add Component
+              </button>
             </div>
 
             <div className="modal-qr-container">
