@@ -6,17 +6,19 @@ import {
   removeInventory,
 } from "../redux/actions/inventoryActions";
 import { PlusCircle, Search, Edit, Trash2, Trash } from "lucide-react";
+import { Mode, Role } from "../helpers/_variables";
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'universal-cookie';
 import axios from "axios";
 
 import "../styles/inventory.scss";
 
-const Mode = {
-  ADD: "ADD",
-  UPDATE: "UPDATE",
-  DELETE: "DELETE",
-};
 
 const Inventory = () => {
+  const cookies = new Cookies()
+  const token = cookies.get("CDIIS-OIS")
+  const decoded = jwtDecode(token);
+
   const inventory = useSelector((state) => state.inventory);
   const dispatch = useDispatch();
 
@@ -30,10 +32,6 @@ const Inventory = () => {
     item.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const LoginPage = ({ setCurrentView, setAuth }) => { return( <AuthLayout> <div className="text-center mb-8"> <h2 className="text-3xl font-bold text-gray-800">Welcome Back!</h2> <p className="text-gray-500 mt-2">Log in to manage your inventory</p> </div> <form> <div className="mb-4"> <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email Address</label> <input className="shadow-inner appearance-none border rounded-lg w-full py-3 px-4 text-gray-700" id="email" type="email" placeholder="you@example.com" /> </div> <div className="mb-6"> <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label> <input className="shadow-inner appearance-none border rounded-lg w-full py-3 px-4 text-gray-700" id="password" type="password" placeholder="••••••••••" /> </div> <button onClick={() => setAuth(true)} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg"> Log In </button> <p className="text-center text-gray-500 text-sm mt-6"> Don't have an account?{' '} <button onClick={() => setCurrentView('register')} className="font-bold text-blue-600 hover:text-blue-800"> Sign Up </button> </p> </form> </AuthLayout> );}
-
-
 
   function handleAdd() {
     setItemId("");
@@ -60,13 +58,16 @@ const Inventory = () => {
       <main>
         <div className="inventory__header">
           <h1 className="inventory__header-title">Inventory</h1>
-          <button
-            onClick={() => handleAdd()}
-            className="inventory__header-addBtn"
-          >
-            <PlusCircle size={20} className="icon" />
-            Add Item
-          </button>
+
+          {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+            <button
+              onClick={() => handleAdd()}
+              className="inventory__header-addBtn"
+            >
+              <PlusCircle size={20} className="icon" />
+              Add Item
+            </button>
+          )}
         </div>
 
         <div className="inventory__search-container">
@@ -91,7 +92,9 @@ const Inventory = () => {
                 <th className="inventory__data-table-column">Name</th>
                 <th className="inventory__data-table-column">Category</th>
                 <th className="inventory__data-table-column">Date Added</th>
-                <th className="inventory__data-table-column">Actions</th>
+                {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+                  <th className="inventory__data-table-column">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -110,20 +113,22 @@ const Inventory = () => {
                   <td className="inventory__data-content-column">
                     {item?.date_added.split("T")[0]}
                   </td>
-                  <td className="inventory__data-content-column actions">
-                    <button
-                      className="inventory__actions-edit"
-                      onClick={() => handleEdit(item?._id)}
-                    >
-                      <Edit size={18} />
-                    </button>
-                    <button
-                      className="inventory__actions-delete"
-                      onClick={() => handleDelete(item?._id)}
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
+                  {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+                    <td className="inventory__data-content-column actions">
+                      <button
+                        className="inventory__actions-edit"
+                        onClick={() => handleEdit(item?._id)}
+                      >
+                        <Edit size={18} />
+                      </button>
+                      <button
+                        className="inventory__actions-delete"
+                        onClick={() => handleDelete(item?._id)}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
