@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 
 import authRoutes from './routes/authRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
+import recordRoutes from './routes/recordRoutes.js';
 
 
 config();
@@ -62,6 +63,7 @@ app.use([
 
 app.use(authRoutes);
 app.use(itemRoutes);
+app.use(recordRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Endpoint not found' });
