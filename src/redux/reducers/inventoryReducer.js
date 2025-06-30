@@ -1,23 +1,23 @@
-import { ADD, SET, REMOVE, EDIT } from '../actions/inventoryActions';
+import { inventoryTypes } from '../actions/inventoryActions';
 
 const initialState = [];
 
 const inventoryReducer = (state = initialState, action) => {
     switch (action.type) {
-        case ADD:
+        case inventoryTypes.ADD_INVENTORY:
             return [...state, action.payload];
 
-        case SET:
+        case inventoryTypes.SET_INVENTORY:
             return [...action.payload]; // overwrite with new array
 
-        case EDIT:
+        case inventoryTypes.EDIT_INVENTORY:
             return state.map(item =>
                 item._id === action.payload._id
                     ? { ...item, ...action.payload } // update the matching item
                     : item
             );
 
-        case REMOVE:
+        case inventoryTypes.REMOVE_INVENTORY:
             return state.filter(item => item._id !== action.payload); // remove by _id
 
         default:

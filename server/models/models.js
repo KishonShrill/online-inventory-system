@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import { Contact } from "lucide-react";
 import mongoose from "mongoose";
 
 
@@ -86,34 +87,34 @@ const recordSchema = new mongoose.Schema({
         required: [true, "Please input due date!"],
     },
     user: {
+        name: {
+            type: String,
+            required: true,
+        },
+        contact: {
+            type: String,
+            required: true,
+        }
+    },
+    type: {
+        type: String,
+        required: [true, "What type of record is this?"]
+    },
+    item: {
         id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            type: String,
+            ref: 'Item',
             required: true,
         },
         name: {
             type: String,
             required: true,
+        },
+        quantity: {
+            type: mongoose.Schema.Types.Int32,
         }
-    },
-    items: [
-        {
-            id: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Item',
-                required: true,
-            },
-            name: {
-                type: String,
-                required: true,
-            },
-            quantity: {
-                type: mongoose.Schema.Types.Int32,
-                required: true,
-            }
-        }
-    ]
-})
+    }
+}, { strict: false })
 
 
 

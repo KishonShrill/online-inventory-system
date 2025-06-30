@@ -170,6 +170,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
     description: "",
     color: "N/A",
     category: "",
+    components: '',
   };
 
   useEffect(() => {
@@ -195,7 +196,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
     }
 
     if (!state.length) {
-      return 'EQP-001';
+      return 'EQP-0001';
     }
 
     const sorted = [...state].sort((a, b) => {
@@ -240,6 +241,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
         description: item.description,
         color: item.color ?? "N/A",
         category: item.category,
+        components: item.items.map(({ name, quantity }) => ({ name, quantity })),
       };
       newItemId = `${String(getEQPId(item.id))}`
       break;
@@ -292,7 +294,9 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
     const description = toProperCase(descRef.current.value.trim());
     const color = toProperCase(colorRef.current.value.trim());
     const category = toProperCase(categoryRef.current.value.trim());
-    const validComponents = components.filter(comp => comp.name.trim() && comp.quantity > 0);
+    const validComponents = components
+      .filter(comp => comp.name.trim() && comp.quantity > 0)
+      .map(comp => ({...comp, name: toProperCase(comp.name)}));
 
     if (!name || !color || !category) {
       alert("Name, Color, and Category are required.");
@@ -304,7 +308,8 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
       name === initialData.name &&
       description === initialData.description &&
       color === initialData.color &&
-      category === initialData.category
+      category === initialData.category &&
+      JSON.stringify(validComponents) === JSON.stringify(initialData.components)
     ) {
       alert("No changes were made.");
       return;

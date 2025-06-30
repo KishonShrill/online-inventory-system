@@ -30,5 +30,34 @@ export const validatePassword = (password) => {
     return validations;
 };
 
+export const validateRecord = (userName, userContact, date) => {
+    const nameRegex = /^[A-Z][a-z]+(?: [A-Z][a-z]+)+$/;
+    const validUserName = nameRegex.test(userName.trim());
+    
+    const isPhoneNumber = /^09\d{9}$/.test(userContact);
+
+    const isValidEmail = validateEmail(userContact);
+
+    const isValidDate = (() => {
+        const inputDateStr = date;
+        const todayStr = new Date().toISOString().split("T")[0];
+        return inputDateStr > todayStr;
+    })();
+
+    const validations = {
+        validUserName,
+        validUserContact: isPhoneNumber || isValidEmail,
+        validDate: isValidDate,
+    };
+    validations.isFullyValid = Object.values(validations).every(Boolean);
+
+    return validations;
+}
+
 validateEmail.propTypes = {email: PropTypes.string.isRequired}
 validatePassword.propTypes = {password: PropTypes.string.isRequired}
+validateRecord.propTypes = {
+    userName: PropTypes.string.isRequired,
+    userContact: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+}

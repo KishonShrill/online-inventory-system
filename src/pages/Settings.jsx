@@ -12,7 +12,7 @@ const Settings = () => {
 
     const logout = () => {
         cookies.remove("CDIIS-OIS", { path: "/" });
-        navigate("/");
+        window.location.pathname = '/';
     }
 
     return (

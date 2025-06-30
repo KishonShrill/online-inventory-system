@@ -4,6 +4,7 @@ import '../styles/dashboard.scss'
 
 const Dashboard = ({ initialBorrowRecords }) => {
     const inventory = useSelector(state => state.inventory);
+    const records = useSelector(state => state.record)
 
     return (
         <>
@@ -15,7 +16,7 @@ const Dashboard = ({ initialBorrowRecords }) => {
                 </div>
                 <div className="dashboard-card">
                     <h3 className="card-title">Items Borrowed</h3>
-                    <p className="card-value text-yellow">{initialBorrowRecords.length}</p>
+                    <p className="card-value text-yellow">{records.length}</p>
                 </div>
                 <div className="dashboard-card">
                     <h3 className="card-title">Overdue Items</h3>

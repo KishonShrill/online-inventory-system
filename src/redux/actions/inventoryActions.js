@@ -1,32 +1,34 @@
-export const ADD = 'ADD';
-export const SET = 'SET';
-export const REMOVE = 'REMOVE';
-export const EDIT = 'EDIT';
+ export const inventoryTypes = {
+    ADD_INVENTORY: 'ADD_INVENTORY',
+    SET_INVENTORY:'SET_INVENTORY',
+    REMOVE_INVENTORY: 'REMOVE_INVENTORY',
+    EDIT_INVENTORY: 'EDIT_INVENTORY',
+}
 
 export const addInventory = (item) => {
     return {
-        type: ADD,
+        type: inventoryTypes.ADD_INVENTORY,
         payload: item,
     }
 };
 
 export const editInventory = (item) => {
     return {
-        type: EDIT,
+        type: inventoryTypes.EDIT_INVENTORY,
         payload: item,
     }
 }
 
 export const setInventory = (items) => {
     return {
-        type: SET,
+        type: inventoryTypes.SET_INVENTORY,
         payload: items,
     };
 };
 
 export const removeInventory = (itemId) => {
     return {
-        type: REMOVE,
+        type: inventoryTypes.REMOVE_INVENTORY,
         payload: itemId,
     }
 }

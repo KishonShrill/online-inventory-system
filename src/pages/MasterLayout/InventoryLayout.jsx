@@ -1,12 +1,14 @@
 import { useEffect, useRef } from "react";
 import { Outlet, Navigate } from "react-router-dom"
-import Cookies from 'universal-cookie';
 import { useDispatch } from 'react-redux';
-import { setInventory } from '../../redux/actions/inventoryActions';
+import Cookies from 'universal-cookie';
 
+import { setInventory } from '../../redux/actions/inventoryActions';
+import { setRecords } from "../../redux/actions/recordActions";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-import useFetchItems from "../../hooks/useFetchItems";
+// import useFetchItems from "../../hooks/useFetchItems";
+import useFetchInventoryAndRecords from "../../hooks/useFetchInventoryAndRecords";
 
 
 import '../../styles/master-layout.scss'
@@ -24,20 +26,35 @@ const InventoryLayout = () => {
     }
     
     const dispatch = useDispatch();
-    const prevDataRef = useRef(null); // store previous data to compare
-    const { data } = useFetchItems();
+    const prevItemsRef = useRef(null); // store previous data to compare
+    const prevRecordsRef = useRef(null); // store previous data to compare
+    // const { data } = useFetchItems();
+    const { itemsQuery, recordsQuery } = useFetchInventoryAndRecords();
+
 
     useEffect(() => {
         if (
-            data?.data && 
-            JSON.stringify(prevDataRef.current) !== JSON.stringify(data.data)
+            itemsQuery?.data && 
+            JSON.stringify(prevItemsRef.current) !== JSON.stringify(itemsQuery.data)
         ) {
             console.log("🔁 Inventory updated");
-            // console.log(JSON.stringify(data?.data))
-            dispatch(setInventory(data.data));
-            prevDataRef.current = data.data;
+            // console.log(JSON.stringify(itemsQuery?.data.data))
+            dispatch(setInventory(itemsQuery.data.data));
+            prevItemsRef.current = itemsQuery.data;
         }
-    }, [data, dispatch]);
+    }, [itemsQuery, dispatch]);
+
+    useEffect(() => {
+        if (
+            recordsQuery?.data &&
+            JSON.stringify(prevRecordsRef.current) !== JSON.stringify(recordsQuery.data)
+        ) {
+            console.log("🔁 Records updated")
+            // console.log(JSON.stringify(recordsQuery?.data.data))
+            dispatch(setRecords(recordsQuery.data.data));
+            prevRecordsRef.current = recordsQuery.data;
+        }
+    }, [recordsQuery, dispatch]);
 
     return (
         <div className="inventory">
@@ -52,4 +69,4 @@ const InventoryLayout = () => {
     )
 }
 
-export default InventoryLayout
+export default InventoryLayout;

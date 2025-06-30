@@ -22,8 +22,6 @@ router.post('/api/items', async (req, res) => {
     try {
         const { id, name, description, category, color, date_added, type, _id, items } = req.body;
 
-        console.log(type)
-
         if (type === 'UPDATE') {
             // Update the existing item by _id
             const updated = await Item.findByIdAndUpdate(

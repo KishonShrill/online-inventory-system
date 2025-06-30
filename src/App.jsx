@@ -21,19 +21,6 @@ const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
 
 
 function App() {
-
-  // const initialInventory = [
-  //   { id: 'EQP-001', name: 'Laptop', description: '15-inch Pro Laptop', dateAdded: '2023-10-26', color: 'Silver', category: 'Electronics' },
-  //   { id: 'EQP-002', name: 'Keyboard', description: 'Mechanical Keyboard', dateAdded: '2023-10-25', color: 'Black', category: 'Accessories' },
-  //   { id: 'EQP-003', name: 'Mouse', description: 'Wireless Mouse', dateAdded: '2023-10-25', color: 'Black', category: 'Accessories' },
-  //   { id: 'EQP-004', name: 'Monitor', description: '27-inch 4K Monitor', dateAdded: '2023-10-24', color: 'Black', category: 'Electronics' },
-  // ];
-
-  const initialBorrowRecords = [
-    { id: 1, itemName: 'Laptop (EQP-001)', borrower: 'John Doe', borrowDate: '2023-11-01', expiryDate: '2023-11-15' },
-    { id: 2, itemName: 'Projector (EQP-005)', borrower: 'Jane Smith', borrowDate: '2023-11-05', expiryDate: '2023-11-10' },
-  ];
-
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -42,10 +29,10 @@ function App() {
             <Route path='/' element={<Authpage />} />
             <Route path='/signup' element={<Signup />} />
             <Route path='/app' element={<InventoryLayout />} >
-              <Route path='dashboard' element={<Dashboard initialBorrowRecords={initialBorrowRecords} />} />
+              <Route path='dashboard' element={<Dashboard />} />
               <Route path='inventory' element={<Inventory />} />
               <Route path='item-check' element={<ItemCheck />} />
-              <Route path='records' element={<Records initialBorrowRecords={initialBorrowRecords} />} />
+              <Route path='records' element={<Records />} />
               <Route path='settings' element={<Settings />} />
             </Route>
           </Routes>
