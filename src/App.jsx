@@ -2,11 +2,9 @@ import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
+
 import './App.css'
 
-// import Homepage from './pages/Homepage';
 import Authpage from './pages/Authpage';
 const InventoryLayout = lazy(() => import('./pages/MasterLayout/InventoryLayout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -18,7 +16,6 @@ const Signup = lazy(() => import('./pages/Signup'));
 
 const queryClient = new QueryClient()
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
-
 
 function App() {
   return (

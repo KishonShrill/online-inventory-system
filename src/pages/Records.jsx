@@ -131,14 +131,17 @@ const Records = () => {
 			<main>
 				<div className="records__header">
 					<h1 className="records__title">Borrow Records</h1>
-					<button
-					onClick={() => handleAdd()}
-					className="inventory__header-addBtn actions-add"
-					title="Add Record"
-					>
-					<PlusCircle size={20} className="icon" />
-					Add Record
-					</button>
+					
+					{(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+						<button
+						onClick={() => handleAdd()}
+						className="inventory__header-addBtn actions-add"
+						title="Add Record"
+						>
+						<PlusCircle size={20} className="icon" />
+						Add Record
+						</button>
+					)}
 				</div>
 
 				<h3 style={{marginLeft: "1rem", marginBottom: "1rem", textDecoration: "underline", cursor: "default"}}>Reserved</h3>

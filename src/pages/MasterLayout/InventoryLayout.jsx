@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import { Outlet, Navigate } from "react-router-dom"
 import { useDispatch } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 import Cookies from 'universal-cookie';
 
 import { setInventory } from '../../redux/actions/inventoryActions';
 import { setRecords } from "../../redux/actions/recordActions";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-// import useFetchItems from "../../hooks/useFetchItems";
 import useFetchInventoryAndRecords from "../../hooks/useFetchInventoryAndRecords";
 
 
@@ -24,7 +24,8 @@ const InventoryLayout = () => {
         alert("You are not logged in!")
         return <Navigate to="/" replace />;
     }
-    
+
+    const decoded = jwtDecode(token);
     const dispatch = useDispatch();
     const prevItemsRef = useRef(null); // store previous data to compare
     const prevRecordsRef = useRef(null); // store previous data to compare
@@ -58,7 +59,7 @@ const InventoryLayout = () => {
 
     return (
         <div className="inventory">
-            <Sidebar />
+            <Sidebar decoded={decoded} />
             <div className="content-container">
                 <Header />
                 <main className="main-container">

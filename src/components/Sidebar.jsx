@@ -1,11 +1,12 @@
+import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Home, Package, Users, Settings, CheckSquare } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
 import { openSidebar, closeSidebar } from "../redux/actions/sidebarActions";
+import { Role } from "../helpers/_variables";
 import '../styles/sidebar.scss'
 
 // Sidebar Component
-const Sidebar = () => {
+const Sidebar = ({ decoded }) => {
     const isSidebarOpen = useSelector(state => state.sidebar.isOpen);
     const dispatch = useDispatch();
 
@@ -23,7 +24,9 @@ const Sidebar = () => {
     const navItems = [
         { name: 'Dashboard', link: '/app/dashboard' , icon: Home },
         { name: 'Inventory', link: '/app/inventory' , icon: Package },
-        { name: 'Item Check', link: '/app/item-check' , icon: CheckSquare },
+            ...(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER
+        ? [{ name: 'Item Check', link: '/app/item-check', icon: CheckSquare }]
+        : []),
         { name: 'Borrow Records', link: '/app/records' , icon: Users },
         { name: 'Settings', link: '/app/settings' , icon: Settings },
     ];

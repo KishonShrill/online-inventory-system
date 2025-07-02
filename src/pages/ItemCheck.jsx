@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import Cookies from "universal-cookie";
+import { Role } from "../helpers/_variables";
+import { jwtDecode } from 'jwt-decode';
 
 import "../styles/itemCheck.scss";
 
 const ItemCheck = () => {
-  const inventory = useSelector((state) => state.inventory);
-
   const [scannedId, setScannedId] = useState("");
   const [item, setItem] = useState(null);
   const [attendance, setAttendance] = useState({});
@@ -13,6 +15,16 @@ const ItemCheck = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const cookies = new Cookies()
+  const token = cookies.get("CDIIS-OIS")
+  const decoded = jwtDecode(token);
+  
+  if (!decoded.userRole === Role.ADMIN && !decoded.userRole === Role.MANAGER) {
+    alert("You are not allowed in here!")
+    return <Navigate to="/app/dashboard" replace />;
+  }
+
+  const inventory = useSelector((state) => state.inventory);
   const timeOfDay = new Date().getHours() < 12 ? "Morning" : "Afternoon";
   const today = new Date().toISOString().slice(0, 10);
 
@@ -89,7 +101,7 @@ const ItemCheck = () => {
             <input
               type="text"
               value={scannedId}
-              onChange={(e) => setScannedId(e.target.value)}
+              onChange={(e) => setScannedId(e.target.value.toUpperCase())}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleFetchItem();
