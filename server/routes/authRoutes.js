@@ -2,7 +2,7 @@ import e from "express";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { User } from '../models/models.js';
+import { User } from '../models/index.js';
 
 
 const router = e.Router();
@@ -76,6 +76,7 @@ router.post('/api/login', async (req, res) => {
         //   create JWT token
         const token = jwt.sign(
             {
+                userId: user._id,
                 userName: user.name,
                 userEmail: user.email,
                 userRole: user.role,

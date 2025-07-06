@@ -1,6 +1,6 @@
 import e from "express";
 
-import { Item } from "../models/models.js";
+import { Item } from "../models/index.js";
 
 const router = e.Router();
 
