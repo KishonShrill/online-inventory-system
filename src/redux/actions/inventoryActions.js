@@ -1,6 +1,6 @@
- export const inventoryTypes = {
+export const inventoryTypes = {
     ADD_INVENTORY: 'ADD_INVENTORY',
-    SET_INVENTORY:'SET_INVENTORY',
+    SET_INVENTORY: 'SET_INVENTORY',
     REMOVE_INVENTORY: 'REMOVE_INVENTORY',
     EDIT_INVENTORY: 'EDIT_INVENTORY',
 }
@@ -17,7 +17,7 @@ export const editInventory = (item) => {
         type: inventoryTypes.EDIT_INVENTORY,
         payload: item,
     }
-}
+};
 
 export const setInventory = (items) => {
     return {
@@ -31,4 +31,4 @@ export const removeInventory = (itemId) => {
         type: inventoryTypes.REMOVE_INVENTORY,
         payload: itemId,
     }
-}
+};
