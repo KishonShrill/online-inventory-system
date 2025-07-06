@@ -9,8 +9,7 @@ import Cookies from "universal-cookie";
 import axios from "axios";
 
 import { Role } from "../helpers/_variables";
-import { getLocalISODateTime } from "../helpers/dateUtils";
-import itemHasBeenChecked from "../helpers/itemHasBeenChecked";
+import { getLocalISODateTime, itemHasBeenChecked } from "../helpers/dateUtils";
 
 import "../styles/itemCheck.scss";
 
