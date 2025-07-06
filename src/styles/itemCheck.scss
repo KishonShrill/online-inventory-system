@@ -1,3 +1,7 @@
+@use 'utils/variables';
+@use 'utils/mixins';
+@use 'sass:color';
+
 .itemCheck {
   &__title-container {
     display: flex;
@@ -94,17 +98,21 @@
     font-size: 0.875rem;
 
     &-error {
-        background-color: #fee2e2; /* Tailwind's red-100 */
-        color: #b91c1c;            /* Tailwind's red-700 */
-        padding: 0.75rem;          /* p-3 = 12px = 0.75rem */
-        border-radius: 0.5rem;     /* rounded-lg = 8px = 0.5rem */
-        margin-top: 1rem;       /* mb-4 = 16px = 1rem */
-        font-size: 0.875rem;       /* text-sm = 14px = 0.875rem */
+      background-color: #fee2e2; /* Tailwind's red-100 */
+      color: #b91c1c;            /* Tailwind's red-700 */
+      padding: 0.75rem;          /* p-3 = 12px = 0.75rem */
+      border-radius: 0.5rem;     /* rounded-lg = 8px = 0.5rem */
+      margin-top: 1rem;       /* mb-4 = 16px = 1rem */
+      font-size: 0.875rem;       /* text-sm = 14px = 0.875rem */
     }
 
     &-success {
       background-color: #d1fae5;
       color: #065f46;
+      padding: 0.75rem;          /* p-3 = 12px = 0.75rem */
+      border-radius: 0.5rem;     /* rounded-lg = 8px = 0.5rem */
+      margin-top: 1rem;       /* mb-4 = 16px = 1rem */
+      font-size: 0.875rem;       /* text-sm = 14px = 0.875rem */
     }
   }
 
@@ -263,4 +271,22 @@
     padding: 0.5rem 1rem;         /* py-2 = 8px, px-4 = 16px */
     border-radius: 0.25rem;       /* rounded = 4px */
     transition: background-color 0.2s ease;
+}
+
+.scan-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 variables.$spacing-sm;
+  background-color: variables.$secondary-color;
+  color: variables.$white;
+  border: none;
+  border-radius: variables.$border-radius-md;
+  cursor: pointer;
+  @include mixins.transition(background-color);
+
+  &:hover {
+    background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
+  }
 }

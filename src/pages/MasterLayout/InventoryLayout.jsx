@@ -6,9 +6,10 @@ import Cookies from 'universal-cookie';
 
 import { setInventory } from '../../redux/actions/inventoryActions';
 import { setRecords } from "../../redux/actions/recordActions";
+import { setAttendance } from "../../redux/actions/attendanceActions";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-import useFetchInventoryAndRecords from "../../hooks/useFetchInventoryAndRecords";
+import useFetchInitialize from "../../hooks/useFetchInitialize";
 
 
 import '../../styles/master-layout.scss'
@@ -29,8 +30,8 @@ const InventoryLayout = () => {
     const dispatch = useDispatch();
     const prevItemsRef = useRef(null); // store previous data to compare
     const prevRecordsRef = useRef(null); // store previous data to compare
-    // const { data } = useFetchItems();
-    const { itemsQuery, recordsQuery } = useFetchInventoryAndRecords();
+    const prevAttendancesRef = useRef(null); // store previous data to compare
+    const { itemsQuery, recordsQuery, attendanceQuery } = useFetchInitialize();
 
 
     useEffect(() => {
@@ -56,6 +57,19 @@ const InventoryLayout = () => {
             prevRecordsRef.current = recordsQuery.data;
         }
     }, [recordsQuery, dispatch]);
+
+    useEffect(() => {
+        if (
+            attendanceQuery?.data &&
+            JSON.stringify(prevAttendancesRef.current) !== JSON.stringify(attendanceQuery.data)
+        ) {
+            console.log("🔁 Attendances updated")
+            console.log(JSON.stringify(attendanceQuery?.data.data))
+            dispatch(setAttendance(attendanceQuery.data.data));
+            prevAttendancesRef.current = attendanceQuery.data;
+        }
+    }, [attendanceQuery, dispatch]);
+    
 
     return (
         <div className="inventory">

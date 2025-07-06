@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 
 import '../styles/dashboard.scss'
 
-const Dashboard = ({ initialBorrowRecords }) => {
+const Dashboard = () => {
     const inventory = useSelector(state => state.inventory);
     const records = useSelector(state => state.record)
 

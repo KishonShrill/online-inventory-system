@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite --host\" \"node ./server/server.mjs\"",
+    "start": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite --host\" \"nodemon ./server/server.mjs\"",
     "dev": "vite",
     "server": "node ./server/server.mjs",
     "build": "vite build",
