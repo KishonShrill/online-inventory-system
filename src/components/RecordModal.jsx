@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addRecord } from "../redux/actions/recordActions";
+import { editInventory } from "../redux/actions/inventoryActions";
 import { ScanIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { validateRecord } from "../helpers/validate";
@@ -81,6 +82,7 @@ const RecordModal = ({ isOpen, onClose }) => {
                     contact: userContact,
                 },
                 item: {
+                    _id: itemDetails._id,
                     id: itemDetails.id,
                     name: itemDetails.name,
                 },
@@ -93,6 +95,7 @@ const RecordModal = ({ isOpen, onClose }) => {
             .then((res) => {
                 console.log(res.data);
                 dispatch(addRecord(res.data.result))
+                dispatch(editInventory(res.data.result.item._id, {status: "Reserved"}))
                 alert(`Record for ${itemDetails.name} created for ${userName} @ ${date}!`);
             })
             .catch((err) => {

@@ -32,11 +32,17 @@ router.post('/api/records', async (req, res) => {
                 },
                 type,
                 item: {
+                    _id: item._id,
                     id: item.id,
                     name: item.name,
                     quantity: quantity ? Number(quantity) : 1
                 },
             })
+
+            const returnedItem = await Item.updateOne(
+                { id: item.id },
+                { $set: {status: "Reserved"} },
+            );
 
             return res.status(201).json({
                 message: "Record added successfully",
@@ -63,11 +69,16 @@ router.post('/api/records', async (req, res) => {
                 },
                 { new: true }
             );
+            const returnedItem = await Item.updateOne(
+                { id: item.id },
+                { $set: {status: "Available"} },
+            );
 
             return res.status(201).json({
                 message: "Record cancelled successfully",
                 result: {
                     updatedRecord,
+                    returnedItem: await Item.find({id: item.id}, {status: 1}),
                 },
             });
         }
@@ -90,7 +101,7 @@ router.post('/api/records', async (req, res) => {
                 message: "Record returned successfully",
                 result: {
                     updatedRecord,
-                    returnedItem: await Item.find({id: item.id}),
+                    returnedItem: await Item.find({id: item.id}, {status: 1}),
                 },
             });
         }
@@ -113,7 +124,7 @@ router.post('/api/records', async (req, res) => {
             message: "Record updated successfully",
             result: {
                 updatedRecord,
-                borrowedItem: await Item.find({id: item.id}),
+                borrowedItem: await Item.find({id: item.id}, {status:1}),
             },
             record: {
                 userName: user.name,

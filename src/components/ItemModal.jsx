@@ -209,10 +209,10 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
         axios(confirguation)
             .then((res) => {
                 // console.log(res.data)
-                // console.log(JSON.stringify(res.data.result))
+                console.log(JSON.stringify(res.data.result))
                 if (res.data.type === Mode.ADD) dispatch(addInventory(res.data.result));
                 if (res.data.type === Mode.UPDATE)
-                    dispatch(editInventory(res.data.result));
+                    dispatch(editInventory(res.data.result._id, res.data.result));
                 if (res.data.type === Mode.DELETE)
                     dispatch(removeInventory(res.data.result));
                 alert(res.data.message);

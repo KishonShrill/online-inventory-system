@@ -12,10 +12,13 @@ export const addInventory = (item) => {
     }
 };
 
-export const editInventory = (item) => {
+export const editInventory = (itemId, item) => {
     return {
         type: inventoryTypes.EDIT_INVENTORY,
-        payload: item,
+        payload: {
+            _id: itemId,
+            item: item,
+        },
     }
 };
 

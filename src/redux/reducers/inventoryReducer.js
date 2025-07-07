@@ -13,7 +13,7 @@ const inventoryReducer = (state = initialState, action) => {
         case inventoryTypes.EDIT_INVENTORY:
             return state.map(item =>
                 item._id === action.payload._id
-                    ? { ...item, ...action.payload } // update the matching item
+                    ? { ...item, ...action.payload.item } // update the matching item
                     : item
             );
 

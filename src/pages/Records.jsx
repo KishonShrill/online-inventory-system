@@ -10,6 +10,7 @@ import axios from "axios";
 import RecordModal from "../components/RecordModal";
 
 import '../styles/records.scss';
+import { editInventory } from "../redux/actions/inventoryActions";
 
 const postURL =
 	import.meta.env.VITE_DEVELOPMENT === "true"
@@ -70,6 +71,7 @@ const Records = () => {
 			.then((res) => {
 				console.log(res.data);
 				dispatch(editRecord(res.data.result.updatedRecord))
+				dispatch(editInventory(res.data.result.borrowedItem[0]._id, {status: res.data.result.borrowedItem[0].status}))
 			})
 			.catch((err) => {
 				console.log(err);
@@ -91,6 +93,7 @@ const Records = () => {
 			.then((res) => {
 				console.log(res.data);
 				dispatch(editRecord(res.data.result.updatedRecord))
+				dispatch(editInventory(res.data.result.borrowedItem[0]._id, {status: res.data.result.borrowedItem[0].status}))
 			})
 			.catch((err) => {
 				console.log(err);
@@ -118,6 +121,7 @@ const Records = () => {
 			.then((res) => {
 				console.log(res.data)
 				dispatch(editRecord(res.data.result.updatedRecord))
+				dispatch(editInventory(res.data.result.returnedItem[0]._id, {status: res.data.result.returnedItem[0].status}))
 			})
 			.catch((err) => {
 				console.log(err);
@@ -208,7 +212,9 @@ const Records = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{borrowedRecords.map((record) => (
+							{borrowedRecords
+								.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
+								.map((record) => (
 								<tr key={record._id} className="records__table-data-row">
 									<td className="records__table-data-column">{record.item.name} ({record.item.id})</td>
 									<td className="records__table-data-column">{record.user.name}</td>

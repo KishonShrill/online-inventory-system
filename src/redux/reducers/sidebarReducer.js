@@ -1,7 +1,7 @@
 import { OPEN, CLOSE } from '../actions/sidebarActions';
 
 const initialState = {
-    isOpen: true,
+    isOpen: false,
 };
 
 const sidebarReducer = (state = initialState, action) => {

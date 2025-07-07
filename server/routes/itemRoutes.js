@@ -6,7 +6,7 @@ const router = e.Router();
 
 router.get('/api/items', async (req, res) => {
     try {
-        const items = await Item.find().sort({ category: -1 })
+        const items = await Item.find().sort({ id:1, category: -1 })
         
         res.json(items);
 

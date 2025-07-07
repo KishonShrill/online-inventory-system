@@ -110,7 +110,7 @@ const Inventory = () => {
                   <td className="inventory__data-content-column">
                     {item?.date_added.split("T")[0]}
                   </td>
-                  {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+                  {(decoded.userRole === Role.MANAGER || decoded.userRole === Role.ADMIN) && (
                     <td className="inventory__data-content-column actions">
                       <button
                         className="inventory__actions-edit"
@@ -118,12 +118,14 @@ const Inventory = () => {
                       >
                         <Edit size={18} />
                       </button>
-                      <button
-                        className="inventory__actions-delete"
-                        onClick={() => handleDelete(item?._id)}
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                      {decoded.userRole === Role.ADMIN && (
+                        <button
+                          className="inventory__actions-delete"
+                          onClick={() => handleDelete(item?._id)}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
                     </td>
                   )}
                 </tr>

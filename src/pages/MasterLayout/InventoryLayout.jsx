@@ -64,7 +64,7 @@ const InventoryLayout = () => {
             JSON.stringify(prevAttendancesRef.current) !== JSON.stringify(attendanceQuery.data)
         ) {
             console.log("🔁 Attendances updated")
-            console.log(JSON.stringify(attendanceQuery?.data.data))
+            // console.log(JSON.stringify(attendanceQuery?.data.data))
             dispatch(setAttendance(attendanceQuery.data.data));
             prevAttendancesRef.current = attendanceQuery.data;
         }
