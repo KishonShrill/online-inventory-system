@@ -1,6 +1,166 @@
+// Dark mode variables
+$primary-dark: #a3c9fe;
+$on-primary-dark: #00315b;
+$primary-container-dark: #1e4876;
+$on-primary-container-dark: #d3e4ff;
+
+
+$secondary-dark: #bbc7db;
+$on-secondary-dark: #263141;
+$secondary-container: #3c4758;
+$on-secondary-container: #d7e3f8;
+
+$tertiary-dark: #d8bde3;
+$on-tertiary-dark: #3c2947;
+$teritiary-container: #543f5e;
+$on-tertiary-container:#f5d9ff;
+
+$error-dark: #ffb4ab;
+$on-error-dark: #690005;
+
+$surface: #131315;
+$surface-container: #1d2024;
+$surface-container-highest: #272a2f;
+$surface-container-high: #32353a;
+$on-surface: #e1e2e8;
+$on-surface-var: #c3c6cf;
+
+
+
 .title {
     line-height: 2.25rem;      /* Tailwind's line-height for text-3xl */
     font-weight: 700;          /* font-bold */
     color: #1F2937;
     margin-bottom: 1.5rem;
+}
+
+.dark-mode {
+
+    h3{
+        color: $on-surface-var;
+    }
+
+    .main-container{
+        background-color: $surface;
+    }
+
+    .header{
+        background-color: $surface-container;
+    }
+    .header-title{
+        color: $on-surface;
+    }
+    
+    .header-sidebar-btn :hover{
+        color: $on-tertiary-dark;
+    }
+    
+    .dashboard-grid{
+        background-color: $surface;
+    }
+    .dashboard-card, .card-title{
+        background-color: $surface-container-high;
+        color: $on-surface;
+    }
+
+    .inventory{
+        &__header{
+            background-color: $surface;
+        }
+
+        .title{
+            color: $on-surface;
+        }
+
+        &__search{
+            &-container{
+                background-color: $secondary-container;
+            }
+            &-input{
+                color: $on-secondary-container;
+                background-color: $secondary-container;
+            }
+            &:focus {
+                outline: none;
+                box-shadow: none;
+            }
+            ::placeholder{
+                color: $on-secondary-container;
+            }
+        }
+        .inventory__data-container{
+            .inventory__data-table{
+            background-color: $secondary-container;
+            }
+            .inventory__data-table-column{
+                background-color: $secondary-container;
+                color: $on-secondary-container;
+            }
+        }
+    }
+    .records__table-header-column{
+            color: $on-primary-container-dark;
+        }
+            &__header {
+            color: $on-secondary-container;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem; /* 6 * 0.25rem = 1.5rem */
+    }
+    .records{
+        &__table {
+            width: 100%;
+            white-space: nowrap; /* Prevents cells from wrapping */
+
+            &-container {
+                background-color: $surface-container-high;
+                border-radius: 0.5rem;       /* rounded-lg = 8px */
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                            0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md */
+                overflow-x: auto;
+            }
+
+            &-header {
+                background-color: $surface-container-high;      /* Tailwind's gray-50 */
+                border-bottom: 2px solid $secondary-container; /* Tailwind's gray-200 */
+            }
+
+            &-data {
+                &-row {
+                    border-bottom: 1px solid #E5E7EB; /* Tailwind's gray-200 */
+                    transition: background-color 0.2s ease-in-out;
+
+                    &:hover {background-color: #F9FAFB; /* Tailwind's gray-50 */}
+                }
+
+                &-column {
+                    padding: 0.75rem;           /* p-3 = 12px */
+                    font-size: 0.875rem;        /* text-sm = 14px */
+                    color: #374151;             /* text-gray-700 */
+                }
+            }
+        }
+    }
+
+    .settings__info-container{
+        background-color: $surface-container;
+        .settings__info-title{
+            color: $on-secondary-container;
+        }
+        .settings__info-label{
+            color: $on-secondary-container;
+        }
+        .settings__info-input{
+            background-color: $surface-container-high;
+            color: $on-primary-container-dark;
+        }
+        button{
+            color: $on-primary-container-dark
+        }
+        span{
+            color: $on-primary-container-dark;
+        }
+    }
+
 }
