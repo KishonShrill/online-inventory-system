@@ -2,3 +2,44 @@ $light: #ffff;
 $dark: #000000;
 
 $sidebar: oklch(27.8% 0.033 256.848);
+
+// Colors
+$primary-color: #007bff;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$secondary-color: #6c757d;
+$text-primary: #333;
+$text-secondary: #555;
+$text-muted: #888;
+$white: #fff;
+$backdrop-bg: rgba(0, 0, 0, 0.6);
+
+// Borders
+$border-light: #eee;
+$border-medium: #ccc;
+$border-dark: #ddd;
+$border-radius-lg: 12px;
+$border-radius-md: 8px;
+$border-radius-sm: 4px;
+
+// Backgrounds
+$bg-info: #f0f8ff;
+$bg-danger: #f8d7da;
+$bg-light-gray: #e9ecef;
+$bg-cancel: #f1f1f1;
+
+// Spacing
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.25rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+
+// Transitions & Animations
+$transition-fast: 0.2s;
+$transition-normal: 0.3s;
+$transition-slow: 0.4s;
+
+// Shadows
+$shadow-main: 0 5px 15px rgba(0,0,0,0.3);
+$shadow-focus: 0 0 0 3px rgba($primary-color, 0.25);

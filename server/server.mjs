@@ -4,19 +4,22 @@ import express from "express";
 import rateLimit from 'express-rate-limit';
 
 import authRoutes from './routes/authRoutes.js';
+import itemRoutes from './routes/itemRoutes.js';
+import recordRoutes from './routes/recordRoutes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
 
 
 config();
 
 const PORT = process.env.PORT || 5000;
-const DEVELOPMENT = process.env.LOCALHOST || 'localhost';
+const DEVELOPMENT = process.env.VITE_LOCALHOST || 'localhost';
 
-const allowedOrigins = process.env.VITE_DEVELOPMENT
+const allowedOrigins = process.env.DEVELOPMENT
     ? [
         'http://localhost:5173',
         'http://localhost:4173',
-        'http://192.168.1.10:5173',
         `http://${DEVELOPMENT}:5173`,
+        `http://${DEVELOPMENT}:4173`,
         `https://cdiis-ois.vercel.app`,
     ]
     : `https://cdiis-ois.vercel.app`;
@@ -60,6 +63,9 @@ app.use([
 ], limiter);
 
 app.use(authRoutes);
+app.use(itemRoutes);
+app.use(recordRoutes);
+app.use(attendanceRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Endpoint not found' });

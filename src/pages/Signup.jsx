@@ -1,12 +1,23 @@
 import {useState} from "react";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import Cookies from "universal-cookie";
 import viewIcon from '../assets/view-on.svg';
 import viewOffIcon from '../assets/view-off.svg';
+import { validateEmail, validatePassword } from "../helpers/validate";
 import '../styles/signup.scss';
 
 
 const Signup = () => {
+    const cookies = new Cookies()
+    const token = cookies.get('CDIIS-OIS')
+    
+    // Early return, no unnecessary fetch call to Database if user is not logged in
+    if (token) {
+        alert("You are logged in!")
+        return <Navigate to="/app/dashboard" replace />;
+    }
+
     const [formData, setFormData] = useState ({
         name: '',
         email: '',
@@ -24,47 +35,47 @@ const Signup = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value});
     };
 
+    const isProperName = (name) => {
+        return /^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/.test(name.trim());
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validation
+        if (!isProperName(formData.name)) return setError("Name must be properly capitalized (e.g., 'John Doe')");
+        if (!validateEmail(formData.email)) return setError("Please use a valid email...")
+        if (!validatePassword(formData.password).isFullyValid) return setError("Password should be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character.") 
+
         if (formData.password !== formData.confirmPassword){
             return setError('Passwords do not match');
         }
-            // const res = await axios.post(postURL, {
-            //     name: formData.name,
-            //     email: formData.email,
-            //     password: formData.password,
-            //     secret_code: formData.secretCode,
-            // });
-
 
         const postURL = import.meta.env.VITE_DEVELOPMENT === 'true'
-            ? `http://localhost:5000/api/register`
+            ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/register`
             : `https://cdiis-ois-server.vercel.app/api/register`;
 
-        const configuration = {
-            method: "post",
+        const confirguation = {
+            method: 'post',
             url: postURL,
             data: {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
                 secret_code: formData.secretCode,
-            },
-        };
+            }
+        }
 
-        axios(configuration)
-            .then((result) => {
-                console.log(result.data)
-                
-                alert('Signup successful');
+        axios(confirguation)
+            .then((res) => {
+                console.log(res)
+                alert(res.data.message);
                 navigate('/');
             })
-            .catch((error) => {
-                console.log(error)
-                setError(error.response.data.message);
-            })
+            .catch((err) => {
+                console.log(err)
+                setError(err.response.data.message);
+            });
     };
     
     return(

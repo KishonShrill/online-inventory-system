@@ -3,7 +3,6 @@ import Cookies from "universal-cookie";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {validateEmail, validatePassword} from '../helpers/validate.js';
-import { Link } from 'react-router-dom';
 
 const cookies = new Cookies();
 
@@ -59,7 +58,7 @@ const LoginForm = () => {
         setError('');
 
         const postURL = import.meta.env.VITE_DEVELOPMENT === 'true'
-            ? `http://localhost:5000/api/login`
+            ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/login`
             : `https://cdiis-ois-server.vercel.app/api/login`;
 
         const configuration = {
@@ -77,11 +76,11 @@ const LoginForm = () => {
                 // emailRef.current.style.borderColor = "green";
                 // passwordRef.current.style.borderColor = "green";
                 // logRef.current.style.color = "green";
-                console.log(result.data.token)
+                // console.log(result.data.token)
                 cookies.set("CDIIS-OIS", result.data.token, {
                     path: "/",
                 });
-                navigate('/dashboard')
+                navigate('/app/dashboard')
             })
             .catch((error) => {
                 console.error(error);
@@ -115,7 +114,6 @@ const LoginForm = () => {
                         <p className="brand-subtitle">Center for Digital Iligan, Innovation & Sustainability </p>
                     </div>
                     <div className="brand-welcome">
-                        <h2>Welcome Back</h2>
                         <p>Access your dashboard and manage your items with our powerful inventory platform.</p>
                     </div>
                 </div>

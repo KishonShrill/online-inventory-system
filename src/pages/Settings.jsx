@@ -1,6 +1,20 @@
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'universal-cookie';
 import '../styles/settings.scss'
 
+
 const Settings = () => {
+    const cookies = new Cookies()
+    const token = cookies.get("CDIIS-OIS")
+    const decoded = jwtDecode(token)
+    const navigate = useNavigate()
+
+    const logout = () => {
+        cookies.remove("CDIIS-OIS", { path: "/" });
+        window.location.pathname = '/';
+    }
+
     return (
         <>
             <title>CDIIS OIS - Settings</title>
@@ -11,13 +25,16 @@ const Settings = () => {
                     <div className="space-y-4">
                         <div>
                             <label className="settings__info-label">Username</label>
-                            <input className="settings__info-input" readOnly defaultValue="Admin"/>
+                            <input className="settings__info-input" readOnly defaultValue={decoded.userName} />
                         </div>
                         <div>
                             <label className="settings__info-label">Email</label>
-                            <input className="settings__info-input" readOnly defaultValue="admin@inventory.com"/>
+                            <input className="settings__info-input" readOnly defaultValue={decoded.userEmail} />
                         </div>
-                        <button className="settings__info-updateBtn">Update Profile</button>
+                        <div style={{display: "flex", justifyContent: "space-between"}}>
+                            <button className="settings__info-btn update">Update Profile</button>
+                            <button className="settings__info-btn danger" onClick={() => logout()}>Sign Out</button>
+                        </div>
                     </div>
 
                     <hr className="my-8"/>

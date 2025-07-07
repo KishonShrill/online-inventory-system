@@ -101,7 +101,7 @@
             }
             
             .form-group {
-                margin-bottom: 1.5rem;
+                margin-bottom: 0.5rem;
                 
                 label {
                     display: block;
@@ -178,7 +178,7 @@
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                margin-bottom: 1.5rem;
+                margin-block: 1.5rem;
                 
                 &:hover {
                     transform: translateY(-2px);

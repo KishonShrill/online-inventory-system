@@ -1,3 +1,5 @@
+@use 'variables';
+
 // Screen breakpoints for responsive design
 // Screen breakpoints for responsive design
 // Screen breakpoints for responsive design
@@ -37,4 +39,14 @@ $breakpoints: (
   &:hover {
     color: $hover-color;
   }
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin transition($properties...) {
+  transition: $properties variables.$transition-fast ease-in-out;
 }

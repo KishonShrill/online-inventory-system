@@ -1,0 +1,292 @@
+@use 'utils/variables';
+@use 'utils/mixins';
+@use 'sass:color';
+
+.itemCheck {
+  &__title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem; /* 6 * 0.25rem = 1.5rem */
+}
+
+  &__title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1f2937; // gray-800
+  }
+
+  &__date {
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #374151; // gray-700
+  }
+
+  &__session {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2563eb; // blue-600
+  }
+
+  &__card {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    background-color: white;
+
+    &-inputRow {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+    &-fetchBtn {
+        font-size: 1.1rem;
+    }
+  }
+
+  &__itemTitle {
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+  }
+
+  &__itemInfo {
+    margin-bottom: 0.25rem;
+    &:nth-of-type(2) {
+        margin-bottom: 1.25rem;
+    }
+  }
+
+  &__input {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    color: #374151;
+    outline: none;
+
+    &:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.5);
+    }
+  }
+
+  &__button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    background-color: #2563eb;
+    color: white;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #1d4ed8;
+    }
+  }
+
+  &__message {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+
+    &-error {
+      background-color: #fee2e2; /* Tailwind's red-100 */
+      color: #b91c1c;            /* Tailwind's red-700 */
+      padding: 0.75rem;          /* p-3 = 12px = 0.75rem */
+      border-radius: 0.5rem;     /* rounded-lg = 8px = 0.5rem */
+      margin-top: 1rem;       /* mb-4 = 16px = 1rem */
+      font-size: 0.875rem;       /* text-sm = 14px = 0.875rem */
+    }
+
+    &-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      padding: 0.75rem;          /* p-3 = 12px = 0.75rem */
+      border-radius: 0.5rem;     /* rounded-lg = 8px = 0.5rem */
+      margin-top: 1rem;       /* mb-4 = 16px = 1rem */
+      font-size: 0.875rem;       /* text-sm = 14px = 0.875rem */
+    }
+  }
+
+  &__item-details {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  &__item-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+
+  &__item-id,
+  &__item-category {
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+  }
+
+  &__component {
+    margin-bottom: 1.5rem;
+
+    &-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+    }
+
+    &-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        list-style-type: none;
+
+        & label { 
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1rem;
+            border-radius: 10px;
+            background-color: #cbcdd1;
+        }
+    }
+
+    &-checkbox {
+        --checkbox-size: 1.3rem;
+        width: var(--checkbox-size);
+        height: var(--checkbox-size);
+        background-color: #f9fafb;
+        border-radius: 0.5rem;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+
+      &:hover {
+        background-color: #f3f4f6;
+      }
+
+      input[type="checkbox"] {
+        height: 1.25rem;
+        width: 1.25rem;
+        color: #2563eb;
+      }
+
+      span {
+        margin-left: 0.75rem;
+        color: #374151;
+        font-weight: 500;
+      }
+    }
+  }
+
+  &__notes {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+      color: #374151;
+
+      &:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.5);
+      }
+    }
+  }
+
+  &__submit {
+    width: 100%;
+    padding: 1rem 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    background-color: #16a34a;
+    color: white;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #15803d;
+    }
+  }
+}
+
+.search {
+    flex-grow: 1;
+}
+.actions {
+    &-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+    &-cancel {
+        background-color: #6B7280;   /* gray-500 */
+        @extend .btn;
+
+        &:hover {background-color: #4B5563;   /* gray-600 */}
+    }
+    &-add {
+        background-color: #2563EB;    /* blue-600 */
+        @extend .btn;
+    
+        &:hover {background-color: #1D4ED8;    /* blue-700 */}
+    }
+    &-create {
+        background-color: #078c66;
+
+        &:hover {background-color: #065F46;}
+    }
+    &-danger {
+        background-color: #B91C1C;
+
+        &:hover {background-color: #891010;}
+    }
+}
+
+.btn {
+    color: white;
+    font-weight: 700;             /* font-bold */
+    padding: 0.5rem 1rem;         /* py-2 = 8px, px-4 = 16px */
+    border-radius: 0.25rem;       /* rounded = 4px */
+    transition: background-color 0.2s ease;
+}
+
+.scan-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 variables.$spacing-sm;
+  background-color: variables.$secondary-color;
+  color: variables.$white;
+  border: none;
+  border-radius: variables.$border-radius-md;
+  cursor: pointer;
+  @include mixins.transition(background-color);
+
+  &:hover {
+    background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
+  }
+}

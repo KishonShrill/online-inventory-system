@@ -36,16 +36,13 @@
             font-size: 1rem;
             color: #374151;                /* text-gray-700 */
         }
-        &-updateBtn {
-            background-color: #2563EB;     /* Tailwind's blue-600 */
+        &-btn {
             color: white;
             font-size: 1rem;
             font-weight: 700;              /* font-bold */
             padding: 0.5rem 1rem;          /* py-2 = 8px, px-4 = 16px */
             border-radius: 0.25rem;        /* rounded = 4px */
             transition: background-color 0.2s ease-in-out;
-
-            &:hover {background-color: #1D4ED8;     /* Tailwind's blue-700 */}
         }
     }
 
@@ -60,6 +57,16 @@
             }
         }
     }
+}
+
+// Buttons
+.update {
+    background-color: #2563EB;     /* Tailwind's blue-600 */
+    &:hover {background-color: #1D4ED8;}     /* Tailwind's blue-700 */
+}
+.danger {
+    background-color: rgb(205, 49, 49);
+    &:hover {background-color: rgb(148, 29, 29);}
 }
 
 // Utils

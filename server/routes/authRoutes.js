@@ -2,13 +2,31 @@ import e from "express";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { User } from '../models/models.js';
+import { User } from '../models/index.js';
+
 
 const router = e.Router();
 
 router.post('/api/register', async (req, res) => {
-    if (!req.body || !req.body.email || !req.body.password || !req.body.secret_code) {
+    if (!req.body || !req.body.email || !req.body.password) {
         return res.status(400).json({ message: "Email and password required" });
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+        return res.status(400).json({ message: "Email already registered" });
+    }
+
+    // Determine role based on secret code
+    const SECRET_CODES = {
+        [process.env.SECRET_CODE_ADMIN]: 'admin',
+        [process.env.SECRET_CODE_MANAGER]: 'manager',
+        [process.env.SECRET_CODE_EMPLOYEE]: 'employee',
+    };
+
+    const role = SECRET_CODES[secret_code];
+    if (!role) {
+        return res.status(400).json({ message: "Invalid secret code. Contact the administrator." });
     }
 
     try {
@@ -17,6 +35,7 @@ router.post('/api/register', async (req, res) => {
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword,
+            role,
         });
 
         const result = await user.save();
@@ -57,8 +76,10 @@ router.post('/api/login', async (req, res) => {
         //   create JWT token
         const token = jwt.sign(
             {
+                userId: user._id,
                 userName: user.name,
                 userEmail: user.email,
+                userRole: user.role,
             },
             process.env.JWT_SECRET || "RANDOM-TOKEN", // Use env variable for secret
             { expiresIn: "24h" }

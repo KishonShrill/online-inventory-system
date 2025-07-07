@@ -1,9 +1,18 @@
 @use 'utils/classes';
+@use 'utils/variables';
+@use 'sass:color';
+
 
 .records {
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem; /* 6 * 0.25rem = 1.5rem */
+    }
+
     &__title {
         @extend .title;
-        margin-bottom: 1.5rem;
     }
 
     &__table {
@@ -48,6 +57,279 @@
     }
 }
 
+.actions {
+    &-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+    &-cancel {
+        background-color: #6B7280;   /* gray-500 */
+        @extend .btn;
+
+        &:hover {background-color: #4B5563;   /* gray-600 */}
+    }
+    &-add {
+        background-color: #2563EB;    /* blue-600 */
+        @extend .btn;
+    
+        &:hover {background-color: #1D4ED8;    /* blue-700 */}
+    }
+    &-create {
+        background-color: #078c66;
+
+        &:hover {background-color: #065F46;}
+    }
+    &-danger {
+        background-color: #B91C1C;
+
+        &:hover {background-color: #891010;}
+    }
+    &-warning {
+        background-color: #b95b1c;
+
+        &:hover {background-color: #895110;}
+    }
+}
+
+// Modal Styles
+/* --- Mixins --- */
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin transition($properties...) {
+  transition: $properties variables.$transition-fast ease-in-out;
+}
+
+
+/* --- Modal Styles --- */
+.modal-backdrop {
+  @include flex-center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: variables.$backdrop-bg;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn variables.$transition-normal forwards;
+}
+
+.modal-content {
+  background: variables.$white;
+  padding: variables.$spacing-xl;
+  border-radius: variables.$border-radius-lg;
+  box-shadow: variables.$shadow-main;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: translateY(-50px);
+  animation: slideDown variables.$transition-slow forwards cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: variables.$spacing-lg;
+  cursor: pointer;
+  color: variables.$text-muted;
+  @include transition(color);
+
+  &:hover {
+    color: variables.$text-primary;
+  }
+}
+
+.modal-header {
+  margin-bottom: variables.$spacing-lg;
+  font-size: 1.75rem;
+  color: variables.$text-primary;
+  border-bottom: 1px solid variables.$border-light;
+  padding-bottom: variables.$spacing-sm;
+}
+
+.form-group {
+  margin-bottom: variables.$spacing-md;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: variables.$spacing-xs;
+  font-weight: 600;
+  color: variables.$text-secondary;
+}
+
+.input-group {
+  display: flex;
+  gap: variables.$spacing-xs;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid variables.$border-medium;
+  border-radius: variables.$border-radius-md;
+  font-size: variables.$spacing-sm;
+  @include transition(border-color, box-shadow);
+
+  &:focus {
+    outline: none;
+    border-color: variables.$primary-color;
+    box-shadow: variables.$shadow-focus;
+  }
+}
+
+.scan-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 variables.$spacing-sm;
+  background-color: variables.$secondary-color;
+  color: variables.$white;
+  border: none;
+  border-radius: variables.$border-radius-md;
+  cursor: pointer;
+  @include transition(background-color);
+
+  &:hover {
+    background-color: color.adjust(variables.$secondary-color, $lightness: -10%);
+  }
+}
+
+.item-details-dropdown {
+  border: 1px dashed variables.$primary-color;
+  background-color: variables.$bg-info;
+  border-radius: variables.$border-radius-md;
+  padding: variables.$spacing-sm;
+  margin: variables.$spacing-lg 0 variables.$spacing-sm;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInSlideUp 0.5s forwards;
+
+  &.not-found {
+    border-color: variables.$danger-color;
+    background-color: variables.$bg-danger;
+  }
+
+  p {
+    margin: variables.$spacing-xs 0;
+    color: variables.$text-primary;
+
+    span {
+      font-weight: bold;
+    }
+  }
+
+  .status-available {
+    color: variables.$success-color;
+    font-weight: bold;
+  }
+
+  .status-borrowed {
+    color: variables.$danger-color;
+    font-weight: bold;
+  }
+}
+
+.item-details-list {
+  list-style-type: none;
+  padding-left: variables.$spacing-sm;
+  margin-top: variables.$spacing-xs;
+
+  li {
+    background-color: variables.$bg-light-gray;
+    padding: 4px 8px;
+    border-radius: variables.$border-radius-sm;
+    display: inline-block;
+    margin: 2px;
+    font-size: 0.9rem;
+  }
+}
+
+.modal-actions {
+  margin-top: variables.$spacing-xl;
+  display: flex;
+  justify-content: flex-end;
+  gap: variables.$spacing-sm;
+}
+
+.modal-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: variables.$border-radius-md;
+  font-size: variables.$spacing-sm;
+  font-weight: 600;
+  cursor: pointer;
+  @include transition(all);
+
+  &-cancel {
+    background-color: variables.$bg-cancel;
+    border: 1px solid variables.$border-dark;
+    color: variables.$text-secondary;
+
+    &:hover {
+      background-color: color.adjust(variables.$bg-cancel, $lightness: -5%);
+    }
+  }
+
+  &-borrow {
+    background-color: variables.$success-color;
+    color: variables.$white;
+
+    &:hover {
+      background-color: color.adjust(variables.$success-color, $lightness: -5%);
+    }
+
+    &:disabled {
+      background-color: color.adjust(variables.$success-color, $lightness: 30%);
+      cursor: not-allowed;
+    }
+  }
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0,0,0,.3);
+  border-radius: 50%;
+  border-top-color: variables.$text-primary;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 10px;
+}
+
+
+/* --- Keyframe Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeInSlideUp {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 // Utils
 .status {
   padding: 0.375rem;               /* p-1.5 = 6px */
@@ -59,7 +341,24 @@
   background-color: rgba(254, 240, 138, 0.5); /* bg-yellow-200 with 50% opacity */
   border-radius: 0.5rem;           /* rounded-lg = 8px */
 }
+.returned {
+  color: greenyellow;
+  background-color: #078c66;
+}
+.expired,
+.cancelled {
+  color: rgb(255, 255, 255);
+  background-color: #ea5c5c;
+}
 .p3-text-sm {
   padding: 0.75rem;        /* p-3 = 12px */
   font-size: 0.875rem;     /* text-sm = 14px */
 }
+.btn {
+    color: white;
+    font-weight: 700;             /* font-bold */
+    padding: 0.5rem 1rem;         /* py-2 = 8px, px-4 = 16px */
+    border-radius: 0.25rem;       /* rounded = 4px */
+    transition: background-color 0.2s ease;
+}
+.icon {margin-right: 0.5rem;}
