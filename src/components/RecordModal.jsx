@@ -45,6 +45,8 @@ const RecordModal = ({ isOpen, onClose }) => {
             return;
         }
 
+        console.log(itemId)
+
         const handler = setTimeout(() => {
             setIsLoading(true);
             setNotFound(false);
@@ -61,12 +63,6 @@ const RecordModal = ({ isOpen, onClose }) => {
             clearTimeout(handler);
         };
     }, [itemId, inventory]);
-
-
-    useEffect(() => {
-        if (!isQROpen) setItemId(""); // optional: reset itemId if scanner closes
-    }, [isQROpen]);
-
 
     if (!isOpen) return null;
 
@@ -149,8 +145,7 @@ const RecordModal = ({ isOpen, onClose }) => {
                         <QRScannerModal
                             onDetected={(scannedText) => {
                                 setItemId(scannedText); // sets the input
-                                const item = inventory.find(i => i.id.toUpperCase() === scannedText.toUpperCase());
-                                if (item) setIsQROpen(false); // close scanner if found
+                                setIsQROpen(false); // close scanner if found
                             }}
                         />
                     )}

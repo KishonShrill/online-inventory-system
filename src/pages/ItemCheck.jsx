@@ -9,6 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 import Cookies from "universal-cookie";
 import axios from "axios";
 
+import QRScannerModal from "../components/QRScannerModal";
 import { Role } from "../helpers/_variables";
 import { getLocalISODateTime, itemHasBeenChecked } from "../helpers/dateUtils";
 
@@ -175,10 +176,19 @@ const ItemCheck = () => {
             <button onClick={handleFetchItem} className="itemCheck__card-fetchBtn actions-add">
               Fetch
             </button>
-            <button type="button" className="scan-btn" title="Scan QR code">
+            <button type="button" className="scan-btn" title="Scan QR code" onClick={() => setIsQROpen(prev => !prev)}>
                 <ScanIcon />
             </button>
           </div>
+
+          {isQROpen && (
+              <QRScannerModal
+                  onDetected={(scannedText) => {
+                      setScannedId(scannedText.toUpperCase()); // sets the input
+                      setIsQROpen(false);
+                  }}
+              />
+          )}
 
           {error && <p className="itemCheck__message-error">{error}</p>}
           {success && <p className="itemCheck__message-success">{success}</p>}

@@ -2,12 +2,6 @@
 @use 'utils/classes';
 
 .inventory {
-    flex-direction: row;
-
-    @media (max-width: 480px) {
-        flex-direction: column;
-    }
-
     &__header {
         display: flex;
         justify-content: space-between;
