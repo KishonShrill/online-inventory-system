@@ -151,15 +151,23 @@
 }
 
 .modal-header {
-  margin-bottom: variables.$spacing-lg;
-  font-size: 1.75rem;
-  color: variables.$text-primary;
-  border-bottom: 1px solid variables.$border-light;
-  padding-bottom: variables.$spacing-sm;
+  @extend .title;
+  
+  @media (min-width: 481px) {
+    margin-bottom: variables.$spacing-lg;
+    font-size: 1.75rem;
+    color: variables.$text-primary;
+    border-bottom: 1px solid variables.$border-light;
+    padding-bottom: variables.$spacing-sm;
+  }
 }
 
 .form-group {
   margin-bottom: variables.$spacing-md;
+
+  @media (max-width: 480px) {
+    margin-bottom: 0.5rem;
+  }
 }
 
 .form-label {
@@ -176,7 +184,7 @@
 
 .form-input {
   width: 100%;
-  padding: 12px;
+  padding: .75rem;
   border: 1px solid variables.$border-medium;
   border-radius: variables.$border-radius-md;
   font-size: variables.$spacing-sm;

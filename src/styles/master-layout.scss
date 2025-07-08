@@ -1,6 +1,7 @@
 .inventory {
   display: flex;
-  height: 100vh; // Tailwind's h-screen
+  flex-direction: column;
+  height: 100dvh; // Tailwind's h-screen
   background-color: #f7fafc; // Tailwind's bg-gray-100
   font-family: sans-serif; // Tailwind's font-sans
 }
@@ -21,9 +22,5 @@
 
   @media (min-width: 640px) { // sm:p-6
     padding: 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    margin-bottom: 4rem;
   }
 }

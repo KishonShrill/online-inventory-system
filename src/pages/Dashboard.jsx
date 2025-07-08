@@ -20,11 +20,11 @@ const Dashboard = () => {
                     <p className="card-value text-blue">{inventory.length}</p>
                 </div>
                 <div className="dashboard-card">
-                    <h3 className="card-title">Items Borrowed</h3>
+                    <h3 className="card-title">Borrowed</h3>
                     <p className="card-value text-yellow">{currentlyBorrowed.length}</p>
                 </div>
                 <div className="dashboard-card">
-                    <h3 className="card-title">Overdue Items</h3>
+                    <h3 className="card-title">Overdue</h3>
                     <p className="card-value text-red">0</p>
                 </div>
                 <div className="dashboard-card">
