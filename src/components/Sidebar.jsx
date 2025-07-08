@@ -19,7 +19,6 @@ const Sidebar = ({ decoded }) => {
     };
 
     const currentPage = useLocation().pathname
-    // console.log(currentPage)
 
     const navItems = [
         { name: 'Dashboard', link: '/app/dashboard' , icon: Home },

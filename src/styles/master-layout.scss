@@ -22,4 +22,8 @@
   @media (min-width: 640px) { // sm:p-6
     padding: 1.5rem;
   }
+
+  @media (max-width: 480px) {
+    margin-bottom: 4rem;
+  }
 }

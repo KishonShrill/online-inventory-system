@@ -6,7 +6,7 @@ import '../styles/dashboard.scss'
 
 const Dashboard = () => {
     const inventory = useSelector(state => state.inventory);
-    const records = useSelector(state => state.record)
+    // const records = useSelector(state => state.record)
 
     const currentlyBorrowed = inventory.filter((item) => item.status === "borrow")
 
@@ -42,7 +42,7 @@ const Dashboard = () => {
 
 const ItemDashboard = () => {
     const inventory = useSelector(state => state.inventory);
-
+    const attendances = useSelector(state => state.attendance);
 
     const [categorized, setCategorized] = useState({});
     const [categories, setCategories] = useState([]);
@@ -92,25 +92,43 @@ const ItemDashboard = () => {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Attendance</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {categorized[activeCategory].map(item => (
+                            {categorized[activeCategory].map(item => {
+                                const today = new Date().toLocaleDateString('en-CA');
+                                const attendanceToday = attendances.find(a =>
+                                a.id === item.id &&
+                                new Date(a.date).toLocaleDateString('en-CA') === today
+                                );
+
+                                const hasMorning = attendanceToday?.attendance_checks?.some(check => check.period === "Morning");
+                                const hasAfternoon = attendanceToday?.attendance_checks?.some(check => check.period === "Afternoon");
+
+                                return (
                                 <tr key={item.id}>
                                     <td>{item.id}</td>
                                     <td>{item.name}</td>
+                                    <td title={`Morning: ${hasMorning ? "Yes" : "No"} | Afternoon: ${hasAfternoon ? "Yes" : "No"}`}>
+                                    {hasMorning && "🌞"}
+                                    {hasAfternoon && "🌙"}
+                                    {!hasMorning && !hasAfternoon && "---"}
+                                    </td>
                                     <td>
-                                        {item.status === "Available" 
+                                    {item.status === "Available" 
                                         ? (<CheckCircle color="green" size={18} />) 
                                         : item.status === "Borrowed" 
                                         ? (<XCircle color="red" size={18} />) 
                                         : (<LoaderPinwheel color="orange" size={18} />)
-                                        }
+                                    }
                                     </td>
                                 </tr>
-                            ))}
+                                );
+                            })}
                         </tbody>
+
                     </table>
                 </div>
             </main>

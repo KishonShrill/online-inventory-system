@@ -9,6 +9,7 @@ import { setRecords } from "../../redux/actions/recordActions";
 import { setAttendance } from "../../redux/actions/attendanceActions";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import Navigation from "../../components/Navigation";
 import useFetchInitialize from "../../hooks/useFetchInitialize";
 
 
@@ -80,6 +81,7 @@ const InventoryLayout = () => {
                     <Outlet />
                 </main>
             </div>
+            <Navigation decoded={decoded} />
         </div>
     )
 }
