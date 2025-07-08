@@ -9,9 +9,6 @@ const Header = () => {
     const token = cookies.get("CDIIS-OIS")
     const decoded = jwtDecode(token);
     
-    const isSidebarOpen = useSelector(state => state.sidebar.isOpen);
-    const dispatch = useDispatch();
-
     return (
         <header className="header">
             <div className="header-container">
