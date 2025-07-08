@@ -1,4 +1,5 @@
 @use 'utils/variables';
+@use 'utils/mixins';
 
 .sidebar {
   height: 100%;
@@ -8,6 +9,10 @@
   color: variables.$light;
   background-color: variables.$sidebar;
   transition: all 0.3s;
+
+  @media (max-width: 480px) {
+    display: none;
+  }
 
   &.open {
     width: 15rem;

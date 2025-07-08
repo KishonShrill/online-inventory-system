@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
@@ -20,6 +21,7 @@ const postURL =
 
 
 const ItemCheck = () => {
+  const [isQROpen, setIsQROpen] = useState(false);
   const [isAlreadySubmitted, setIsAlreadySubmitted] = useState(false);
   const [attendance, setAttendance] = useState({});
   const [scannedId, setScannedId] = useState("");
@@ -149,7 +151,7 @@ const ItemCheck = () => {
       <title>CDIIS OIS - Inventory Check</title>
       <div className="itemCheck__container">
         <div className="itemCheck__header">
-          <h1 className="itemCheck__title">Item Attendance Check</h1>
+          <h1 className="itemCheck__title">Item Attendance</h1>
           <div className="itemCheck__timeInfo">
             <p className="itemCheck__date">{today}</p>
             <p className="itemCheck__session">{timeOfDay} Session</p>
@@ -171,7 +173,7 @@ const ItemCheck = () => {
               className="itemCheck__input search"
             />
             <button onClick={handleFetchItem} className="itemCheck__card-fetchBtn actions-add">
-              Fetch Item
+              Fetch
             </button>
             <button type="button" className="scan-btn" title="Scan QR code">
                 <ScanIcon />

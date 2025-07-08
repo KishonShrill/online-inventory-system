@@ -69,7 +69,7 @@ router.post('/api/login', async (req, res) => {
 
         if (!passwordCheck) {
             return res.status(400).json({
-                message: "Passwords does not match",
+                message: "Password does not match",
             });
         }
 

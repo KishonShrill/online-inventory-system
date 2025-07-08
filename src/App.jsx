@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './App.css'
 
 import Authpage from './pages/Authpage';
+import { useSelector } from 'react-redux'
 const InventoryLayout = lazy(() => import('./pages/MasterLayout/InventoryLayout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Inventory = lazy(() => import('./pages/Inventory'));
@@ -18,6 +19,10 @@ const queryClient = new QueryClient()
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
 
 function App() {
+
+  const darkMode = useSelector(state => state.darkMode.enabled);
+  useEffect(() => { document.body.classList.toggle('dark-mode',darkMode)}, [darkMode]);
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
