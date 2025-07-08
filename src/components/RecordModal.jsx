@@ -5,6 +5,8 @@ import { editInventory } from "../redux/actions/inventoryActions";
 import { ScanIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { validateRecord } from "../helpers/validate";
+import QRScannerModal from "./QRScannerModal";
+
 import axios from "axios";
 
 const postURL =
@@ -17,6 +19,7 @@ const RecordModal = ({ isOpen, onClose }) => {
     const inventory = useSelector((state) => state.inventory);
 	const dispatch = useDispatch();
 
+    const [isQROpen, setIsQROpen] = useState(false)
 	const [itemId, setItemId] = useState('');
     const [userName, setUserName] = useState('');
     const [userContact, setUserContact] = useState('');
@@ -58,6 +61,11 @@ const RecordModal = ({ isOpen, onClose }) => {
             clearTimeout(handler);
         };
     }, [itemId, inventory]);
+
+
+    useEffect(() => {
+        if (!isQROpen) setItemId(""); // optional: reset itemId if scanner closes
+    }, [isQROpen]);
 
 
     if (!isOpen) return null;
@@ -131,11 +139,21 @@ const RecordModal = ({ isOpen, onClose }) => {
                                 placeholder="Type or scan item ID (e.g., EQP-0001)"
                                 autoFocus
                             />
-                            <button type="button" className="scan-btn" title="Scan QR code">
+                            <button type="button" className="scan-btn" title="Scan QR code" onClick={() => setIsQROpen(prev => !prev)}>
                                 <ScanIcon />
                             </button>
                         </div>
                     </div>
+
+                    {isQROpen && (
+                        <QRScannerModal
+                            onDetected={(scannedText) => {
+                                setItemId(scannedText); // sets the input
+                                const item = inventory.find(i => i.id.toUpperCase() === scannedText.toUpperCase());
+                                if (item) setIsQROpen(false); // close scanner if found
+                            }}
+                        />
+                    )}
                     
                     {/* Item details dropdown now shows richer data */}
                     {itemDetails && (

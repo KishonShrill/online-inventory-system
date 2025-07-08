@@ -4,6 +4,10 @@
   height: 100dvh; // Tailwind's h-screen
   background-color: #f7fafc; // Tailwind's bg-gray-100
   font-family: sans-serif; // Tailwind's font-sans
+
+  @media (min-width: 640px) { // sm:p-6
+    flex-direction: row;
+  }
 }
 
 .content-container {

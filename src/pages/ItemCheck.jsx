@@ -20,6 +20,7 @@ const postURL =
 
 
 const ItemCheck = () => {
+  const [isQROpen, setIsQROpen] = useState(false);
   const [isAlreadySubmitted, setIsAlreadySubmitted] = useState(false);
   const [attendance, setAttendance] = useState({});
   const [scannedId, setScannedId] = useState("");

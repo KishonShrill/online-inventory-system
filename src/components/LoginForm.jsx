@@ -84,23 +84,9 @@ const LoginForm = () => {
             })
             .catch((error) => {
                 console.error(error);
+                setError(error.response.data.message)
                 setLoading(false);
-                // emailRef.current.style.borderColor = "red";
-                // passwordRef.current.style.borderColor = "red";
-                // logRef.current.textContent = "Email or Password does not exist";
-                // logRef.current.style.color = "red";
-                // submitRef.current.style.background = "#ee4d2d";
             });
-
-        // await new Promise(resolve => setTimeout(resolve, 1500));
-        // if (email === 'admin@gmail.com' && password === 'password123456') {
-        //     // Simulate navigation to dashboard
-        //     setLoading(false);
-        //     alert('Login successful! Redirecting to dashboard...');
-        // } else {
-        //     setLoading(false);
-        //     setError('Invalid email or password');
-        // }
     };
 
     return (
