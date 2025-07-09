@@ -1,5 +1,6 @@
 
 @use 'utils/classes';
+@use 'utils/variables';
 
 .dashboard-title {
   @extend .title;
@@ -105,6 +106,7 @@
   }
 
   .dashboard-content {
+    position: relative;
     flex-grow: 1;
     overflow-x: auto; // allow horizontal scroll for tables
 
@@ -138,8 +140,111 @@
   -webkit-overflow-scrolling: touch;
 }
 
+// Modal Styles
+/* --- Mixins --- */
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin transition($properties...) {
+  transition: $properties variables.$transition-fast ease-in-out;
+}
+
+/* --- Modal Styles --- */
+.modal-backdrop {
+  @include flex-center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: variables.$backdrop-bg;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn variables.$transition-normal forwards;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: scaleIn 0.2s ease-in-out;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #444;
+
+  &:hover {
+    color: red;
+  }
+}
+
+.attendance-list {
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+  gap: 0.25rem;
+
+  & li {
+    padding: 0.25rem 0.5rem;
+    background: rgb(186, 204, 219);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+
+
 // Utility Colors (you can also move these to a _colors.scss)
 .text-blue { color: #2563eb; }
 .text-yellow { color: #ca8a04; }
 .text-red { color: #dc2626; }
 .text-green { color: #16a34a; }
+
+.emoji-btn {
+    background: aliceblue ;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-right: 0.25rem;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+        transform: scale(1.2);
+    }
+}

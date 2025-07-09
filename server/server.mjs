@@ -30,14 +30,14 @@ const corsOptions = {
         console.log("Non-browser: " + !origin);
 
         // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-
         // Check if the origin is in the allowed origins list
-        if (allowedOrigins.includes(origin)) {
-            // ✅ Origin is allowed
-            callback(null, true);
+        if (
+            !origin ||
+            allowedOrigins.includes(origin) ||
+            /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/.test(origin) // matches LAN IPs
+        ) {
+        callback(null, true);
         } else {
-            // ❌ Origin not allowed
             callback(new Error('Not allowed by CORS'));
         }
     },

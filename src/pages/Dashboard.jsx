@@ -47,6 +47,8 @@ const ItemDashboard = () => {
     const [categorized, setCategorized] = useState({});
     const [categories, setCategories] = useState([]);
     const [activeCategory, setActiveCategory] = useState("");
+    const [selectedCheck, setSelectedCheck] = useState(null); // Holds attendance_check to show
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Categorize and set activeCategory when inventory updates
     useEffect(() => {
@@ -100,37 +102,69 @@ const ItemDashboard = () => {
                             {categorized[activeCategory].map(item => {
                                 const today = new Date().toLocaleDateString('en-CA');
                                 const attendanceToday = attendances.find(a =>
-                                a.id === item.id &&
-                                new Date(a.date).toLocaleDateString('en-CA') === today
+                                    a.id === item.id &&
+                                    new Date(a.date).toLocaleDateString('en-CA') === today
                                 );
 
                                 const hasMorning = attendanceToday?.attendance_checks?.some(check => check.period === "Morning");
                                 const hasAfternoon = attendanceToday?.attendance_checks?.some(check => check.period === "Afternoon");
 
                                 return (
-                                <tr key={item.id}>
-                                    <td>{item.id}</td>
-                                    <td>{item.name}</td>
-                                    <td title={`Morning: ${hasMorning ? "Yes" : "No"} | Afternoon: ${hasAfternoon ? "Yes" : "No"}`}>
-                                    {hasMorning && "🌞"}
-                                    {hasAfternoon && "🌙"}
-                                    {!hasMorning && !hasAfternoon && "---"}
-                                    </td>
-                                    <td>
-                                    {item.status === "Available" 
-                                        ? (<CheckCircle color="green" size={18} />) 
-                                        : item.status === "Borrowed" 
-                                        ? (<XCircle color="red" size={18} />) 
-                                        : (<LoaderPinwheel color="orange" size={18} />)
-                                    }
-                                    </td>
-                                </tr>
+                                    <tr key={item.id}>
+                                        <td>{item.id}</td>
+                                        <td>{item.name}</td>
+                                        <td title={`Morning: ${hasMorning ? "Yes" : "No"} | Afternoon: ${hasAfternoon ? "Yes" : "No"}`}>
+                                            {hasMorning && (
+                                                <button
+                                                    className="emoji-btn"
+                                                    onClick={() => {
+                                                        const check = attendanceToday.attendance_checks.find(c => c.period === "Morning");
+                                                        setSelectedCheck(check);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                >🌞</button>
+                                            )}
+                                            {hasAfternoon && (
+                                                <button
+                                                    className="emoji-btn"
+                                                    onClick={() => {
+                                                        const check = attendanceToday.attendance_checks.find(c => c.period === "Afternoon");
+                                                        setSelectedCheck(check);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                >🌙</button>
+                                            )}
+                                            {!hasMorning && !hasAfternoon && "---"}
+                                        </td>
+                                        <td>
+                                            {item.status === "Available"
+                                                ? (<CheckCircle color="green" size={18} />)
+                                                : item.status === "Borrowed"
+                                                    ? (<XCircle color="red" size={18} />)
+                                                    : (<LoaderPinwheel color="orange" size={18} />)
+                                            }
+                                        </td>
+                                    </tr>
                                 );
                             })}
                         </tbody>
-
                     </table>
                 </div>
+                {isModalOpen && selectedCheck && (
+                    <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                            <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>&times;</button>
+                            <h2 className="modal-header">{selectedCheck.period} Attendance</h2>
+                            <ul className="attendance-list">
+                                {selectedCheck.items_checked.map((item, index) => (
+                                    <li key={index}>
+                                        {item.is_present ? "✅" : "❌"} {item.component_name} ({item.quantity})
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     );
