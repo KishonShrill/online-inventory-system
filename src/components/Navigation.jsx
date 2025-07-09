@@ -28,7 +28,7 @@ const Navigation = ({ decoded }) => {
                             className={`navigation__link sidebar-link-button ${currentPage === item.link ? 'active' : 'hoverable'}`}
                             to={item.link}
                         >
-                            <item.icon size={24} className="sidebar-icon" />
+                            <item.icon size={24} className={`sidebar-icon ${currentPage === item.link ? 'active' : 'hoverable'}`} />
                             {/* <span
                                 className={`sidebar-link-span`}
                             >

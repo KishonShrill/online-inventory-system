@@ -17,6 +17,7 @@
   &.open {
     width: 15rem;
   }
+
   &.close {
     width: 4.5rem;
   }
@@ -26,36 +27,40 @@
     padding-block: 0.5rem;
   }
 }
+
 .sidebar-header-container {
-  height: 4rem;           // h-16
-  padding: 1rem 0;              // p-4
-  display: flex;              // flex
-  align-items: center;        // items-center
+  height: 4rem; // h-16
+  padding: 1rem 0; // p-4
+  display: flex; // flex
+  align-items: center; // items-center
   justify-content: space-between; // justify-between
 }
+
 .sidebar-header-title {
-  font-size: 1.25rem;       // text-xl
-  font-weight: bold;        // font-bold
-  white-space: nowrap;      // whitespace-nowrap
-  overflow: hidden;         // overflow-hidden
+  font-size: 1.25rem; // text-xl
+  font-weight: bold; // font-bold
+  white-space: nowrap; // whitespace-nowrap
+  overflow: hidden; // overflow-hidden
   color: white;
 
-  &.hidden {display: none;}
+  &.hidden {
+    display: none;
+  }
 }
 
 .sidebar-button {
-//   @extend .nav-header;           // Assuming .nav-header is another class you've defined
+  //   @extend .nav-header;           // Assuming .nav-header is another class you've defined
   width: 40px;
   height: 40px;
   display: grid;
   place-content: center;
   color: inherit;
   border: none;
-  border-radius: 9999px;         
+  border-radius: 9999px;
   background-color: transparent;
 
   &:hover {
-    background-color: #768297;   // hover:bg-gray-700
+    background-color: #768297; // hover:bg-gray-700
   }
 }
 
@@ -63,12 +68,13 @@
   display: flex;
   align-items: center;
   width: 100%;
-  margin-top: 0.5rem;     // my-2 → 0.5rem top and bottom
+  margin-top: 0.5rem; // my-2 → 0.5rem top and bottom
   margin-bottom: 0.5rem;
-  border-radius: 0.5rem;  // rounded-lg
+  border-radius: 0.5rem; // rounded-lg
   transition-property: background-color, border-color, color, fill, stroke;
   transition-duration: 200ms; // duration-200
 }
+
 .sidebar-icon {
   flex-shrink: 0;
 }
@@ -79,10 +85,11 @@
   transition: opacity 300ms;
 
   &.appear {
-    opacity: 0; 
+    opacity: 0;
     display: none;
   }
 }
+
 .sidebar-link-button {
   width: 100%;
   margin-block: 8px;
@@ -93,10 +100,16 @@
   border-radius: 10px;
   overflow-x: hidden;
 }
+
 .sidebar-link-button.hoverable:hover {
   background-color: #374151; // Tailwind gray-700
 }
 
 .sidebar-link-button.active {
   background-color: #2563eb; // Tailwind blue-600
+}
+
+.sidebar-icon.active,
+.navigation__link:hover .sidebar-icon {
+  color: white;
 }
