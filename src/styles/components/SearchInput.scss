@@ -1,0 +1,43 @@
+// OKAY OKAY OKAY OKAY OKAY
+.search-input-container {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.5rem;
+    background-color: white;
+    transition: border 0.2s;
+
+    &.left .search-input {
+        margin-left: 0.5rem;
+    }
+
+    &.right .search-input {
+        margin-right: 0.5rem;
+    }
+
+    &:focus-within {
+        border-color: #2563eb;
+    }
+
+    .search-input {
+        border: none;
+        outline: none;
+        flex: 1;
+        font-size: 1rem;
+        background: transparent;
+    }
+
+    .search-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+    }
+}

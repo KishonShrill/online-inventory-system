@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addAttendance } from "../redux/actions/attendanceActions";
-import { ScanIcon } from "lucide-react";
+import { ScanIcon, Search } from "lucide-react";
 import { jwtDecode } from 'jwt-decode';
 import Cookies from "universal-cookie";
 import axios from "axios";

@@ -1,3 +1,6 @@
+import { scan } from 'react-scan'
+scan({ enabled: import.meta.env.VITE_SCAN === "true", });
+
 import { Suspense, lazy, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
