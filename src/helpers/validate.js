@@ -31,7 +31,7 @@ export const validatePassword = (password) => {
 };
 
 export const validateRecord = (userName, userContact, date) => {
-    const nameRegex = /^[A-Z][a-z]+(?: [A-Z][a-z]+)+$/;
+    const nameRegex = /^[A-Z][a-z]+(?: [A-Z]\.?)? [A-Z][a-z]+$/;
     const validUserName = nameRegex.test(userName.trim());
     
     const isPhoneNumber = /^09\d{9}$/.test(userContact);

@@ -39,7 +39,7 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
-        {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position='bottom-right' />}
+        {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} />}
       </QueryClientProvider>
     </>
   )
