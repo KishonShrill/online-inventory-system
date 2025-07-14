@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CheckCircle, XCircle, LoaderPinwheel } from "lucide-react";
+import { CheckCircle, XCircle, LoaderPinwheel, Archive } from "lucide-react";
 import { useSelector } from 'react-redux';
 
 import '../styles/dashboard.scss'
@@ -13,7 +13,10 @@ const Dashboard = () => {
     return (
         <>
             <title>CDIIS OIS - Dashboard</title>
-            <h1 className='dashboard-title'>Dashboard</h1>
+            <div className="dashboard-header">
+                <h1 className="dashboard-title">Dashboard</h1>
+                <p className="dashboard-subtitle">Welcome back! Here is your inventory system overview.</p>
+            </div>
             <div className="dashboard-grid">
                 <div className="dashboard-card">
                     <h3 className="card-title">Total Items</h3>
@@ -34,7 +37,7 @@ const Dashboard = () => {
                     </p>
                 </div>
             </div>
-            <h1 className='dashboard-title'>Viewable Items</h1>
+            {/* <h1 className='dashboard-title'>Viewable Items</h1> */}
             <ItemDashboard />
         </>
     )
@@ -70,7 +73,12 @@ const ItemDashboard = () => {
 
     return (
         <div className="dashboard-container">
-            {/* Sidebar */}
+            <div className="container-header">
+                <Archive className="container-icon" />
+                <h2>Inventory Status</h2>
+            </div>
+            
+            {/* Topbar */}
             <aside className="dashboard-sidebar">
                 <div className="dashboard-sidebar-btn-container">
                     {categories.map(category => (
@@ -87,7 +95,7 @@ const ItemDashboard = () => {
 
             {/* Main content area */}
             <main className="dashboard-content">
-                <h2 className="category-header">{activeCategory}</h2>
+                {/* <h2 className="category-header">{activeCategory}</h2> */}
                 <div className="table-wrapper">
                     <table className="item-table">
                         <thead>

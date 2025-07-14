@@ -2,8 +2,10 @@
 @use 'utils/classes';
 @use 'utils/variables';
 
-.dashboard-title {
-  @extend .title;
+.dashboard {
+  &-header {@extend .main-header;}
+  &-title {@extend .main-title;}
+  &-subtitle {@extend .main-subtitle;}
 }
 
 .dashboard-grid {
@@ -64,11 +66,12 @@
   .dashboard-sidebar {
     // width: 100%;
     border-right: none;
-    border-block: 1px solid #ddd;
+    // border-top: 1px solid #ddd;
 
     .dashboard-sidebar-btn-container {
       display: flex;
       flex-direction: row;
+      gap: 0.25rem;
       overflow-x: auto;
       
       // @media (min-width: 640px) {
@@ -87,7 +90,7 @@
         text-align: left;
         padding: 0.5rem 1rem;
         cursor: pointer;
-        border-radius: 0.375rem;
+        border-radius: 0.375rem 0.375rem 0 0;
         transition: background 0.2s ease;
         font-weight: bold;
 
@@ -109,6 +112,7 @@
     position: relative;
     flex-grow: 1;
     overflow-x: auto; // allow horizontal scroll for tables
+    background: #f0f0f0;
 
     .category-header {
       font-size: 1.25rem;

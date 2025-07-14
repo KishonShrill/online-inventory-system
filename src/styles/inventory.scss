@@ -13,7 +13,7 @@
         }
         
         &-title {
-            @extend .title;
+            @extend .main-title;
         }
         &-addBtn {
             background-color: #2563EB; /* Tailwind's bg-blue-600 */

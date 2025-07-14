@@ -27,10 +27,7 @@ $on-surface-var: #c3c6cf;
 
 
 
-.title {
-    line-height: 2.25rem;      /* Tailwind's line-height for text-3xl */
-    font-weight: 700;          /* font-bold */
-    color: #1F2937;
+.main-header {
     margin-bottom: 1.5rem;
 
     @media (max-width: 1024px) {
@@ -41,6 +38,22 @@ $on-surface-var: #c3c6cf;
         margin-bottom: 0.5rem;
         font-size: 1.5rem;
         line-height: 1.5rem;
+    }
+}
+
+.main-title {
+    line-height: 2.25rem;      /* Tailwind's line-height for text-3xl */
+    color: #1F2937;
+
+    @media (max-width: 480px) {
+        font-size: 1.5rem;
+        line-height: 1.5rem;
+    }
+}
+
+.main-subtitle {
+    @media (max-width: 480px) {
+        display: none;
     }
 }
 
