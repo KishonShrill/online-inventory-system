@@ -20,7 +20,7 @@ router.get('/api/records', async (req, res) => {
 
 router.post('/api/records', async (req, res) => {
     try {
-        const { user, item, date, type, quantity, _id } = req.body;
+        const { user, item, date, type, quantity, _id, returned_items, feedback } = req.body;
 
         if (type === 'reserve') {
             const addedRecord = await Record.create({
@@ -88,6 +88,8 @@ router.post('/api/records', async (req, res) => {
                 _id,
                 {
                     returned_on: date,
+                    returned_items,
+                    feedback,
                     type,
                 },
                 { new: true }
