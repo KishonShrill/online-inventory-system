@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
 import { PlusCircle } from 'lucide-react'
 import { Role } from "../helpers/_variables";
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'universal-cookie';
 
 import RecordModal from "../components/RecordModal";
-import { useSortableData } from '../helpers/sortUtils';
-import { filterBySearchQuery } from "../helpers/inputUtils";
 
 import ReserveTable from "../components/Records/ReserveTable";
 import BorrowTable from "../components/Records/BorrowTable";
@@ -30,7 +27,6 @@ const Records = () => {
 				<br />
 				<br />
 				<BorrowTable decoded={decoded} />
-
 			</main>
 		</>
 	)

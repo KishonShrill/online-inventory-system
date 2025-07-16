@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { editRecord } from '../../redux/actions/recordActions';
 import { editInventory } from "../../redux/actions/inventoryActions";
@@ -9,19 +9,18 @@ import SearchInput from "../../components/SearchInput";
 import axios from "axios";
 
 const postURL =
-	import.meta.env.VITE_DEVELOPMENT === "true"
-		? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/records`
-		: `https://cdiis-ois-server.vercel.app/api/records`;
+    import.meta.env.VITE_DEVELOPMENT === "true"
+        ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/records`
+        : `https://cdiis-ois-server.vercel.app/api/records`;
 
 const ReserveTable = ({ decoded }) => {
     const [searchQueryReserve, setSearchQueryReserve] = useState('');
     const [debouncedReserveQuery, setDebouncedReserveQuery] = useState('');
-    const [filteredReserves, setFilteredReserves] = useState([]);
 
-	const dispatch = useDispatch()
+    const dispatch = useDispatch()
     const records = useSelector((state) => state.record);
     const reservedRecords = records.filter(item => item.type?.toLowerCase().includes("reserve"))
-    const { items: sortedReservedRecords, requestSort: requestReservedSort, getSortDirectionClass: getReservedClass } = useSortableData(reservedRecords, { key: 'status', direction: 'ascending' });
+    const { items: sortedReservedRecords, requestSort: requestReservedSort, getSortDirectionClass: getReservedClass } = useSortableData(reservedRecords, { key: 'type', direction: 'ascending' });
 
     const handleLend = (record) => {
         const todayPlus7 = new Date();
@@ -88,20 +87,13 @@ const ReserveTable = ({ decoded }) => {
         return () => clearTimeout(handler);
     }, [searchQueryReserve]);
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            const result = filterBySearchQuery(
-                sortedReservedRecords,
-                debouncedReserveQuery,
-                ['item.name', 'user.name', 'due_date']
-            );
-            setFilteredReserves(result);
-        }, 500) // 500ms debounce time
-
-        return () => {
-            clearTimeout(handler)
-        };
-    }, [debouncedReserveQuery, records])
+    const filteredReserves = useMemo(() => {
+        return filterBySearchQuery(
+            sortedReservedRecords,
+            debouncedReserveQuery,
+            ['item.name', 'user.name', 'due_date']
+        );
+    }, [sortedReservedRecords, debouncedReserveQuery]);
 
     return (
         <>
@@ -111,28 +103,28 @@ const ReserveTable = ({ decoded }) => {
                 <table className="records__table">
                     <thead className="records__table-header">
                         <tr>
-                            <th className="records__table-header-column">
+                            <th className="records__table-header-column" title={`${getReservedClass('item.name')}`}>
                                 <button type="button" onClick={() => requestReservedSort('item.name')} className={`sort-button ${getReservedClass('item.name')}`}>
                                     Item Name
                                 </button>
                             </th>
-                            <th className="records__table-header-column">
+                            <th className="records__table-header-column" title={`${getReservedClass('user.name')}`}>
                                 <button type="button" onClick={() => requestReservedSort('user.name')} className={`sort-button ${getReservedClass('user.name')}`}>
                                     User
                                 </button>
                             </th>
-                            <th className="records__table-header-column">
+                            <th className="records__table-header-column" title={`${getReservedClass('user.contact')}`}>
                                 <button type="button" onClick={() => requestReservedSort('user.contact')} className={`sort-button ${getReservedClass('user.contact')}`}>
                                     Contact
                                 </button>
                             </th>
-                            <th className="records__table-header-column">
+                            <th className="records__table-header-column" title={`${getReservedClass('due_date')}`}>
                                 <button type="button" onClick={() => requestReservedSort('due_date')} className={`sort-button ${getReservedClass('due_date')}`}>
                                     Due Date
                                 </button>
                             </th>
-                            <th className="records__table-header-column">
-                                <button type="button" onClick={() => requestReservedSort('status')} className={`sort-button ${getReservedClass('status')}`}>
+                            <th className="records__table-header-column" title={`${getReservedClass('type')}`}>
+                                <button type="button" onClick={() => requestReservedSort('type')} className={`sort-button ${getReservedClass('type')}`}>
                                     Status
                                 </button>
                             </th>
@@ -143,7 +135,7 @@ const ReserveTable = ({ decoded }) => {
                     </thead>
                     <tbody>
                         {filteredReserves.map((record) => (
-                            <tr key={record?._id} className="records__table-data-row">
+                            <tr key={record?._id} className="records__table-data-row" title={`${record?.item.name} (${record?.user.name})`}>
                                 <td className="records__table-data-column">{record?.item.name} ({record?.item.id})</td>
                                 <td className="records__table-data-column">{record?.user.name}</td>
                                 <td className="records__table-data-column">{record?.user.contact}</td>
