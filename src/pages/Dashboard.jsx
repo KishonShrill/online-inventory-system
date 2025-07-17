@@ -100,10 +100,10 @@ const ItemDashboard = () => {
                     <table className="item-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Attendance</th>
-                                <th>Status</th>
+                                <th className="dash-col-1" >ID</th>
+                                <th className="dash-col-2" >Name</th>
+                                <th className="dash-col-3" >Attendance</th>
+                                <th className="dash-col-4" >Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -144,13 +144,19 @@ const ItemDashboard = () => {
                                             )}
                                             {!hasMorning && !hasAfternoon && "---"}
                                         </td>
-                                        <td>
-                                            {item.status === "Available"
-                                                ? (<CheckCircle color="green" size={18} />)
-                                                : item.status === "Borrowed"
-                                                    ? (<XCircle color="red" size={18} />)
-                                                    : (<LoaderPinwheel color="orange" size={18} />)
-                                            }
+                                        <td title={item?.status}>
+                                            <span style={{
+                                                height: "100%",
+                                                display: "flex",
+                                                alignItems: "center"
+                                            }}>
+                                                {item.status === "Available"
+                                                    ? (<CheckCircle color="green" size={18} />)
+                                                    : item.status === "Borrowed"
+                                                        ? (<XCircle color="red" size={18} />)
+                                                        : (<LoaderPinwheel color="orange" size={18} />)
+                                                }
+                                            </span>
                                         </td>
                                     </tr>
                                 );
