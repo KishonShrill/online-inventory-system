@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useSelector, useDispatch } from "react-redux";
 import { PlusCircle, Search, Edit, Trash2 } from "lucide-react";
 import { Mode, Role } from "../helpers/_variables";
@@ -6,6 +7,8 @@ import { jwtDecode } from 'jwt-decode';
 import Cookies from 'universal-cookie';
 
 import ItemModal from '../components/ItemModal.jsx'
+import Pagination from "../components/Pagination.jsx";
+import { paginationData } from "../helpers/paginationUtils.js";
 
 
 import "../styles/inventory.scss";
@@ -23,12 +26,15 @@ const Inventory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mode, setMode] = useState("ADD");
   const [itemId, setItemId] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredInventory = inventory.filter(item =>
     item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const { paginatedData, totalPages, quantity } = paginationData(filteredInventory, 10, currentPage)
 
   function handleAdd() {
     setItemId("");
@@ -81,6 +87,7 @@ const Inventory = () => {
           </div>
         </div>
 
+        <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity}/>
         <div className="inventory__data-container">
           <table className="inventory__data-table">
             <thead className="inventory__data-table-header">
@@ -95,7 +102,7 @@ const Inventory = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredInventory.map((item) => (
+              {paginatedData.map((item) => (
                 <tr
                   key={item?._id}
                   className="border-b border-gray-200 hover:bg-gray-50"
