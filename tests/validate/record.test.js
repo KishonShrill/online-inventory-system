@@ -8,6 +8,11 @@ describe("validateRecord", () => {
         expect(result.validUserName).toBe(true);
     });
 
+    test("valid full name without middle initial (<2 words)", () => {
+        const result = validateRecord("Juan Dela Cruz", "09123456789", "2099-01-01");
+        expect(result.validUserName).toBe(true);
+    });
+
     test("valid full name with middle initial (no dot)", () => {
         const result = validateRecord("Juan D Cruz", "09123456789", "2099-01-01");
         expect(result.validUserName).toBe(true);

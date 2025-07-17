@@ -1,12 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
+
 import { useSelector, useDispatch } from "react-redux";
 import { editRecord } from '../../redux/actions/recordActions';
 import { editInventory } from "../../redux/actions/inventoryActions";
 import { useSortableData } from "../../helpers/sortUtils";
 import { Role } from "../../helpers/_variables";
-import { filterBySearchQuery } from "../../helpers/inputUtils";
-import SearchInput from "../../components/SearchInput";
+
 import axios from "axios";
+import SearchInput from "../../components/SearchInput";
+import Pagination from "../Pagination";
+import { filterBySearchQuery } from "../../helpers/inputUtils";
+import { paginationData } from "../../helpers/paginationUtils.js";
 
 const postURL =
     import.meta.env.VITE_DEVELOPMENT === "true"
@@ -16,6 +20,7 @@ const postURL =
 const ReserveTable = ({ decoded }) => {
     const [searchQueryReserve, setSearchQueryReserve] = useState('');
     const [debouncedReserveQuery, setDebouncedReserveQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const dispatch = useDispatch()
     const records = useSelector((state) => state.record);
@@ -95,8 +100,10 @@ const ReserveTable = ({ decoded }) => {
         );
     }, [sortedReservedRecords, debouncedReserveQuery]);
 
+    const { paginatedData, totalPages, quantity } = paginationData(filteredReserves, 7, currentPage)
+
     return (
-        <>
+        <div>
             <h3 style={{ marginLeft: "1rem", marginBottom: "1rem", textDecoration: "underline", cursor: "default" }}>Reserved</h3>
             <SearchInput value={searchQueryReserve} onChange={(e) => setSearchQueryReserve(e.target.value)} />
             <div className="records__table-container">
@@ -134,7 +141,7 @@ const ReserveTable = ({ decoded }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredReserves.map((record) => (
+                        {paginatedData.map((record) => (
                             <tr key={record?._id} className="records__table-data-row" title={`${record?.item.name} (${record?.user.name})`}>
                                 <td className="records__table-data-column">{record?.item.name} ({record?.item.id})</td>
                                 <td className="records__table-data-column">{record?.user.name}</td>
@@ -161,7 +168,8 @@ const ReserveTable = ({ decoded }) => {
                     </tbody>
                 </table>
             </div>
-        </>
+            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity}/>
+        </div>
     )
 };
 
