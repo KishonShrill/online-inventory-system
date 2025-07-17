@@ -1,6 +1,7 @@
 @use "utils/classes";
 @use "utils/variables";
 @use "sass:color";
+@use 'components/_table.scss';
 
 .records {
   &__header {

@@ -1,0 +1,16 @@
+/* Style for the highlighted row */
+table > tbody > tr.selected {
+  background-color: #007bff !important;
+  color: white;
+}
+
+/* Ensure child elements like <td> also inherit the white text color */
+table > tbody > tr.selected > td {
+  color: white;
+}
+
+/* Optional: Change cursor to indicate the row is clickable */
+table > tbody > tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
