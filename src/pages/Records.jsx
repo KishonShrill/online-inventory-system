@@ -21,13 +21,10 @@ const Records = () => {
 	return (
 		<>
 			<title>CDIIS OIS - Borrower Records</title>
-			<main>
-				<RecordHeader decoded={decoded} />
-				<ReserveTable decoded={decoded} />
-				<br />
-				<br />
-				<BorrowTable decoded={decoded} />
-			</main>
+			<RecordHeader decoded={decoded} />
+			<ReserveTable decoded={decoded} />
+			<br />
+			<BorrowTable decoded={decoded} />
 		</>
 	)
 }

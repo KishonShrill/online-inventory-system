@@ -16,18 +16,18 @@ import useFetchInitialize from "../../hooks/useFetchInitialize";
 
 import '../../styles/master-layout.scss'
 
+const cookies = new Cookies()
+const token = cookies.get('CDIIS-OIS')
 
 const InventoryLayout = () => {
-
-    const cookies = new Cookies()
-    const token = cookies.get('CDIIS-OIS')
+    
     
     // Early return, no unnecessary fetch call to Database if user is not logged in
     if (!token) {
         alert("You are not logged in!")
         return <Navigate to="/" replace />;
     }
-
+    
     const decoded = jwtDecode(token);
     const dispatch = useDispatch();
     const prevItemsRef = useRef(null); // store previous data to compare
