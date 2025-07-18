@@ -63,8 +63,6 @@ router.post('/api/records', async (req, res) => {
             const updatedRecord = await Record.findByIdAndUpdate(
                 _id,
                 {
-                    due_date: 'N/A',
-                    returned_date: "N/A",
                     type,
                 },
                 { new: true }

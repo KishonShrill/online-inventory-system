@@ -68,6 +68,9 @@ const ReserveTable = ({ decoded }) => {
             url: postURL,
             data: {
                 _id: record?._id,
+                item: {
+                    id: record?.item.id
+                },
                 type: "cancelled",
             }
         }
@@ -76,7 +79,7 @@ const ReserveTable = ({ decoded }) => {
             .then((res) => {
                 console.log(res.data);
                 dispatch(editRecord(res.data.result.updatedRecord))
-                dispatch(editInventory(res.data.result.borrowedItem[0]._id, { status: res.data.result.borrowedItem[0].status }))
+                dispatch(editInventory(res.data.result.returnedItem[0]._id, { status: res.data.result.returnedItem[0].status }))
             })
             .catch((err) => {
                 console.log(err);
@@ -180,9 +183,16 @@ const RecordActions = ({ record, handleLend, handleRetract }) => {
 
     return (
         <>
-            <button className="actions-add" onClick={() => handleLend(record)}>Lend</button>
+            <button 
+                className="actions-add" 
+                onClick={() => handleLend(record)}
+            >Lend</button>
             {isExpired && (
-                <button className="actions-danger" onClick={() => handleRetract(record)}>Retract</button>
+                <button 
+                    className="actions-danger"
+                    style={{marginLeft: "0.5rem"}}
+                    onClick={() => handleRetract(record)}
+                >Retract</button>
             )}
         </>
     );

@@ -118,10 +118,12 @@
   }
 
   &-warning {
-    background-color: #b95b1c;
+    background-color: rgb(255, 235, 15);
+    color: black;
 
     &:hover {
-      background-color: #895110;
+      background-color: #decd1a;
+      color: white;
     }
   }
 }
