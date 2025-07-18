@@ -83,7 +83,8 @@ const recordSchema = new mongoose.Schema({
     },
     due_date: {
         type: Date,
-        required: [true, "Please input due date!"],
+        required: false,
+        default: null,
     },
     user: {
         name: {

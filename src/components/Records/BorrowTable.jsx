@@ -9,6 +9,7 @@ import SearchInput from "../../components/SearchInput";
 import ReturnItemModal from "./ReturnItemModal";
 import Pagination from "../Pagination";
 import { paginationData } from "../../helpers/paginationUtils.js";
+import { XCircle } from "lucide-react";
 
 const BorrowTable = ({ decoded }) => {
     const [searchQueryBorrow, setSearchQueryBorrow] = useState('');
@@ -26,6 +27,7 @@ const BorrowTable = ({ decoded }) => {
     const records = useSelector((state) => state.record);
     const borrowedRecords = records.filter(item => {
         return (
+            item.type?.toLowerCase().includes("cancelled") ||
             item.type?.toLowerCase().includes("borrow") ||
             item.type?.toLowerCase().includes("returned")
         )
@@ -162,10 +164,13 @@ const BorrowTable = ({ decoded }) => {
                                     <td className="pi3-text-sm" onClick={(e) => e.stopPropagation()}>
                                         {record?.type === 'returned' ? (
                                            '✅'
+                                        ) : record?.type === 'cancelled' ? (
+                                            <span style={{display: 'flex'}}><XCircle size={18} color="red"/></span>
                                         ) : (
-                                            (decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+                                            (decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && 
+                                            (
                                                 new Date().toLocaleDateString('en-CA') < record?.due_date?.split("T")[0]
-                                                    ? <button className="actions-warning" onClick={() => handleReturn(record)}>Return</button>
+                                                    ? <button className="actions-create" onClick={() => handleReturn(record)}>Return</button>
                                                     : <button className="actions-danger" onClick={() => handleReturn(record)}>Return</button>
                                             )
                                         )}
