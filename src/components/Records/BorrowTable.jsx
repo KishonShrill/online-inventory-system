@@ -35,7 +35,7 @@ const BorrowTable = ({ decoded }) => {
 
     // Tabular Data
     // Tabular Data
-    const { items: sortedBorrowedRecords, requestSort: requestBorrowedSort, getSortDirectionClass: getBorrowedClass } = useSortableData(borrowedRecords, { key: 'type', direction: 'ascending' });
+    const { items: sortedBorrowedRecords, requestSort: requestBorrowedSort, getSortDirectionClass: getBorrowedClass } = useSortableData(borrowedRecords, { key: 'due_date', direction: 'descending' });
     const filteredBorrows = useMemo(() => {
         return filterBySearchQuery(
             sortedBorrowedRecords,
@@ -244,7 +244,13 @@ const ViewReturnedItemModal = ({ record, onClose }) => {
                                         </label>
                                     </li>
                                 ))
-                            ) : (
+                            )
+                            : record?.type == "cancelled" ? (
+                                <li className="form-checkbox">
+                                    ⚠️ This record has been cancelled.
+                                </li>
+                            )
+                            : (
                                 <li className="form-checkbox">
                                     ⚠️ Item is not yet returned for this record.
                                 </li>
