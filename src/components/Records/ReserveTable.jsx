@@ -28,6 +28,11 @@ const ReserveTable = ({ decoded }) => {
     const { items: sortedReservedRecords, requestSort: requestReservedSort, getSortDirectionClass: getReservedClass } = useSortableData(reservedRecords, { key: 'type', direction: 'ascending' });
 
     const handleLend = (record) => {
+        const isConfirmed = confirm(`Are you sure about lending to ${record?.user.name}?`)
+        if (!isConfirmed) {
+            return;
+        }
+
         const todayPlus7 = new Date();
         todayPlus7.setDate(todayPlus7.getDate() + 7);
         const borrowDueDate = todayPlus7.toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
@@ -63,6 +68,11 @@ const ReserveTable = ({ decoded }) => {
     }
 
     const handleRetract = (record) => {
+        const isConfirmed = confirm(`Retracting reserve record of ${record?.user.name} - ${record?.item.name} (${record?.item.id})?`)
+        if (!isConfirmed) {
+            return;
+        }
+
         const configuration = {
             method: "post",
             url: postURL,

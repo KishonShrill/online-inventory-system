@@ -218,13 +218,17 @@
 }
 
 .attendance-list {
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   list-style-type: none;
   gap: 0.25rem;
 
   & li {
     padding: 0.25rem 0.5rem;
+    flex: 0 1 1px;
+    border-radius: 5px;
     background: rgb(186, 204, 219);
   }
 }

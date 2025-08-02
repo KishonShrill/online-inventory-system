@@ -29,7 +29,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
     let initialData = {
         name: "",
         description: "",
-        color: "N/A",
+        color: "",
         category: "",
         components: '',
     };
@@ -100,7 +100,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
             initialData = {
                 name: item.name,
                 description: item.description,
-                color: item.color ?? "N/A",
+                color: item.color ?? "",
                 category: item.category,
                 components: item.items.map(({ name, quantity }) => ({ name, quantity })),
             };
@@ -113,7 +113,7 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
             initialData = {
                 name: item.name,
                 description: item.description,
-                color: item.color ?? "N/A",
+                color: item.color ?? "",
                 category: item.category,
             };
             newItemId = `${String(getEQPId(item.id))}`

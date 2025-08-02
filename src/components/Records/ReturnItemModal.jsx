@@ -41,6 +41,11 @@ const ReturnItemModal = ({ isOpen, onClose, record }) => {
     const handleReturn = (e) => {
         e.preventDefault();
 
+        const isConfirmed = confirm(`Are you sure about this record?`)
+        if (!isConfirmed) {
+            return;
+        }
+
         const feedbackText = textareaRef.current.value.trim()
         const allChecked = Object.values(components).every(Boolean);
 

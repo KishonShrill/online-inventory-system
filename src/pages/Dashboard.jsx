@@ -169,6 +169,7 @@ const ItemDashboard = () => {
                         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                             <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>&times;</button>
                             <h2 className="modal-header">{selectedCheck.period} Attendance</h2>
+                            <label className="form-label" htmlFor="returnFeedback">Components:</label>
                             <ul className="attendance-list">
                                 {selectedCheck.items_checked.map((item, index) => (
                                     <li key={index}>
@@ -176,6 +177,15 @@ const ItemDashboard = () => {
                                     </li>
                                 ))}
                             </ul>
+                            <div className="form-group form-ending">
+                                <label className="form-label" htmlFor="returnFeedback">Feedback:</label>
+                                <textarea 
+                                    id="returnFeedback"
+                                    className="form-textarea"
+                                    defaultValue={selectedCheck.notes === '' ? "No problems..." : selectedCheck.notes}
+                                    readOnly
+                                ></textarea>
+                            </div>
                         </div>
                     </div>
                 )}
