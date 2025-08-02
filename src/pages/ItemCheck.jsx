@@ -89,6 +89,11 @@ const ItemCheck = () => {
   };
 
   const handleSubmit = () => {
+    const isConfirmed = confirm("Is the attendance really correct?")
+    if (!isConfirmed) {
+      return;
+    }
+
     if (!item) {
       setError("No item scanned.");
       return;
