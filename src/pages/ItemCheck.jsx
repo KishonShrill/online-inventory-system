@@ -1,10 +1,9 @@
-
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addAttendance } from "../redux/actions/attendanceActions";
-import { ScanIcon, Search } from "lucide-react";
+import { ScanIcon } from "lucide-react";
 import { jwtDecode } from 'jwt-decode';
 import Cookies from "universal-cookie";
 import axios from "axios";
@@ -12,6 +11,7 @@ import axios from "axios";
 import QRScannerModal from "../components/QRScannerModal";
 import { Role } from "../helpers/_variables";
 import { getLocalISODateTime, itemHasBeenChecked } from "../helpers/dateUtils";
+import CustomDatalist from "../components/CustomDatalist";
 
 import "../styles/itemCheck.scss";
 
@@ -81,7 +81,6 @@ const ItemCheck = () => {
     setAttendance(initialAttendance);
   };
 
-
   const handleSubItemCheck = (subItemName) => {
     setAttendance((prev) => ({
       ...prev,
@@ -147,6 +146,17 @@ const ItemCheck = () => {
     setAttendance({});
   };
 
+  const filteredItems = useMemo(() => {
+    const search = scannedId.toLowerCase();
+    return inventory
+      .filter(
+        (item) =>
+          item.id.toLowerCase().includes(search) ||
+          item.name.toLowerCase().includes(search)
+      )
+      .slice(0, 10); // only top 10 matches
+  }, [scannedId, inventory]);
+
   return (
     <>
       <title>CDIIS OIS - Inventory Check</title>
@@ -163,6 +173,7 @@ const ItemCheck = () => {
           <div className="itemCheck__card-inputRow">
             <input
               type="text"
+              list="itemIDs"
               value={scannedId}
               onChange={(e) => setScannedId(e.target.value.toUpperCase())}
               onKeyDown={(e) => {
@@ -173,6 +184,7 @@ const ItemCheck = () => {
               placeholder="Scan or enter Item ID (e.g., EQP-0015)"
               className="itemCheck__input search"
             />
+            <CustomDatalist id="itemIDs" items={filteredItems} />
             <button onClick={handleFetchItem} className="itemCheck__card-fetchBtn actions-add">
               Fetch
             </button>

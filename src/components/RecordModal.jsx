@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { addRecord } from "../redux/actions/recordActions";
 import { editInventory } from "../redux/actions/inventoryActions";
@@ -8,6 +8,7 @@ import { validateRecord } from "../helpers/validate";
 import QRScannerModal from "./QRScannerModal";
 
 import axios from "axios";
+import CustomDatalist from "./CustomDatalist";
 
 const postURL =
     import.meta.env.VITE_DEVELOPMENT === "true"
@@ -36,6 +37,17 @@ const RecordModal = ({ isOpen, onClose }) => {
             resolve(item || null);
 		});
 	};
+
+    const filteredItems = useMemo(() => {
+        const search = itemId.toLowerCase();
+        return inventory
+            .filter(
+            (item) =>
+                item.id.toLowerCase().includes(search) ||
+                item.name.toLowerCase().includes(search)
+            )
+            .slice(0, 10); // only top 10 matches
+    }, [itemId, inventory]);
 
 	// Debounce effect for fetching item details
     useEffect(() => {
@@ -129,12 +141,14 @@ const RecordModal = ({ isOpen, onClose }) => {
                             <input
                                 type="text"
                                 id="itemId"
+                                list="itemIDs"
                                 className="form-input"
                                 value={itemId}
                                 onChange={(e) => setItemId(e.target.value)}
                                 placeholder="Type or scan item ID (e.g., EQP-0001)"
                                 autoFocus
                             />
+                            <CustomDatalist id="itemIDs" items={filteredItems} />
                             <button type="button" className="scan-btn" title="Scan QR code" onClick={() => setIsQROpen(prev => !prev)}>
                                 <ScanIcon />
                             </button>
