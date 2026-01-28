@@ -1,14 +1,37 @@
 import { useState, useEffect } from "react";
-import { CheckCircle, XCircle, LoaderPinwheel, Archive } from "lucide-react";
+import { CheckCircle, CheckCircle2, XCircle, LoaderPinwheel, Archive, Package, Clock, AlertCircle, Filter } from "lucide-react";
 import { useSelector } from 'react-redux';
 
-import '../styles/dashboard.scss'
+import '../styles/dashboard.scss';
 
 const Dashboard = () => {
     const inventory = useSelector(state => state.inventory);
     // const records = useSelector(state => state.record)
 
-    const currentlyBorrowed = inventory.filter((item) => item.status === "borrow")
+    const currentlyBorrowed = inventory.filter((item) => item.status === "Borrowed")
+    const categoryCount = [...new Set(inventory.map(i => i.category))].length
+
+    const DASHBOARD_STATS = [
+        { label: 'Total Items', value: inventory.length, icon: Package, color: 'bg-blue-50 text-blue-600' },
+        { label: 'Borrowed', value: currentlyBorrowed.length, icon: Clock, color: 'bg-amber-50 text-amber-600' },
+        { label: 'Overdue', value: 0, icon: AlertCircle, color: 'bg-red-50 text-red-600' },
+        { label: 'Categories', value: categoryCount , icon: Filter, color: 'bg-emerald-50 text-emerald-600' },
+    ];
+
+    const StatCard = ({ label, value, icon: Icon, color }) => (
+        <div className="bg-white rounded-xl p-3 sm:p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="dashboard-card">
+                <div>
+                    <p className="card-title">{label}</p>
+                    <h3 className="text-3xl leading-none font-bold text-slate-800 mt-2">{value}</h3>
+                </div>
+                <div className={`p-3 rounded-full ${color}`}>
+                    <Icon size={24} />
+                </div>
+            </div>
+        </div>
+    );
+
 
     return (
         <>
@@ -18,24 +41,9 @@ const Dashboard = () => {
                 <p className="dashboard-subtitle">Welcome back! Here is your inventory system overview.</p>
             </div>
             <div className="dashboard-grid">
-                <div className="dashboard-card">
-                    <h3 className="card-title">Total Items</h3>
-                    <p className="card-value text-blue">{inventory.length}</p>
-                </div>
-                <div className="dashboard-card">
-                    <h3 className="card-title">Borrowed</h3>
-                    <p className="card-value text-yellow">{currentlyBorrowed.length}</p>
-                </div>
-                <div className="dashboard-card">
-                    <h3 className="card-title">Overdue</h3>
-                    <p className="card-value text-red">0</p>
-                </div>
-                <div className="dashboard-card">
-                    <h3 className="card-title">Categories</h3>
-                    <p className="card-value text-green">
-                        {[...new Set(inventory.map(i => i.category))].length}
-                    </p>
-                </div>
+                {DASHBOARD_STATS.map((stat, idx) => (
+                    <StatCard key={idx} {...stat} />
+                ))}
             </div>
             {/* <h1 className='dashboard-title'>Viewable Items</h1> */}
             <ItemDashboard />
@@ -145,18 +153,15 @@ const ItemDashboard = () => {
                                             {!hasMorning && !hasAfternoon && "---"}
                                         </td>
                                         <td title={item?.status}>
-                                            <span style={{
-                                                height: "100%",
-                                                display: "flex",
-                                                alignItems: "center"
-                                            }}>
-                                                {item.status === "Available"
-                                                    ? (<CheckCircle color="green" size={18} />)
-                                                    : item.status === "Borrowed"
-                                                        ? (<XCircle color="red" size={18} />)
-                                                        : (<LoaderPinwheel color="orange" size={18} />)
-                                                }
-                                            </span>
+                                            {item.status === "Available"
+                                                ? ( <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">
+                                                        <CheckCircle2 size={12} /> Available</div>)
+                                                : item.status === "Borrowed"
+                                                    ? ( <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold border border-red-100">
+                                                        <XCircle size={12} /> Borrowed</div>)
+                                                    : ( <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-semibold border border-orange-100">
+                                                        <LoaderPinwheel size={12} /> Reserved</div>)
+                                            }
                                         </td>
                                     </tr>
                                 );

@@ -1,3 +1,4 @@
+@layer base {
 body {
   background-color: #f9fafb; /* Optional: light background */
   color: #111827;            /* Tailwind gray-900-ish */
@@ -74,4 +75,5 @@ main div h2 {
 }
 .container-icon {
   color: #4b5563;
+}
 }

@@ -1,6 +1,7 @@
 @use 'utils/classes';
 @use 'utils/variables';
 
+
 .dashboard {
   &-header {@extend .main-header;}
   &-title {@extend .main-title;}
@@ -30,20 +31,29 @@
 
 .dashboard-card {
   background-color: white;
-  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   .card-title {
     font-size: 1.125rem;
     font-weight: 600;
     color: #4b5563;
+
+    @media (max-width: 480px) {
+      font-size: 0.875rem;
+    }
   }
 
   .card-value {
     font-size: 1.875rem;
     font-weight: 700;
     margin-top: 0.5rem;
+
+    @media (max-width: 480px) {
+      line-height: 1.3rem;
+    }
   }
 }
 

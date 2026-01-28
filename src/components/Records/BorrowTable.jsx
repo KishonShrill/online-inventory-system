@@ -68,6 +68,27 @@ const BorrowTable = ({ decoded }) => {
         }
     };
 
+    const Badge = ({ children, type }) => {
+        const styles = {
+            Computers: 'bg-blue-100 text-blue-700 border-blue-200',
+            Televisions: 'bg-purple-100 text-purple-700 border-purple-200',
+            'Drawing Tablets': 'bg-pink-100 text-pink-700 border-pink-200',
+            'Action Cameras': 'bg-orange-100 text-orange-700 border-orange-200',
+            Returned: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            Borrow: 'bg-amber-100 text-amber-700 border-amber-200', // change this before production -> Borrowed
+            Overdue: 'bg-red-100 text-red-700 border-red-200',
+            default: 'bg-slate-100 text-slate-700 border-slate-200'
+        };
+
+        const styleClass = styles[children] || styles.default;
+
+        return (
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${styleClass}`}>
+            {children}
+            </span>
+        );
+    };
+
     // Debounce effect for search input
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -108,14 +129,9 @@ const BorrowTable = ({ decoded }) => {
                                     User
                                 </button>
                             </th>
-                            <th className="records__table-header-column" title={`${getBorrowedClass('start_date')}`}>
-                                <button type="button" onClick={() => requestBorrowedSort('start_date')} className={`sort-button ${getBorrowedClass('start_date')}`}>
-                                    Borrowed On
-                                </button>
-                            </th>
                             <th className="records__table-header-column" title={`${getBorrowedClass('due_date')}`}>
                                 <button type="button" onClick={() => requestBorrowedSort('due_date')} className={`sort-button ${getBorrowedClass('due_date')}`}>
-                                    Due Date
+                                    Dates
                                 </button>
                             </th>
                             <th className="records__table-header-column" title={`${getBorrowedClass('returned_on')}`}>
@@ -142,24 +158,22 @@ const BorrowTable = ({ decoded }) => {
                                     onClick={() => handleRowClick(record)}
                                     title={`${record?.item.name} (${record?.user.name})`}
                                 >
-                                    <td className="records__table-data-column">{record?.item.name} ({record?.item.id})</td>
-                                    <td className="records__table-data-column">{record?.user.name} ({record?.user.contact})</td>
-                                    <td className="records__table-data-column">{record?.start_date?.split("T")[0]}</td>
-                                    <td className="records__table-data-column">{record?.due_date?.split("T")[0]}</td>
+                                    <td className="records__table-data-column"><b>{record?.item.name} ({record?.item.id})</b></td>
+                                    <td className="records__table-data-column">
+                                        <div className="flex flex-col">
+                                            <span className="text-sm text-slate-700 font-medium">{record?.user.name}</span>
+                                            <span className="text-xs text-slate-400">{record?.user.contact}</span>
+                                        </div>
+                                    </td>
+                                    <td className="records__table-data-column">
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-xs text-slate-500">Borrowed: {record?.start_date?.split("T")[0]}</span>
+                                            <span className="text-xs text-slate-500">Due: <span className={`${record?.due_date?.split("T")[0] === 'Overdue' ? 'text-red-600 font-bold' : ''}`}>{record?.due_date?.split("T")[0]}</span></span>
+                                        </div>
+                                    </td>
                                     <td className="records__table-data-column">{record?.returned_on?.split("T")[0]}</td>
                                     <td className={`p3-text-sm`} >
-                                        <span className={`status ${record?.type === 'returned' // Returned if returned, cancelled, else borrowed
-                                            ? 'returned'
-                                            : record?.type === 'cancelled'
-                                                ? 'cancelled'
-                                                : 'borrowed'
-                                            }`}>
-                                            {record?.type === 'returned'
-                                                ? 'Returned'
-                                                : record?.type === 'cancelled'
-                                                    ? 'Cancelled'
-                                                    : 'Borrowed'}
-                                        </span>
+                                        <Badge>{record?.type.charAt(0).toUpperCase() + record?.type.slice(1)}</Badge>
                                     </td>
                                     <td className="pi3-text-sm" onClick={(e) => e.stopPropagation()}>
                                         {record?.type === 'returned' ? (
