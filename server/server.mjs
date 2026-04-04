@@ -25,26 +25,26 @@ const allowedOrigins = process.env.DEVELOPMENT
     : `https://cdiis-ois.vercel.app`;
 
 const corsOptions = {
-     origin: function (origin, callback) {
-         console.log("Origin Requests: " + origin);
-         console.log("Non-browser: " + !origin);
+    origin: function(origin, callback) {
+        console.log("Origin Requests: " + origin);
+        console.log("Non-browser: " + !origin);
 
-         // Allow requests with no origin (like mobile apps or curl requests)
-         // Check if the origin is in the allowed origins list
-         if (
-             !origin ||
-             allowedOrigins.includes(origin) ||
-             /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/.test(origin) // matches LAN IPs
-         ) {
-         callback(null, true);
-         } else {
-             callback(new Error('Not allowed by CORS'));
-         }
-     },
-     methods: ["POST", "GET", "PUT", "DELETE"],
-     credentials: true, // Allow cookies, authorization headers if needed
-     allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
- };
+        // Allow requests with no origin (like mobile apps or curl requests)
+        // Check if the origin is in the allowed origins list
+        if (
+            !origin ||
+            allowedOrigins.includes(origin) ||
+            /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/.test(origin) // matches LAN IPs
+        ) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ["POST", "GET", "PUT", "DELETE"],
+    credentials: true, // Allow cookies, authorization headers if needed
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
+};
 
 // const corsOptions = {
 //    origin: function (origin, callback) {
@@ -75,7 +75,7 @@ app.use(cors(corsOptions));
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // limit each IP to 100 requests per windowMs
+    max: 50, // limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes.',
 });
 app.use([

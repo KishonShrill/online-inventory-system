@@ -9,7 +9,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './App.css'
 
 import { useSelector } from 'react-redux'
-import Authpage from './pages/Authpage';
+import Login from './pages/Login';
 const InventoryLayout = lazy(() => import('./pages/MasterLayout/InventoryLayout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Inventory = lazy(() => import('./pages/Inventory'));
@@ -31,7 +31,7 @@ function App() {
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <Routes>
-                        <Route path='/' element={<Authpage />} />
+                        <Route path='/' element={<Login />} />
                         <Route path='/signup' element={<Signup />} />
                         <Route path='/app' element={<InventoryLayout />} >
                             <Route path='dashboard' element={<Dashboard />} />

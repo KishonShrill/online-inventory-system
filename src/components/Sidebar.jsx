@@ -1,4 +1,3 @@
-
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Home, Package, Users, Settings, CheckSquare } from "lucide-react";
@@ -22,30 +21,30 @@ const Sidebar = ({ decoded }) => {
     const currentPage = useLocation().pathname
 
     const navItems = [
-        { name: 'Dashboard', link: '/app/dashboard' , icon: Home },
-        { name: 'Inventory', link: '/app/inventory' , icon: Package },
-            ...(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER
-        ? [{ name: 'Item Check', link: '/app/item-check', icon: CheckSquare }]
-        : []),
-        { name: 'Borrow Records', link: '/app/records' , icon: Users },
+        { name: 'Dashboard', link: '/app/dashboard', icon: Home },
+        { name: 'Inventory', link: '/app/inventory', icon: Package },
+        ...(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER
+            ? [{ name: 'Item Check', link: '/app/item-check', icon: CheckSquare }]
+            : []),
+        { name: 'Borrow Records', link: '/app/records', icon: Users },
     ];
 
     const managementItems = [
-        { name: 'Settings', link: '/app/settings' , icon: Settings },
+        { name: 'Settings', link: '/app/settings', icon: Settings },
     ]
 
     return (
         <aside className={`sidebar ${isSidebarOpen ? 'open' : 'close'}`}>
             <div className="sidebar-header-container">
-                 <h1 className={`sidebar-header-title ${!isSidebarOpen && 'hidden'}`}>Inventory</h1>
-                 <button onClick={() => handleToggle()} className="sidebar-button">
-                    {isSidebarOpen ? <ChevronLeft size={24}/> : <ChevronRight size={24} />}
+                <h1 className={`sidebar-header-title ${!isSidebarOpen && 'hidden'}`}>Inventory</h1>
+                <button onClick={() => handleToggle()} className="sidebar-button">
+                    {isSidebarOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
                 </button>
             </div>
-            <hr style={{marginBottom: "1rem"}}/>
+            <hr style={{ marginBottom: "1rem" }} />
             <nav>
-                <p className="px-4 text-xs font-bold white uppercase tracking-wider mb-2 whitespace-nowrap" style={{display: isSidebarOpen ? "block" : "none" }}>Main Menu</p>
-                <ul style={{listStyle: "none"}}>
+                <p className="px-4 text-xs font-bold white uppercase tracking-wider mb-2 whitespace-nowrap" style={{ display: isSidebarOpen ? "block" : "none" }}>Main Menu</p>
+                <ul style={{ listStyle: "none" }}>
                     {navItems.map(item => (
                         <li key={item.name}>
                             <Link
@@ -56,15 +55,15 @@ const Sidebar = ({ decoded }) => {
                                 <span
                                     className={`sidebar-link-span ${!isSidebarOpen && 'appear'}`}
                                 >
-                                {item.name}
+                                    {item.name}
                                 </span>
                             </Link>
                         </li>
                     ))}
                 </ul>
-                
-                <p className="mt-8 px-4 text-xs font-bold white uppercase tracking-wider mb-2 whitespace-nowrap" style={{display: isSidebarOpen ? "block" : "none" }}>Management</p>
-                <ul style={{listStyle: "none"}}>
+
+                <p className="mt-8 px-4 text-xs font-bold white uppercase tracking-wider mb-2 whitespace-nowrap" style={{ display: isSidebarOpen ? "block" : "none" }}>Management</p>
+                <ul style={{ listStyle: "none" }}>
                     {managementItems.map(item => (
                         <li key={item.name}>
                             <Link
@@ -75,7 +74,7 @@ const Sidebar = ({ decoded }) => {
                                 <span
                                     className={`sidebar-link-span ${!isSidebarOpen && 'appear'}`}
                                 >
-                                {item.name}
+                                    {item.name}
                                 </span>
                             </Link>
                         </li>

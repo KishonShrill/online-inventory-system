@@ -1,211 +1,144 @@
 import { useState, useEffect, useMemo } from "react";
-
 import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { ResultAsync } from "neverthrow";
+import { Search, ArrowUpDown, Clock, XCircle, CheckCircle2 } from "lucide-react";
+
 import { editRecord } from '../../redux/actions/recordActions';
 import { editInventory } from "../../redux/actions/inventoryActions";
 import { useSortableData } from "../../helpers/sortUtils";
-import { Role } from "../../helpers/_variables";
-
-import axios from "axios";
-import SearchInput from "../../components/SearchInput";
-import Pagination from "../Pagination";
 import { filterBySearchQuery } from "../../helpers/inputUtils";
 import { paginationData } from "../../helpers/paginationUtils.js";
+import { Role } from "../../helpers/_variables";
+import Pagination from "../Pagination";
 
-const postURL =
-    import.meta.env.VITE_DEVELOPMENT === "true"
-        ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/records`
-        : `https://cdiis-ois-server.vercel.app/api/records`;
+// Shadcn UI
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+
+const postURL = import.meta.env.VITE_DEVELOPMENT === "true"
+    ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/records`
+    : `https://cdiis-ois-server.vercel.app/api/records`;
+
+const updateRecordAPI = (configuration) => {
+    return ResultAsync.fromPromise(
+        axios(configuration),
+        (err) => err.response?.data?.message || "An unexpected network error occurred."
+    );
+};
 
 const ReserveTable = ({ decoded }) => {
+    const dispatch = useDispatch();
+    const records = useSelector((state) => state.record);
+    const reservedRecords = records.filter(item => item.type?.toLowerCase().includes("reserve"));
+
     const [searchQueryReserve, setSearchQueryReserve] = useState('');
     const [debouncedReserveQuery, setDebouncedReserveQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
-    const dispatch = useDispatch()
-    const records = useSelector((state) => state.record);
-    const reservedRecords = records.filter(item => item.type?.toLowerCase().includes("reserve"))
-    const { items: sortedReservedRecords, requestSort: requestReservedSort, getSortDirectionClass: getReservedClass } = useSortableData(reservedRecords, { key: 'type', direction: 'ascending' });
-
-    const handleLend = (record) => {
-        const isConfirmed = confirm(`Are you sure about lending to ${record?.user.name}?`)
-        if (!isConfirmed) {
-            return;
-        }
-
-        const todayPlus7 = new Date();
-        todayPlus7.setDate(todayPlus7.getDate() + 7);
-        const borrowDueDate = todayPlus7.toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
-
-        const configuration = {
-            method: "post",
-            url: postURL,
-            data: {
-                _id: record?._id,
-                user: {
-                    name: record?.user.name,
-                    contact: record?.user.contact,
-                },
-                item: {
-                    id: record?.item.id,
-                    name: record?.item.name,
-                },
-                date: borrowDueDate,
-                type: 'borrow',
-            },
-        };
-
-        axios(configuration)
-            .then((res) => {
-                console.log(res.data);
-                dispatch(editRecord(res.data.result.updatedRecord))
-                dispatch(editInventory(res.data.result.borrowedItem[0]._id, { status: res.data.result.borrowedItem[0].status }))
-            })
-            .catch((err) => {
-                console.log(err);
-                alert(err.response.data.message);
-            })
-    }
-
-    const handleRetract = (record) => {
-        const isConfirmed = confirm(`Retracting reserve record of ${record?.user.name} - ${record?.item.name} (${record?.item.id})?`)
-        if (!isConfirmed) {
-            return;
-        }
-
-        const configuration = {
-            method: "post",
-            url: postURL,
-            data: {
-                _id: record?._id,
-                item: {
-                    id: record?.item.id
-                },
-                type: "cancelled",
-            }
-        }
-
-        axios(configuration)
-            .then((res) => {
-                console.log(res.data);
-                dispatch(editRecord(res.data.result.updatedRecord))
-                dispatch(editInventory(res.data.result.returnedItem[0]._id, { status: res.data.result.returnedItem[0].status }))
-            })
-            .catch((err) => {
-                console.log(err);
-                alert(err.response.data.message);
-            })
-    }
+    const { items: sortedReservedRecords, requestSort } = useSortableData(reservedRecords, { key: 'type', direction: 'ascending' });
 
     useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedReserveQuery(searchQueryReserve.trim());
-        }, 300); // 300ms debounce
-
+        const handler = setTimeout(() => setDebouncedReserveQuery(searchQueryReserve.trim()), 300);
         return () => clearTimeout(handler);
     }, [searchQueryReserve]);
 
     const filteredReserves = useMemo(() => {
-        return filterBySearchQuery(
-            sortedReservedRecords,
-            debouncedReserveQuery,
-            ['item.name', 'user.name', 'due_date']
-        );
+        return filterBySearchQuery(sortedReservedRecords, debouncedReserveQuery, ['item.name', 'user.name', 'due_date']);
     }, [sortedReservedRecords, debouncedReserveQuery]);
 
-    const { paginatedData, totalPages, quantity } = paginationData(filteredReserves, 7, currentPage)
+    const { paginatedData, totalPages, quantity } = paginationData(filteredReserves, 7, currentPage);
+
+    const handleLend = async (record) => {
+        if (!confirm(`Authorize deployment of ${record?.item.name} to ${record?.user.name}?`)) return;
+
+        const todayPlus7 = new Date();
+        todayPlus7.setDate(todayPlus7.getDate() + 7);
+        const borrowDueDate = todayPlus7.toLocaleDateString('en-CA');
+
+        const apiResult = await updateRecordAPI({
+            method: "post", url: postURL,
+            data: {
+                _id: record?._id,
+                user: { name: record?.user.name, contact: record?.user.contact },
+                item: { id: record?.item.id, name: record?.item.name },
+                date: borrowDueDate, type: 'borrow',
+            }
+        });
+
+        if (apiResult.isErr()) return alert(apiResult.error); // Note: Swap for toast later
+
+        dispatch(editRecord(apiResult.value.data.result.updatedRecord));
+        dispatch(editInventory(apiResult.value.data.result.borrowedItem[0]._id, { status: apiResult.value.data.result.borrowedItem[0].status }));
+    };
+
+    const handleRetract = async (record) => {
+        if (!confirm(`Revoke reservation for ${record?.item.name}?`)) return;
+
+        const apiResult = await updateRecordAPI({
+            method: "post", url: postURL,
+            data: { _id: record?._id, item: { id: record?.item.id }, type: "cancelled" }
+        });
+
+        if (apiResult.isErr()) return alert(apiResult.error);
+
+        dispatch(editRecord(apiResult.value.data.result.updatedRecord));
+        dispatch(editInventory(apiResult.value.data.result.returnedItem[0]._id, { status: apiResult.value.data.result.returnedItem[0].status }));
+    };
 
     return (
-        <div>
-            <h3 style={{ marginLeft: "1rem", marginBottom: "1rem", textDecoration: "underline", cursor: "default" }}>Reserved</h3>
-            <SearchInput value={searchQueryReserve} onChange={(e) => setSearchQueryReserve(e.target.value)} />
-            <div className="records__table-container">
-                <table className="records__table">
-                    <thead className="records__table-header">
-                        <tr>
-                            <th className="records__table-header-column" title={`${getReservedClass('item.name')}`}>
-                                <button type="button" onClick={() => requestReservedSort('item.name')} className={`sort-button ${getReservedClass('item.name')}`}>
-                                    Item Name
-                                </button>
-                            </th>
-                            <th className="records__table-header-column" title={`${getReservedClass('user.name')}`}>
-                                <button type="button" onClick={() => requestReservedSort('user.name')} className={`sort-button ${getReservedClass('user.name')}`}>
-                                    User
-                                </button>
-                            </th>
-                            <th className="records__table-header-column" title={`${getReservedClass('user.contact')}`}>
-                                <button type="button" onClick={() => requestReservedSort('user.contact')} className={`sort-button ${getReservedClass('user.contact')}`}>
-                                    Contact
-                                </button>
-                            </th>
-                            <th className="records__table-header-column" title={`${getReservedClass('due_date')}`}>
-                                <button type="button" onClick={() => requestReservedSort('due_date')} className={`sort-button ${getReservedClass('due_date')}`}>
-                                    Due Date
-                                </button>
-                            </th>
-                            <th className="records__table-header-column" title={`${getReservedClass('type')}`}>
-                                <button type="button" onClick={() => requestReservedSort('type')} className={`sort-button ${getReservedClass('type')}`}>
-                                    Status
-                                </button>
-                            </th>
-                            {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
-                                <th className="records__table-header-column">Actions</th>
-                            )}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {paginatedData.map((record) => (
-                            <tr key={record?._id} className="records__table-data-row" title={`${record?.item.name} (${record?.user.name})`}>
-                                <td className="records__table-data-column">{record?.item.name} ({record?.item.id})</td>
-                                <td className="records__table-data-column">{record?.user.name}</td>
-                                <td className="records__table-data-column">{record?.user.contact}</td>
-                                <td className="records__table-data-column">{record?.due_date?.split("T")[0]}</td>
-                                <td className="p3-text-sm">
-                                    {
-                                        (new Date().toLocaleDateString('en-CA') < record?.due_date?.split("T")[0])
-                                            ? (<span className="status">{record?.type}</span>)
-                                            : (<span className="status expired">Expired</span>)
-                                    }
-                                </td>
-                                <td className="pi3-text-sm">
-                                    {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
-                                        <RecordActions
-                                            record={record}
-                                            handleLend={handleLend}
-                                            handleRetract={handleRetract}
-                                        />
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+        <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-b border-slate-100">
+                <div className="relative w-full sm:max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                        placeholder="Search reservations..."
+                        value={searchQueryReserve} onChange={(e) => setSearchQueryReserve(e.target.value)}
+                        className="pl-9 bg-slate-50 focus-visible:ring-blue-600"
+                    />
+                </div>
+                <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity} />
             </div>
-            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity}/>
+
+            <Table>
+                <TableHeader className="bg-slate-50/50">
+                    <TableRow>
+                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('item.name')}>Asset <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('user.name')}>Personnel <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('due_date')}>Scheduled <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                        <TableHead className="font-semibold text-slate-600">Status</TableHead>
+                        {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+                            <TableHead className="text-right font-semibold text-slate-600">Actions</TableHead>
+                        )}
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {paginatedData.map((record) => {
+                        const isExpired = new Date().toLocaleDateString('en-CA') >= record?.due_date?.split("T")[0];
+                        return (
+                            <TableRow key={record?._id} className="hover:bg-slate-50/50">
+                                <TableCell className="font-medium text-slate-900">{record?.item.name} <span className="text-slate-400 font-mono text-xs block">{record?.item.id}</span></TableCell>
+                                <TableCell>
+                                    <div className="flex flex-col"><span className="text-sm font-medium text-slate-700">{record?.user.name}</span><span className="text-xs text-slate-500">{record?.user.contact}</span></div>
+                                </TableCell>
+                                <TableCell className="text-slate-600">{record?.due_date?.split("T")[0]}</TableCell>
+                                <TableCell>
+                                    {!isExpired ? <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200"><Clock className="w-3 h-3 mr-1" /> Pending</Badge> : <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200"><XCircle className="w-3 h-3 mr-1" /> Expired</Badge>}
+                                </TableCell>
+                                {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+                                    <TableCell className="text-right">
+                                        <Button size="sm" onClick={() => handleLend(record)} className="bg-blue-600 hover:bg-blue-700 text-white mr-2">Deploy</Button>
+                                        {isExpired && <Button size="sm" variant="destructive" onClick={() => handleRetract(record)}>Revoke</Button>}
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
         </div>
-    )
-};
-
-const RecordActions = ({ record, handleLend, handleRetract }) => {
-    const today = new Date().toLocaleDateString('en-CA');
-    const dueDate = record?.due_date?.split("T")[0];
-    const isExpired = today >= dueDate;
-
-    return (
-        <>
-            <button 
-                className="actions-add" 
-                onClick={() => handleLend(record)}
-            >Lend</button>
-            {isExpired && (
-                <button 
-                    className="actions-danger"
-                    style={{marginLeft: "0.5rem"}}
-                    onClick={() => handleRetract(record)}
-                >Retract</button>
-            )}
-        </>
     );
 };
-
 export default ReserveTable;

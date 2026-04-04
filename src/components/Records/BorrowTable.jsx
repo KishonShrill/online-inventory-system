@@ -1,291 +1,153 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-
 import { useSelector } from "react-redux";
+import { Search, ArrowUpDown, XCircle, CheckCircle2, RotateCcw } from "lucide-react";
+
 import { useSortableData } from "../../helpers/sortUtils";
 import { filterBySearchQuery } from "../../helpers/inputUtils";
+import { paginationData } from "../../helpers/paginationUtils.js";
 import { Role } from "../../helpers/_variables";
-
-import SearchInput from "../../components/SearchInput";
 import ReturnItemModal from "./ReturnItemModal";
 import Pagination from "../Pagination";
-import { paginationData } from "../../helpers/paginationUtils.js";
-import { XCircle } from "lucide-react";
+
+// Shadcn UI
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const BorrowTable = ({ decoded }) => {
     const [searchQueryBorrow, setSearchQueryBorrow] = useState('');
     const [debouncedBorrowQuery, setDebouncedBorrowQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const [selectedRowId, setSelectedRowId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
-    const tableContainerRef = useRef(null);
-
     const [chosenRecord, setChosenRecord] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
 
     const records = useSelector((state) => state.record);
-    const borrowedRecords = records.filter(item => {
-        return (
-            item.type?.toLowerCase().includes("cancelled") ||
-            item.type?.toLowerCase().includes("borrow") ||
-            item.type?.toLowerCase().includes("returned")
-        )
-    })
+    const borrowedRecords = records.filter(item => ["cancelled", "borrow", "returned"].some(status => item.type?.toLowerCase().includes(status)));
 
-    // Tabular Data
-    // Tabular Data
-    const { items: sortedBorrowedRecords, requestSort: requestBorrowedSort, getSortDirectionClass: getBorrowedClass } = useSortableData(borrowedRecords, { key: 'due_date', direction: 'descending' });
-    const filteredBorrows = useMemo(() => {
-        return filterBySearchQuery(
-            sortedBorrowedRecords,
-            debouncedBorrowQuery,
-            ['item.name', 'user.name', 'start_date']
-        );
-    }, [sortedBorrowedRecords, debouncedBorrowQuery]);
-    const { paginatedData, totalPages, quantity } = paginationData(filteredBorrows, 7, currentPage)
-    // Tabular Data
-    // Tabular Data
+    const { items: sortedBorrowedRecords, requestSort } = useSortableData(borrowedRecords, { key: 'due_date', direction: 'descending' });
 
-    const closeReturnModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleReturn = (record) => {
-        setChosenRecord(record);
-        setIsModalOpen(true)
-    };
-
-    const handleRowClick = (record) => {
-        if (selectedRowId === record._id) {
-            // This is the second click on the same row
-            setModalData(record);
-            setIsViewModalOpen(true);
-            setSelectedRowId(null); // Deselect row after opening modal
-        } else {
-            // This is the first click, so just select the row
-            setSelectedRowId(record._id);
-        }
-    };
-
-    const Badge = ({ children, type }) => {
-        const styles = {
-            Computers: 'bg-blue-100 text-blue-700 border-blue-200',
-            Televisions: 'bg-purple-100 text-purple-700 border-purple-200',
-            'Drawing Tablets': 'bg-pink-100 text-pink-700 border-pink-200',
-            'Action Cameras': 'bg-orange-100 text-orange-700 border-orange-200',
-            Returned: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-            Borrow: 'bg-amber-100 text-amber-700 border-amber-200', // change this before production -> Borrowed
-            Overdue: 'bg-red-100 text-red-700 border-red-200',
-            default: 'bg-slate-100 text-slate-700 border-slate-200'
-        };
-
-        const styleClass = styles[children] || styles.default;
-
-        return (
-            <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${styleClass}`}>
-            {children}
-            </span>
-        );
-    };
-
-    // Debounce effect for search input
     useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedBorrowQuery(searchQueryBorrow.trim());
-        }, 300); // 300ms debounce
-
+        const handler = setTimeout(() => setDebouncedBorrowQuery(searchQueryBorrow.trim()), 300);
         return () => clearTimeout(handler);
     }, [searchQueryBorrow]);
 
-    // Effect to handle clicks outside the table
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (tableContainerRef.current && !tableContainerRef.current.contains(event.target)) {
-                setSelectedRowId(null); // Reset selection if click is outside
-            }
+    const filteredBorrows = useMemo(() => filterBySearchQuery(sortedBorrowedRecords, debouncedBorrowQuery, ['item.name', 'user.name', 'start_date']), [sortedBorrowedRecords, debouncedBorrowQuery]);
+    const { paginatedData, totalPages, quantity } = paginationData(filteredBorrows, 7, currentPage);
+
+    const handleRowClick = (record) => {
+        setModalData(record);
+        setIsViewModalOpen(true);
+    };
+
+    const StatusBadge = ({ status }) => {
+        const map = {
+            returned: { color: 'bg-emerald-50 text-emerald-700 border-emerald-200', label: 'Returned' },
+            borrow: { color: 'bg-amber-50 text-amber-700 border-amber-200', label: 'Deployed' },
+            cancelled: { color: 'bg-red-50 text-red-700 border-red-200', label: 'Cancelled' },
         };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside); // Cleanup
-        };
-    }, []);
+        const active = map[status?.toLowerCase()] || { color: 'bg-slate-50 text-slate-700', label: status };
+        return <Badge variant="outline" className={`${active.color} font-semibold capitalize`}>{active.label}</Badge>;
+    };
 
     return (
-        <div>
-            <h3 style={{ marginLeft: "1rem", marginBottom: "1rem", textDecoration: "underline", cursor: "default" }}>Borrowed</h3>
-            <SearchInput value={searchQueryBorrow} onChange={(e) => setSearchQueryBorrow(e.target.value)} />
-            <div className="records__table-container" ref={tableContainerRef}>
-                <table className="records__table">
-                    <thead className="records__table-header">
-                        <tr>
-                            <th className="records__table-header-column" title={`${getBorrowedClass('due_date')}`}>
-                                <button type="button" onClick={() => requestBorrowedSort('item.name')} className={`sort-button ${getBorrowedClass('item.name')}`}>
-                                    Item Name
-                                </button>
-                            </th>
-                            <th className="records__table-header-column" title={`${getBorrowedClass('user.name')}`}>
-                                <button type="button" onClick={() => requestBorrowedSort('user.name')} className={`sort-button ${getBorrowedClass('user.name')}`}>
-                                    User
-                                </button>
-                            </th>
-                            <th className="records__table-header-column" title={`${getBorrowedClass('due_date')}`}>
-                                <button type="button" onClick={() => requestBorrowedSort('due_date')} className={`sort-button ${getBorrowedClass('due_date')}`}>
-                                    Dates
-                                </button>
-                            </th>
-                            <th className="records__table-header-column" title={`${getBorrowedClass('returned_on')}`}>
-                                <button type="button" onClick={() => requestBorrowedSort('returned_on')} className={`sort-button ${getBorrowedClass('returned_on')}`}>
-                                    Returned On
-                                </button>
-                            </th>
-                            <th className="records__table-header-column" title={`${getBorrowedClass('type')}`}>
-                                <button type="button" onClick={() => requestBorrowedSort('type')} className={`sort-button ${getBorrowedClass('type')}`}>
-                                    Status
-                                </button>
-                            </th>
-                            {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
-                                <th className="records__table-header-column">Actions</th>
-                            )}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {paginatedData
-                            .map((record) => (
-                                <tr 
-                                    key={record?._id} 
-                                    className={`records__table-data-row ${selectedRowId === record._id ? 'selected' : ''}`} 
-                                    onClick={() => handleRowClick(record)}
-                                    title={`${record?.item.name} (${record?.user.name})`}
-                                >
-                                    <td className="records__table-data-column"><b>{record?.item.name} ({record?.item.id})</b></td>
-                                    <td className="records__table-data-column">
-                                        <div className="flex flex-col">
-                                            <span className="text-sm text-slate-700 font-medium">{record?.user.name}</span>
-                                            <span className="text-xs text-slate-400">{record?.user.contact}</span>
-                                        </div>
-                                    </td>
-                                    <td className="records__table-data-column">
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-xs text-slate-500">Borrowed: {record?.start_date?.split("T")[0]}</span>
-                                            <span className="text-xs text-slate-500">Due: <span className={`${record?.due_date?.split("T")[0] === 'Overdue' ? 'text-red-600 font-bold' : ''}`}>{record?.due_date?.split("T")[0]}</span></span>
-                                        </div>
-                                    </td>
-                                    <td className="records__table-data-column">{record?.returned_on?.split("T")[0]}</td>
-                                    <td className={`p3-text-sm`} >
-                                        <Badge>{record?.type.charAt(0).toUpperCase() + record?.type.slice(1)}</Badge>
-                                    </td>
-                                    <td className="pi3-text-sm" onClick={(e) => e.stopPropagation()}>
-                                        {record?.type === 'returned' ? (
-                                           '✅'
-                                        ) : record?.type === 'cancelled' ? (
-                                            <span style={{display: 'flex'}}><XCircle size={18} color="red"/></span>
-                                        ) : (
-                                            (decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && 
-                                            (
-                                                new Date().toLocaleDateString('en-CA') < record?.due_date?.split("T")[0]
-                                                    ? <button className="actions-create" onClick={() => handleReturn(record)}>Return</button>
-                                                    : <button className="actions-danger" onClick={() => handleReturn(record)}>Return</button>
-                                            )
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                    </tbody>
-                </table>
+        <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-b border-slate-100">
+                <div className="relative w-full sm:max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                        placeholder="Search deployments..."
+                        value={searchQueryBorrow} onChange={(e) => setSearchQueryBorrow(e.target.value)}
+                        className="pl-9 bg-slate-50 focus-visible:ring-blue-600"
+                    />
+                </div>
+                <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity} />
             </div>
-            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity}/>
-            <ReturnItemModal isOpen={isModalOpen} onClose={closeReturnModal} record={chosenRecord} />
-            {/* Conditionally render the modal */}
-            {isViewModalOpen && modalData && (
-                <ViewReturnedItemModal 
-                    record={modalData} 
-                    onClose={() => setIsViewModalOpen(false)} 
-                />
-            )}
+
+            <Table>
+                <TableHeader className="bg-slate-50/50">
+                    <TableRow>
+                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('item.name')}>Asset <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('user.name')}>Personnel <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('due_date')}>Lifecycle <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('returned_on')}>Returned <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                        <TableHead className="font-semibold text-slate-600">Status</TableHead>
+                        <TableHead className="text-right font-semibold text-slate-600 pr-6">Processing</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {paginatedData.map((record) => {
+                        const isOverdue = record?.type === 'borrow' && new Date().toLocaleDateString('en-CA') >= record?.due_date?.split("T")[0];
+                        return (
+                            <TableRow key={record?._id} className="hover:bg-slate-50/50 cursor-pointer" onClick={() => handleRowClick(record)}>
+                                <TableCell className="font-medium text-slate-900">{record?.item.name} <span className="text-slate-400 font-mono text-xs block">{record?.item.id}</span></TableCell>
+                                <TableCell>
+                                    <div className="flex flex-col"><span className="text-sm font-medium text-slate-700">{record?.user.name}</span><span className="text-xs text-slate-500">{record?.user.contact}</span></div>
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex flex-col gap-1 text-xs">
+                                        <span className="text-slate-500">Out: {record?.start_date?.split("T")[0]}</span>
+                                        <span className="text-slate-500">Due: <span className={isOverdue ? 'text-red-600 font-bold' : ''}>{record?.due_date?.split("T")[0]}</span></span>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="text-slate-600 text-sm">{record?.returned_on?.split("T")[0] || "-"}</TableCell>
+                                <TableCell><StatusBadge status={record?.type} /></TableCell>
+                                <TableCell className="text-right pr-4" onClick={(e) => e.stopPropagation()}>
+                                    {record?.type === 'returned' && <CheckCircle2 className="w-5 h-5 text-emerald-500 ml-auto mr-4" />}
+                                    {record?.type === 'cancelled' && <XCircle className="w-5 h-5 text-red-500 ml-auto mr-4" />}
+                                    {record?.type === 'borrow' && (decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+                                        <Button size="sm" variant={isOverdue ? "destructive" : "default"} onClick={() => { setChosenRecord(record); setIsModalOpen(true); }} className={!isOverdue ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}>
+                                            <RotateCcw className="w-3 h-3 mr-1" /> Process
+                                        </Button>
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+
+            <ReturnItemModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} record={chosenRecord} />
+
+            {/* View Details Modal */}
+            <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl flex items-center gap-2">Transaction Details <Badge variant="secondary">{modalData?.type.toUpperCase()}</Badge></DialogTitle>
+                        <DialogDescription>Personnel: {modalData?.user.name} | Contact: {modalData?.user.contact}</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-4">
+                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 flex justify-between items-center">
+                            <div><p className="text-sm text-slate-500 font-medium mb-1">Asset Nomenclature</p><p className="text-base font-bold text-slate-900">{modalData?.item.name}</p></div>
+                            <Badge variant="outline" className="font-mono bg-white">{modalData?.item.id}</Badge>
+                        </div>
+
+                        <div className="space-y-2">
+                            <h4 className="text-sm font-semibold text-slate-900">Component Status</h4>
+                            <div className="border border-slate-100 rounded-lg p-3 bg-white space-y-2">
+                                {modalData?.returned_items ? Object.entries(modalData.returned_items).map(([name, isReturned]) => (
+                                    <div key={name} className="flex justify-between items-center text-sm">
+                                        <span className="text-slate-700">{name}</span>
+                                        {isReturned ? <Badge variant="secondary" className="bg-emerald-100 text-emerald-700"><CheckCircle2 className="w-3 h-3 mr-1" /> Returned</Badge> : <Badge variant="secondary" className="bg-red-100 text-red-700"><XCircle className="w-3 h-3 mr-1" /> Missing</Badge>}
+                                    </div>
+                                )) : <p className="text-sm text-slate-500 italic">No component data recorded.</p>}
+                            </div>
+                        </div>
+
+                        {modalData?.feedback && (
+                            <div className="space-y-2">
+                                <h4 className="text-sm font-semibold text-slate-900">Operator Feedback</h4>
+                                <div className="text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[80px]">{modalData.feedback}</div>
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
-    )
+    );
 };
-
-const ViewReturnedItemModal = ({ record, onClose }) => {
-    return (
-        <div className="modal-backdrop" onClick={onClose}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <button className="modal-close-btn" onClick={onClose}>&times;</button>
-                <h2 className="modal-header">View Returned Item</h2>
-
-                <form id="just-watching">
-                    <div className="form-group">
-                        <label className="form-label" htmlFor="itemId">Item ID (Borrower)</label>
-                        <div className="input-group">
-                            <input 
-                                type="text"
-                                id="itemId" 
-                                className="form-input"
-                                defaultValue={`${record?.item.id} (${record?.user.name})`}
-                                readOnly
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label className="form-label" htmlFor="itemName">Gadget:</label>
-                        <div className="input-group">
-                            <input 
-                                type="text"
-                                id="itemName"
-                                className="form-input"
-                                defaultValue={record?.item.name}
-                                readOnly 
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="itemComponents" className="form-label">Item Components:</label>
-                        <ul id="itemComponents">
-                            {record?.returned_items ? (
-                                Object.entries(record?.returned_items).map(([name, isReturned], i) => (
-                                    <li
-                                        key={name}
-                                        className="form-checkbox"
-                                    >
-                                        <span className="">
-                                            {i + 1}. {name} —{" "}
-                                        </span>
-                                        <label>
-                                            {isReturned ? "✅ Returned" : "❌ Missing"}
-                                        </label>
-                                    </li>
-                                ))
-                            )
-                            : record?.type == "cancelled" ? (
-                                <li className="form-checkbox">
-                                    ⚠️ This record has been cancelled.
-                                </li>
-                            )
-                            : (
-                                <li className="form-checkbox">
-                                    ⚠️ Item is not yet returned for this record.
-                                </li>
-                            )}
-                        </ul>
-                    </div>
-
-                    {record?.feedback && (
-                        <div className="form-group">
-                            <label className="form-label" htmlFor="returnFeedback">Feedback:</label>
-                            <textarea 
-                                id="returnFeedback"
-                                className="form-textarea"
-                                defaultValue={record?.feedback}
-                            ></textarea>
-                        </div>
-                    )}
-                </form>
-            </div>
-        </div>
-    )
-}
-
 export default BorrowTable;
