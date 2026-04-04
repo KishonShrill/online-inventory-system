@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import { Outlet, Navigate } from "react-router-dom"
 import { useDispatch } from 'react-redux';
@@ -20,14 +19,7 @@ const cookies = new Cookies()
 const token = cookies.get('CDIIS-OIS')
 
 const InventoryLayout = () => {
-    
-    
     // Early return, no unnecessary fetch call to Database if user is not logged in
-    if (!token) {
-        alert("You are not logged in!")
-        return <Navigate to="/" replace />;
-    }
-    
     const decoded = jwtDecode(token);
     const dispatch = useDispatch();
     const prevItemsRef = useRef(null); // store previous data to compare
@@ -35,10 +27,16 @@ const InventoryLayout = () => {
     const prevAttendancesRef = useRef(null); // store previous data to compare
     const { itemsQuery, recordsQuery, attendanceQuery } = useFetchInitialize();
 
+    useEffect(() => {
+        if (!token) {
+            alert("You are not logged in!")
+            return <Navigate to="/" replace />;
+        }
+    }, [])
 
     useEffect(() => {
         if (
-            itemsQuery?.data && 
+            itemsQuery?.data &&
             JSON.stringify(prevItemsRef.current) !== JSON.stringify(itemsQuery.data)
         ) {
             console.log("🔁 Inventory updated");
@@ -71,7 +69,7 @@ const InventoryLayout = () => {
             prevAttendancesRef.current = attendanceQuery.data;
         }
     }, [attendanceQuery, dispatch]);
-    
+
 
     return (
         <div className="inventory">
