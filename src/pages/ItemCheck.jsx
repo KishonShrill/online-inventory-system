@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
@@ -43,10 +43,12 @@ const ItemCheck = () => {
     const decoded = token ? jwtDecode(token) : { userRole: 'guest' };
     const dispatch = useDispatch();
 
-    if (decoded.userRole !== Role.ADMIN && decoded.userRole !== Role.MANAGER) {
-        alert("System clearance denied. Authorized personnel only.");
-        return <Navigate to="/app/dashboard" replace />;
-    }
+    useEffect(() => {
+        if (decoded.userRole !== Role.ADMIN && decoded.userRole !== Role.MANAGER) {
+            alert("System clearance denied. Authorized personnel only.");
+            return <Navigate to="/app/dashboard" replace />;
+        }
+    }, [])
 
     const attendances = useSelector((state) => state.attendance);
     const inventory = useSelector((state) => state.inventory);
@@ -173,11 +175,11 @@ const ItemCheck = () => {
                 {/* Page Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+                        <h1 className="text-3xl max-md:text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
                             <ClipboardCheck className="w-8 h-8 text-blue-600" />
                             Asset Verification
                         </h1>
-                        <p className="text-slate-500 mt-1">Scan or manually enter an asset ID to log its components.</p>
+                        <p className="text-slate-500 mt-1 max-md:text-sm">Scan or manually enter an asset ID to log its components.</p>
                     </div>
 
                     {/* Dynamic Time/Session Badge */}
@@ -197,7 +199,7 @@ const ItemCheck = () => {
                         <CardTitle className="text-lg text-slate-800">Identify Asset</CardTitle>
                         <CardDescription>Use a barcode scanner or search the registry.</CardDescription>
 
-                        <div className="flex items-center gap-3 mt-4">
+                        <div className="flex max-md:flex-col gap-3 mt-4">
                             <div className="relative flex-1">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                                     <Search className="w-4 h-4" />
@@ -209,27 +211,29 @@ const ItemCheck = () => {
                                     onChange={(e) => setScannedId(e.target.value.toUpperCase())}
                                     onKeyDown={(e) => e.key === "Enter" && handleFetchItem()}
                                     placeholder="e.g., EQP-0015"
-                                    className="pl-10 h-12 text-lg font-mono uppercase bg-slate-50 border-slate-300 focus-visible:ring-blue-600"
+                                    className="pl-10 h-12 text-lg max-md:text-sm font-mono uppercase bg-slate-50 border-slate-300 focus-visible:ring-blue-600"
                                 />
                                 <CustomDatalist id="itemIDs" items={filteredItems} />
                             </div>
 
-                            <Button
-                                onClick={handleFetchItem}
-                                className="h-12 px-6 bg-slate-900 hover:bg-slate-800 text-white font-semibold"
-                            >
-                                Verify
-                            </Button>
+                            <div className="flex gap-2 justify-between">
+                                <Button
+                                    onClick={handleFetchItem}
+                                    className="h-12 px-6 grow bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+                                >
+                                    Verify
+                                </Button>
 
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="h-12 w-12 p-0 border-slate-300 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200"
-                                onClick={() => setIsQROpen(prev => !prev)}
-                                title="Open Camera Scanner"
-                            >
-                                <ScanLine className="w-5 h-5" />
-                            </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="h-12 w-12 p-0 border-slate-300 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200"
+                                    onClick={() => setIsQROpen(prev => !prev)}
+                                    title="Open Camera Scanner"
+                                >
+                                    <ScanLine className="w-5 h-5" />
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Status Messages */}
@@ -277,8 +281,8 @@ const ItemCheck = () => {
                                             <Label
                                                 key={subItem.name}
                                                 className={`flex items-center gap-3 p-3 rounded-lg border transition-colors cursor-pointer ${attendance[subItem.name]
-                                                        ? "bg-emerald-50 border-emerald-200 text-emerald-900"
-                                                        : "bg-white border-slate-200 hover:border-blue-300 hover:bg-slate-50"
+                                                    ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                                                    : "bg-white border-slate-200 hover:border-blue-300 hover:bg-slate-50"
                                                     }`}
                                             >
                                                 <Checkbox

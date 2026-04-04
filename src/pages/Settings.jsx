@@ -1,128 +1,158 @@
 
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'universal-cookie';
-import '../styles/settings.scss'
-import { useDispatch, useSelector } from 'react-redux';
+import { User, Mail, LogOut, Bell, Moon, ShieldCheck, Settings2 } from 'lucide-react';
+
 import { toggleDarkMode } from '../redux/actions/darkModeActions';
-import {  
-  User,
-  Mail,
-  LogOut,
-  Bell,
-  Moon,
-} from 'lucide-react';
 
-
+// Shadcn UI Components
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 const Settings = () => {
-    const cookies = new Cookies()
-    const token = cookies.get("CDIIS-OIS")
-    const decoded = jwtDecode(token)
-    const navigate = useNavigate()
-    const darkMode = useSelector(state => state.darkMode.enabled);
-    const dispatch = useDispatch();
+    const cookies = new Cookies();
+    const token = cookies.get("CDIIS-OIS");
+    const decoded = token ? jwtDecode(token) : { userName: 'Guest', userEmail: 'N/A' };
 
-    const logout = () => {
-        cookies.remove("CDIIS-OIS", { path: "/" });
-        window.location.pathname = '/';
-    }
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const darkMode = useSelector(state => state.darkMode?.enabled || false);
+
+    const handleLogout = () => {
+        if (confirm("Are you sure you want to securely sign out?")) {
+            cookies.remove("CDIIS-OIS", { path: "/" });
+            window.location.pathname = '/';
+        }
+    };
 
     return (
-        <>
-            <title>CDIIS OIS - Settings</title>
-            <div className='max-w-4xl mx-auto space-y-8'>
-                <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-8">
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="h-16 w-16 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-2xl font-bold">
-                            A
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-slate-800">Admin Account</h2>
-                            <p className="text-slate-500 text-sm">Manage your profile information</p>
-                        </div>
+        <div className="min-h-screen bg-slate-50 p-6 md:p-10 font-sans">
+            <title>CDIIS OIS - System Preferences</title>
+
+            <div className="max-w-4xl mx-auto">
+
+                {/* Page Header */}
+                <div className="mb-8 flex items-center gap-3">
+                    <div className="p-2.5 bg-blue-600 text-white rounded-xl shadow-sm">
+                        <Settings2 className="w-6 h-6" />
                     </div>
-    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                                <User size={16} className="text-slate-400"/> Username
-                            </label>
-                            <input 
-                                type="text"
-                                readOnly
-                                defaultValue={decoded.userName} 
-                                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none text-sm transition-all"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                                <Mail size={16} className="text-slate-400"/> Email Address
-                            </label>
-                            <input 
-                                type="email" 
-                                readOnly
-                                defaultValue={decoded.userEmail}
-                                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none text-sm transition-all"
-                            />
-                        </div>
-                    </div>
-                </div>   
-    
-                {/* System Preferences */}
-                <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-8">
-                    <h3 className="text-lg font-bold text-slate-800 mb-6">System Settings</h3>
-                    
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between pb-6 border-b border-slate-50">
-                            <div className="flex gap-4">
-                                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg h-fit">
-                                    <Bell size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-slate-800">Email Notifications</h4>
-                                    <p className="text-xs text-slate-500 mt-1">Receive updates when items are overdue.</p>
-                                </div>
-                            </div>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" defaultChecked className="sr-only peer" />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                            </label>
-                        </div>
-    
-                        <div className="flex items-center justify-between">
-                            <div className="flex gap-4">
-                                <div className="p-2 bg-slate-100 text-slate-600 rounded-lg h-fit">
-                                    <Moon size={20} />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-slate-800">Dark Mode</h4>
-                                    <p className="text-xs text-slate-500 mt-1">Switch between light and dark themes.</p>
-                                </div>
-                            </div>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" className="sr-only peer" />
-                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                            </label>
-                        </div>
+                    <div>
+                        <h1 className="text-3xl max-md:text-2xl font-bold tracking-tight text-slate-900">System Preferences</h1>
+                        <p className="text-slate-500 mt-1 max-md:text-sm">Manage your administrator profile and application settings.</p>
                     </div>
                 </div>
-    
-                {/* Danger Zone */}
-                <div className="border border-red-100 bg-red-50 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                     <div>
-                        <h4 className="font-bold text-red-800">Sign Out Session</h4>
-                        <p className="text-xs text-red-600 mt-1">Securely log out of your administrator account.</p>
-                     </div>
-                     <button 
-                        className="flex items-center gap-2 px-4 py-2 border border-red-200 hover:bg-red-100 text-red-700 rounded-lg text-sm font-semibold transition-colors"
-                        onClick={() => logout()}>
-                        <LogOut size={16} /> Sign Out
-                     </button>
+
+                <div className="space-y-6">
+
+                    {/* Profile Information Card */}
+                    <Card className="border-slate-200 shadow-sm gap-0">
+                        <CardHeader className="pb-4 border-b border-slate-100">
+                            <div className="flex items-center gap-4">
+                                <div className="h-16 w-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-inner border-2 border-white ring-2 ring-slate-100">
+                                    {decoded.userName.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <CardTitle className="text-xl">Admin Profile</CardTitle>
+                                    <CardDescription className="flex items-center gap-1.5 mt-1">
+                                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                                        Identity Verified
+                                    </CardDescription>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="pt-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label className="text-slate-700 flex items-center gap-2">
+                                        <User className="w-4 h-4 text-slate-400" /> Authorized User
+                                    </Label>
+                                    <Input
+                                        type="text" readOnly defaultValue={decoded.userName}
+                                        className="bg-slate-50 border-slate-200 text-slate-600 font-medium focus-visible:ring-0 cursor-default"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-slate-700 flex items-center gap-2">
+                                        <Mail className="w-4 h-4 text-slate-400" /> Official Email Address
+                                    </Label>
+                                    <Input
+                                        type="email" readOnly defaultValue={decoded.userEmail}
+                                        className="bg-slate-50 border-slate-200 text-slate-600 font-medium focus-visible:ring-0 cursor-default"
+                                    />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Application Settings Card */}
+                    <Card className="border-slate-200 shadow-sm gap-0">
+                        <CardHeader className="pb-4 border-b border-slate-100">
+                            <CardTitle className="text-lg">Application Settings</CardTitle>
+                            <CardDescription>Customize your monitoring experience.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="pt-6 space-y-6">
+
+                            {/* Notification Toggle */}
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg border border-blue-100">
+                                        <Bell className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-slate-900 text-sm">System Notifications</h4>
+                                        <p className="text-sm text-slate-500">Receive alerts when deployed assets are overdue.</p>
+                                    </div>
+                                </div>
+                                <Switch defaultChecked id="notifications" />
+                            </div>
+
+                            {/* Dark Mode Toggle */}
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-2.5 bg-slate-100 text-slate-700 rounded-lg border border-slate-200">
+                                        <Moon className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-slate-900 text-sm">Dark Interface</h4>
+                                        <p className="text-sm text-slate-500">Switch the CDIIS dashboard to a low-light theme.</p>
+                                    </div>
+                                </div>
+                                <Switch
+                                    id="dark-mode"
+                                    checked={darkMode}
+                                    onCheckedChange={() => dispatch(toggleDarkMode())}
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Danger Zone */}
+                    <Card className="border-red-200 bg-red-50/50 shadow-sm overflow-hidden">
+                        <CardContent className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div>
+                                <h4 className="font-bold text-red-900">Terminate Session</h4>
+                                <p className="text-sm text-red-700 mt-1">Securely sever your connection to the CDIIS network.</p>
+                            </div>
+                            <Button
+                                variant="destructive"
+                                className="bg-red-600 hover:bg-red-700 text-white w-full sm:w-auto shadow-sm"
+                                onClick={handleLogout}
+                            >
+                                <LogOut className="w-4 h-4 mr-2" />
+                                Sign Out Securely
+                            </Button>
+                        </CardContent>
+                    </Card>
+
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
-export default Settings
+export default Settings;

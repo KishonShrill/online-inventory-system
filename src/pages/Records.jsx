@@ -27,8 +27,8 @@ const Records = () => {
             {/* Page Header */}
             <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Transaction Records</h1>
-                    <p className="text-slate-500 mt-1">Manage asset reservations, active deployments, and return logs.</p>
+                    <h1 className="text-3xl max-md:text-2xl font-bold tracking-tight text-slate-900">Transaction Records</h1>
+                    <p className="text-slate-500 mt-1 max-md:text-sm">Manage asset reservations, active deployments, and return logs.</p>
                 </div>
 
                 {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (

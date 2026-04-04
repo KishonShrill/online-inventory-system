@@ -12,7 +12,7 @@ import { paginationData } from "../helpers/paginationUtils.js";
 // Shadcn UI Components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
@@ -70,8 +70,8 @@ const Inventory = () => {
             {/* Page Header */}
             <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Asset Directory</h1>
-                    <p className="text-slate-500 mt-1">Manage and track all registered municipal inventory items.</p>
+                    <h1 className="text-3xl max-md:text-2xl font-bold tracking-tight text-slate-900">Asset Directory</h1>
+                    <p className="text-slate-500 mt-1 max-md:text-sm">Manage and track all registered municipal inventory items.</p>
                 </div>
 
                 {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
@@ -100,7 +100,7 @@ const Inventory = () => {
                             />
                         </div>
                         {/* We inject your existing Pagination component here so it sits cleanly on the right */}
-                        <div className="w-full sm:w-auto flex justify-end">
+                        <div className="w-full sm:w-auto flex justify-end max-md:justify-center">
                             <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity} />
                         </div>
                     </div>
@@ -115,7 +115,7 @@ const Inventory = () => {
                             <p className="text-sm">Try adjusting your search query.</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto px-4">
                             <Table>
                                 <TableHeader className="bg-slate-50/80">
                                     <TableRow>
@@ -149,7 +149,7 @@ const Inventory = () => {
 
                                             {(decoded.userRole === Role.MANAGER || decoded.userRole === Role.ADMIN) && (
                                                 <TableCell className="text-right pr-4 align-middle">
-                                                    <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <div className="flex justify-end items-center gap-1 opacity-50 group-hover:opacity-100 transition-opacity">
                                                         <Button
                                                             variant="ghost" size="icon"
                                                             className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"

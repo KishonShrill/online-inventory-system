@@ -41,7 +41,7 @@ router.post('/api/records', async (req, res) => {
 
             const returnedItem = await Item.updateOne(
                 { id: item.id },
-                { $set: {status: "Reserved"} },
+                { $set: { status: "Reserved" } },
             );
 
             return res.status(201).json({
@@ -69,14 +69,14 @@ router.post('/api/records', async (req, res) => {
             );
             const returnedItem = await Item.updateOne(
                 { id: item.id },
-                { $set: {status: "Available"} },
+                { $set: { status: "Available" } },
             );
 
             return res.status(201).json({
                 message: "Record cancelled successfully",
                 result: {
                     updatedRecord,
-                    returnedItem: await Item.find({id: item.id}, {status: 1}),
+                    returnedItem: await Item.find({ id: item.id }, { status: 1 }),
                 },
             });
         }
@@ -94,14 +94,14 @@ router.post('/api/records', async (req, res) => {
             );
             const returnedItem = await Item.updateOne(
                 { id: item.id },
-                { $set: {status: "Available"} },
+                { $set: { status: "Available" } },
             );
 
             return res.status(201).json({
                 message: "Record returned successfully",
                 result: {
                     updatedRecord,
-                    returnedItem: await Item.find({id: item.id}, {status: 1}),
+                    returnedItem: await Item.find({ id: item.id }, { status: 1 }),
                 },
             });
         }
@@ -117,14 +117,14 @@ router.post('/api/records', async (req, res) => {
         );
         const borrowedItem = await Item.updateOne(
             { id: item.id },
-            { $set: {status: "Borrowed"} },
+            { $set: { status: "Borrowed" } },
         );
 
         return res.status(201).json({
             message: "Record updated successfully",
             result: {
                 updatedRecord,
-                borrowedItem: await Item.find({id: item.id}, {status:1}),
+                borrowedItem: await Item.find({ id: item.id }, { status: 1 }),
             },
             record: {
                 userName: user.name,
@@ -137,7 +137,7 @@ router.post('/api/records', async (req, res) => {
                 type,
             }
         })
-        
+
     } catch (error) {
         res.status(500).json({
             path: '/api/records',

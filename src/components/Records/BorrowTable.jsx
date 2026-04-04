@@ -68,48 +68,50 @@ const BorrowTable = ({ decoded }) => {
                 <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity} />
             </div>
 
-            <Table>
-                <TableHeader className="bg-slate-50/50">
-                    <TableRow>
-                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('item.name')}>Asset <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
-                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('user.name')}>Personnel <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
-                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('due_date')}>Lifecycle <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
-                        <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('returned_on')}>Returned <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
-                        <TableHead className="font-semibold text-slate-600">Status</TableHead>
-                        <TableHead className="text-right font-semibold text-slate-600 pr-6">Processing</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {paginatedData.map((record) => {
-                        const isOverdue = record?.type === 'borrow' && new Date().toLocaleDateString('en-CA') >= record?.due_date?.split("T")[0];
-                        return (
-                            <TableRow key={record?._id} className="hover:bg-slate-50/50 cursor-pointer" onClick={() => handleRowClick(record)}>
-                                <TableCell className="font-medium text-slate-900">{record?.item.name} <span className="text-slate-400 font-mono text-xs block">{record?.item.id}</span></TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col"><span className="text-sm font-medium text-slate-700">{record?.user.name}</span><span className="text-xs text-slate-500">{record?.user.contact}</span></div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col gap-1 text-xs">
-                                        <span className="text-slate-500">Out: {record?.start_date?.split("T")[0]}</span>
-                                        <span className="text-slate-500">Due: <span className={isOverdue ? 'text-red-600 font-bold' : ''}>{record?.due_date?.split("T")[0]}</span></span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-slate-600 text-sm">{record?.returned_on?.split("T")[0] || "-"}</TableCell>
-                                <TableCell><StatusBadge status={record?.type} /></TableCell>
-                                <TableCell className="text-right pr-4" onClick={(e) => e.stopPropagation()}>
-                                    {record?.type === 'returned' && <CheckCircle2 className="w-5 h-5 text-emerald-500 ml-auto mr-4" />}
-                                    {record?.type === 'cancelled' && <XCircle className="w-5 h-5 text-red-500 ml-auto mr-4" />}
-                                    {record?.type === 'borrow' && (decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
-                                        <Button size="sm" variant={isOverdue ? "destructive" : "default"} onClick={() => { setChosenRecord(record); setIsModalOpen(true); }} className={!isOverdue ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}>
-                                            <RotateCcw className="w-3 h-3 mr-1" /> Process
-                                        </Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
+            <div className="px-4">
+                <Table>
+                    <TableHeader className="bg-slate-50/50">
+                        <TableRow>
+                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('item.name')}>Asset <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('user.name')}>Personnel <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('due_date')}>Lifecycle <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('returned_on')}>Returned <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                            <TableHead className="font-semibold text-slate-600">Status</TableHead>
+                            <TableHead className="text-right font-semibold text-slate-600 pr-6">Processing</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {paginatedData.map((record) => {
+                            const isOverdue = record?.type === 'borrow' && new Date().toLocaleDateString('en-CA') >= record?.due_date?.split("T")[0];
+                            return (
+                                <TableRow key={record?._id} className="hover:bg-slate-50/50 cursor-pointer" onClick={() => handleRowClick(record)}>
+                                    <TableCell className="font-medium text-slate-900">{record?.item.name} <span className="text-slate-400 font-mono text-xs block">{record?.item.id}</span></TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col"><span className="text-sm font-medium text-slate-700">{record?.user.name}</span><span className="text-xs text-slate-500">{record?.user.contact}</span></div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col gap-1 text-xs">
+                                            <span className="text-slate-500">Out: {record?.start_date?.split("T")[0]}</span>
+                                            <span className="text-slate-500">Due: <span className={isOverdue ? 'text-red-600 font-bold' : ''}>{record?.due_date?.split("T")[0]}</span></span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-slate-600 text-sm">{record?.returned_on?.split("T")[0] || "-"}</TableCell>
+                                    <TableCell><StatusBadge status={record?.type} /></TableCell>
+                                    <TableCell className="text-right pr-4" onClick={(e) => e.stopPropagation()}>
+                                        {record?.type === 'returned' && <CheckCircle2 className="w-5 h-5 text-emerald-500 ml-auto mr-4" />}
+                                        {record?.type === 'cancelled' && <XCircle className="w-5 h-5 text-red-500 ml-auto mr-4" />}
+                                        {record?.type === 'borrow' && (decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
+                                            <Button size="sm" variant={isOverdue ? "destructive" : "default"} onClick={() => { setChosenRecord(record); setIsModalOpen(true); }} className={!isOverdue ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}>
+                                                <RotateCcw className="w-3 h-3 mr-1" /> Process
+                                            </Button>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
 
             <ReturnItemModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} record={chosenRecord} />
 

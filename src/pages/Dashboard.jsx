@@ -7,7 +7,7 @@ import {
 
 // Shadcn UI Components (Adjust paths as needed)
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -32,15 +32,15 @@ const Dashboard = () => {
 
             {/* Header Section */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900">System Dashboard</h1>
-                <p className="text-slate-500 mt-1">Welcome back. Here is the current status of the Iligan City inventory network.</p>
+                <h1 className="text-3xl max-md:text-2xl font-bold tracking-tight text-slate-900">System Dashboard</h1>
+                <p className="text-slate-500 mt-1 max-sm:text-sm">Welcome back. Here is the current status of the Iligan City inventory network.</p>
             </div>
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {DASHBOARD_STATS.map((stat, idx) => (
                     <Card key={idx} className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                        <CardContent className="p-6 flex items-center justify-between">
+                        <CardContent className="px-6 flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-medium text-slate-500 mb-1">{stat.label}</p>
                                 <h3 className="text-3xl font-bold text-slate-900">{stat.value}</h3>

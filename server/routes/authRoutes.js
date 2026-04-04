@@ -86,7 +86,7 @@ router.post('/api/login', async (req, res) => {
             try {
                 const token = jwt.sign(
                     { userId: user._id, userName: user.name, userEmail: user.email, userRole: user.role },
-                    process.env.JWT_SECRET || "RANDOM-TOKEN",
+                    process.env.JWT_SECRET,
                     { expiresIn: "24h" }
                 );
                 return okAsync({ user, token }); // Pass both down the chain
