@@ -24,7 +24,7 @@ const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
 function App() {
 
     const darkMode = useSelector(state => state.darkMode.enabled);
-    useEffect(() => { document.body.classList.toggle('dark-mode', darkMode) }, [darkMode]);
+    useEffect(() => { document.body.classList.toggle('dark', darkMode) }, [darkMode]);
 
     return (
         <>

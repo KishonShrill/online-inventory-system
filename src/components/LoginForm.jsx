@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import Cookies from "universal-cookie";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import {validateEmail, validatePassword} from '../helpers/validate.js';
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { validateEmail, validatePassword } from '../helpers/validate.js';
+
+// Shadcn UI Components
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const cookies = new Cookies();
-
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
@@ -18,42 +24,31 @@ const LoginForm = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        if (name === 'email') {
-            setEmail(value);
-        } else if (name === 'password') {
-            setPassword(value);
-        }
-        
+        if (name === 'email') setEmail(value);
+        else if (name === 'password') setPassword(value);
+
         if (fieldErrors[name]) {
-            setFieldErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
+            setFieldErrors(prev => ({ ...prev, [name]: '' }));
         }
     };
 
     const validateForm = () => {
         const errors = {};
-        if (!email.trim()) {
-            errors.email = 'Email is required';
-        } else if (!validateEmail(email)) {
-            errors.email = 'Email must be a valid email';
-        }
-        if (!password) {
-            errors.password = 'Password is required';
-        } else if (!validatePassword(password)) {
-            errors.password = 'Password must contain 12 characters long and contain letters and numbers';
-        }
+        if (!email.trim()) errors.email = 'Email is required';
+        else if (!validateEmail(email)) errors.email = 'Email must be a valid email';
+
+        if (!password) errors.password = 'Password is required';
+        else if (!validatePassword(password).isFullyValid)
+            errors.password = 'Password must be 8+ chars and contain letters/numbers/special chars';
+
         setFieldErrors(errors);
         return Object.keys(errors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
 
-        if (!validateForm()) {
-            return;
-        }
         setLoading(true);
         setError('');
 
@@ -61,46 +56,26 @@ const LoginForm = () => {
             ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/login`
             : `https://cdiis-ois-server.vercel.app/api/login`;
 
-        const configuration = {
-            method: "post",
-            url: postURL,
-            data: {
-                email,
-                password,
-            },
-        };
-
-        axios(configuration)
-            .then((result) => {
-                setLoading(false);
-                // emailRef.current.style.borderColor = "green";
-                // passwordRef.current.style.borderColor = "green";
-                // logRef.current.style.color = "green";
-                // console.log(result.data.token)
-                cookies.set("CDIIS-OIS", result.data.token, {
-                    path: "/",
-                });
-                navigate('/app/dashboard')
-            })
-            .catch((error) => {
-                console.error(error);
-                setError(error.response.data.message)
-                setLoading(false);
-            });
+        try {
+            const result = await axios.post(postURL, { email, password });
+            cookies.set("CDIIS-OIS", result.data.token, { path: "/" });
+            navigate('/app/dashboard');
+        } catch (err) {
+            setError(err.response?.data?.message || "Login failed. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="modern-login-page">
-            {/* Left Side - Branding */}
+        <div className="modern-login-page dark:bg-slate-950">
+            {/* Branding Section - Keep your custom CSS here */}
             <div className="brand-section">
                 <div className="brand-overlay"></div>
                 <div className="brand-content">
                     <div className="brand-header">
                         <h1 className="brand-title">CDIIS</h1>
-                        <p className="brand-subtitle">Center for Digital Iligan, Innovation & Sustainability </p>
-                    </div>
-                    <div className="brand-welcome">
-                        <p>Access your dashboard and manage your items with our powerful inventory platform.</p>
+                        <p className="brand-subtitle">Center for Digital Iligan, Innovation & Sustainability</p>
                     </div>
                 </div>
                 <div className="animated-bg">
@@ -110,134 +85,72 @@ const LoginForm = () => {
                 </div>
             </div>
 
-            {/* Right Side - Login Form */}
-            <div className="form-section">
+            {/* Login Form Section */}
+            <div className="form-section dark:bg-slate-900 transition-colors">
                 <div className="form-container">
-                    <div className="mobile-brand">
-                        <h1>CDIIS</h1>
-                    </div>
-
                     <div className="login-card">
                         <div className="login-header">
-                            <h2>Welcome back</h2>
-                            <p>Please sign in to your account</p>
+                            <h2 className="dark:text-white">Welcome back</h2>
+                            <p className="dark:text-slate-400">Please sign in to your account</p>
                         </div>
 
-                        <form className="login-form" onSubmit={handleSubmit}>
-                            {error && (
-                                <div className="error-alert">
-                                    {error}
-                                </div>
-                            )}
+                        <form className="login-form space-y-4" onSubmit={handleSubmit}>
+                            {error && <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md border border-red-200">{error}</div>}
 
-                            <div className="input-group">
-                                <label htmlFor="email">Email address</label>
-                                <div className="input-wrapper">
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        value={email}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter your email"
-                                        className={fieldErrors.email ? 'error' : ''}
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="dark:text-slate-300">Email address</Label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                                    <Input
+                                        id="email" name="email" type="email"
+                                        placeholder="name@iligan.gov.ph"
+                                        value={email} onChange={handleInputChange}
+                                        className={`pl-10 dark:bg-slate-800 dark:border-slate-700 dark:text-white ${fieldErrors.email ? 'border-red-500' : ''}`}
                                         disabled={loading}
-                                        required
                                     />
-                                    <svg className="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                                    </svg>
                                 </div>
-                                {fieldErrors.email && (
-                                    <p className="field-error">{fieldErrors.email}</p>
-                                )}
+                                {fieldErrors.email && <p className="text-xs text-red-500">{fieldErrors.email}</p>}
                             </div>
 
-                            <div className="input-group">
-                                <label htmlFor="password">Password</label>
-                                <div className="input-wrapper">
-                                    <input
-                                        type={showPassword ? "text" : "password"}
-                                        id="password"
-                                        name="password"
-                                        value={password}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter your password"
-                                        className={fieldErrors.password ? 'error' : ''}
+                            <div className="space-y-2">
+                                <Label htmlFor="password" className="dark:text-slate-300">Password</Label>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                                    <Input
+                                        id="password" name="password" type={showPassword ? "text" : "password"}
+                                        placeholder="••••••••"
+                                        value={password} onChange={handleInputChange}
+                                        className={`pl-10 pr-10 dark:bg-slate-800 dark:border-slate-700 dark:text-white ${fieldErrors.password ? 'border-red-500' : ''}`}
                                         disabled={loading}
-                                        required
                                     />
-                                    <svg className="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
                                     <button
                                         type="button"
-                                        className="password-toggle"
+                                        className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        tabIndex={-1}
                                     >
-                                        {showPassword ? (
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                                            </svg>
-                                        ) : (
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        )}
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
                                 </div>
-                                {fieldErrors.password && (
-                                    <p className="field-error">{fieldErrors.password}</p>
-                                )}
+                                {fieldErrors.password && <p className="text-xs text-red-500">{fieldErrors.password}</p>}
                             </div>
 
-                            <div className="form-options">
-                                <div className="remember-me">
-                                    <input id="remember-me" name="remember-me" type="checkbox" />
-                                    <label htmlFor="remember-me">Remember me</label>
+                            <div className="flex items-center justify-between py-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="remember" />
+                                    <Label htmlFor="remember" className="text-sm dark:text-slate-400">Remember me</Label>
                                 </div>
-                                <button className="forgot-password">Forgot password?</button>
+                                <button type="button" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">Forgot password?</button>
                             </div>
 
-                            <button
-                                type="submit"
-                                onClick={handleSubmit}
-                                disabled={loading}
-                                className="submit-btn"
-                            >
-                                {loading ? (
-                                    <div className="loading-content">
-                                        <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Signing in...
-                                    </div>
-                                ) : (
-                                    'Sign in'
-                                )}
-                            </button>
-
-                            <div className="signup-link">
-                                <p>
-                                    Don't have an account?{' '}
-                                    <a href="/signup" className="signup-btn">Sign up</a>
-                                </p>
-                            </div>
+                            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={loading}>
+                                {loading ? "Signing in..." : "Sign in"}
+                            </Button>
                         </form>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="login-footer">
-                        <p>&copy; 2025 CDIIS. All rights reserved.</p>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-
 
 export default LoginForm;

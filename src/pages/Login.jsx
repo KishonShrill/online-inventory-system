@@ -73,7 +73,7 @@ const Login = () => {
     if (token) return null;
 
     return (
-        <div className="w-full min-h-screen flex flex-col lg:flex-row font-sans bg-white">
+        <div className="w-full min-h-screen flex flex-col lg:flex-row font-sans bg-slate-50">
 
             {/* Left Panel - The "Mission Control" Branding */}
             <div className="hidden lg:flex w-full lg:w-5/12 bg-slate-950 flex-col justify-between p-12 relative overflow-hidden border-r border-slate-800">
@@ -137,7 +137,7 @@ const Login = () => {
             </div>
 
             {/* Right Panel - The Action Area (Form) */}
-            <div className="w-full lg:w-7/12 flex items-center justify-center p-8 sm:p-12 md:p-24 bg-slate-50">
+            <div className="w-full lg:w-7/12 flex items-center justify-center p-8 sm:p-12 md:p-24">
                 <div className="w-full max-w-[400px] space-y-8">
 
                     <div className="flex flex-col items-center lg:hidden mb-8">

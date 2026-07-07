@@ -31,16 +31,17 @@ const Sidebar = ({ decoded }) => {
 
     return (
         <aside
-            className={`flex flex-col bg-slate-950 text-slate-300 h-full border-r border-slate-900 transition-all duration-300 shrink-0 ${isSidebarOpen ? 'w-64' : 'w-[4.5rem]'}`}
+            // Made the sidebar fully adaptive: white in light mode, slate-900 in dark mode
+            className={`flex flex-col bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 h-full border-r border-slate-200 dark:border-slate-800 transition-all duration-300 shrink-0 ${isSidebarOpen ? 'w-64' : 'w-[4.5rem]'}`}
         >
             {/* Sidebar Header & Toggle */}
-            <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/50">
-                <div className={`font-bold text-xl text-white tracking-wide overflow-hidden whitespace-nowrap transition-all duration-300 ${!isSidebarOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>
+            <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800">
+                <div className={`font-bold text-xl text-slate-900 dark:text-white tracking-wide overflow-hidden whitespace-nowrap transition-all duration-300 ${!isSidebarOpen ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}>
                     Inventory
                 </div>
                 <button
                     onClick={handleToggle}
-                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors shrink-0"
+                    className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors shrink-0"
                     title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
                 >
                     {isSidebarOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
@@ -52,7 +53,7 @@ const Sidebar = ({ decoded }) => {
 
                 {/* Main Menu Group */}
                 <div className="mb-6">
-                    <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 whitespace-nowrap transition-opacity duration-300 ${!isSidebarOpen && 'opacity-0'}`}>
+                    <p className={`px-4 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 whitespace-nowrap transition-opacity duration-300 ${!isSidebarOpen && 'opacity-0'}`}>
                         Main Menu
                     </p>
                     <ul className="space-y-1 px-3 m-0 list-none">
@@ -62,10 +63,9 @@ const Sidebar = ({ decoded }) => {
                                     to={item.link}
                                     title={!isSidebarOpen ? item.name : ""}
                                     className={({ isActive }) => `flex items-center p-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-                                        ? "bg-blue-600 text-white shadow-md shadow-blue-900/20"
-                                        : "hover:bg-slate-900 hover:text-white"}`}
+                                        ? "bg-blue-600 text-white shadow-md shadow-blue-600/20 dark:shadow-blue-900/40"
+                                        : "hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white"}`}
                                 >
-                                    {/* The Fix: Wrap the children in a function to access isActive */}
                                     {({ isActive }) => (
                                         <>
                                             <item.icon size={22} className="shrink-0" strokeWidth={isActive ? 2.5 : 2} />
@@ -76,12 +76,13 @@ const Sidebar = ({ decoded }) => {
                                     )}
                                 </NavLink>
                             </li>
-                        ))}                    </ul>
+                        ))}
+                    </ul>
                 </div>
 
                 {/* Management Group */}
                 <div>
-                    <p className={`px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 whitespace-nowrap transition-opacity duration-300 ${!isSidebarOpen && 'opacity-0'}`}>
+                    <p className={`px-4 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 whitespace-nowrap transition-opacity duration-300 ${!isSidebarOpen && 'opacity-0'}`}>
                         Management
                     </p>
                     <ul className="space-y-1 px-3 m-0 list-none">
@@ -91,11 +92,10 @@ const Sidebar = ({ decoded }) => {
                                     to={item.link}
                                     title={!isSidebarOpen ? item.name : ""}
                                     className={({ isActive }) => `flex items-center p-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-                                        ? "bg-slate-800 text-white shadow-md shadow-slate-900/20"
-                                        : "hover:bg-slate-900 hover:text-white"
+                                        ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm"
+                                        : "hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
                                         }`}
                                 >
-                                    {/* The Fix: Wrap the children in a function to access isActive */}
                                     {({ isActive }) => (
                                         <>
                                             <item.icon size={22} className="shrink-0" strokeWidth={isActive ? 2.5 : 2} />

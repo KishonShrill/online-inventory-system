@@ -68,7 +68,7 @@ const ReserveTable = ({ decoded }) => {
             }
         });
 
-        if (apiResult.isErr()) return alert(apiResult.error); // Note: Swap for toast later
+        if (apiResult.isErr()) return alert(apiResult.error);
 
         dispatch(editRecord(apiResult.value.data.result.updatedRecord));
         dispatch(editInventory(apiResult.value.data.result.borrowedItem[0]._id, { status: apiResult.value.data.result.borrowedItem[0].status }));
@@ -90,13 +90,13 @@ const ReserveTable = ({ decoded }) => {
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-b border-slate-100">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-b border-slate-100 dark:border-slate-800 transition-colors">
                 <div className="relative w-full sm:max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                     <Input
                         placeholder="Search reservations..."
                         value={searchQueryReserve} onChange={(e) => setSearchQueryReserve(e.target.value)}
-                        className="pl-9 bg-slate-50 focus-visible:ring-blue-600"
+                        className="pl-9 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 focus-visible:ring-blue-600 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors"
                     />
                 </div>
                 <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} quantity={quantity} />
@@ -104,14 +104,14 @@ const ReserveTable = ({ decoded }) => {
 
             <div className="px-4">
                 <Table>
-                    <TableHeader className="bg-slate-50/50">
-                        <TableRow>
-                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('item.name')}>Asset <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
-                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('user.name')}>Personnel <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
-                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 -ml-4" onClick={() => requestSort('due_date')}>Scheduled <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
-                            <TableHead className="font-semibold text-slate-600">Status</TableHead>
+                    <TableHeader className="bg-slate-50/50 dark:bg-slate-800/50 transition-colors">
+                        <TableRow className="dark:border-slate-700">
+                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 dark:text-slate-300 -ml-4" onClick={() => requestSort('item.name')}>Asset <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 dark:text-slate-300 -ml-4" onClick={() => requestSort('user.name')}>Personnel <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                            <TableHead><Button variant="ghost" className="font-semibold text-slate-600 dark:text-slate-300 -ml-4" onClick={() => requestSort('due_date')}>Scheduled <ArrowUpDown className="ml-2 w-3 h-3" /></Button></TableHead>
+                            <TableHead className="font-semibold text-slate-600 dark:text-slate-300">Status</TableHead>
                             {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
-                                <TableHead className="text-right font-semibold text-slate-600">Actions</TableHead>
+                                <TableHead className="text-right font-semibold text-slate-600 dark:text-slate-300">Actions</TableHead>
                             )}
                         </TableRow>
                     </TableHeader>
@@ -119,18 +119,21 @@ const ReserveTable = ({ decoded }) => {
                         {paginatedData.map((record) => {
                             const isExpired = new Date().toLocaleDateString('en-CA') >= record?.due_date?.split("T")[0];
                             return (
-                                <TableRow key={record?._id} className="hover:bg-slate-50/50">
-                                    <TableCell className="font-medium text-slate-900">{record?.item.name} <span className="text-slate-400 font-mono text-xs block">{record?.item.id}</span></TableCell>
+                                <TableRow key={record?._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 dark:border-slate-800 transition-colors">
+                                    <TableCell className="font-medium text-slate-900 dark:text-slate-100">{record?.item.name} <span className="text-slate-400 dark:text-slate-500 font-mono text-xs block">{record?.item.id}</span></TableCell>
                                     <TableCell>
-                                        <div className="flex flex-col"><span className="text-sm font-medium text-slate-700">{record?.user.name}</span><span className="text-xs text-slate-500">{record?.user.contact}</span></div>
+                                        <div className="flex flex-col"><span className="text-sm font-medium text-slate-700 dark:text-slate-200">{record?.user.name}</span><span className="text-xs text-slate-500 dark:text-slate-400">{record?.user.contact}</span></div>
                                     </TableCell>
-                                    <TableCell className="text-slate-600">{record?.due_date?.split("T")[0]}</TableCell>
+                                    <TableCell className="text-slate-600 dark:text-slate-400">{record?.due_date?.split("T")[0]}</TableCell>
                                     <TableCell>
-                                        {!isExpired ? <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200"><Clock className="w-3 h-3 mr-1" /> Pending</Badge> : <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200"><XCircle className="w-3 h-3 mr-1" /> Expired</Badge>}
+                                        {!isExpired
+                                            ? <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800"><Clock className="w-3 h-3 mr-1" /> Pending</Badge>
+                                            : <Badge variant="outline" className="bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800"><XCircle className="w-3 h-3 mr-1" /> Expired</Badge>
+                                        }
                                     </TableCell>
                                     {(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER) && (
                                         <TableCell className="text-right">
-                                            <Button size="sm" onClick={() => handleLend(record)} className="bg-blue-600 hover:bg-blue-700 text-white mr-2">Deploy</Button>
+                                            <Button size="sm" onClick={() => handleLend(record)} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 text-white mr-2">Deploy</Button>
                                             {isExpired && <Button size="sm" variant="destructive" onClick={() => handleRetract(record)}>Revoke</Button>}
                                         </TableCell>
                                     )}

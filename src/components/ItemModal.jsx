@@ -148,22 +148,22 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
     const ui = {
         title: mode === Mode.ADD ? "Provision New Asset" : mode === Mode.UPDATE ? "Update Asset Details" : "Revoke Asset",
         icon: mode === Mode.ADD ? PackagePlus : mode === Mode.UPDATE ? Edit3 : AlertTriangle,
-        iconColor: isRemoveMode ? "text-red-600" : "text-blue-600",
+        iconColor: isRemoveMode ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400",
         btnText: isRemoveMode ? "Confirm Deletion" : "Save Asset Record",
         btnVariant: isRemoveMode ? "destructive" : "default"
     };
 
     return (
         <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto bg-white">
+            <DialogContent className="sm:max-w-[650px] max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900 dark:border-slate-800 transition-colors">
                 <DialogHeader>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className={`p-2 rounded-lg bg-slate-100 ${ui.iconColor}`}>
+                        <div className={`p-2 rounded-lg bg-slate-100 dark:bg-slate-800 ${ui.iconColor}`}>
                             <ui.icon className="w-5 h-5" />
                         </div>
-                        <DialogTitle className="text-2xl">{ui.title}</DialogTitle>
+                        <DialogTitle className="text-2xl dark:text-slate-100">{ui.title}</DialogTitle>
                     </div>
-                    <DialogDescription>
+                    <DialogDescription className="dark:text-slate-400">
                         {isRemoveMode
                             ? "Warning: This action will permanently remove this asset from the CDIIS network."
                             : "Enter the specifications and components for this hardware asset."}
@@ -172,8 +172,8 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-6 mt-4">
                     {error && (
-                        <div className="p-3 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
-                            <AlertTriangle className="w-4 h-4" /> {error}
+                        <div className="p-3 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-md flex items-center gap-2">
+                            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
                         </div>
                     )}
 
@@ -181,40 +181,42 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
                         {/* Main Inputs */}
                         <div className="md:col-span-2 space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Asset Nomenclature (Name)</Label>
+                                <Label htmlFor="name" className="dark:text-slate-300">Asset Nomenclature (Name)</Label>
                                 <Input
                                     id="name" placeholder="e.g. ThinkPad T14 Gen 3"
                                     value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     disabled={isRemoveMode || mode === Mode.UPDATE}
-                                    className="bg-slate-50 focus-visible:ring-blue-600" required
+                                    className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus-visible:ring-blue-600 placeholder:text-slate-400 dark:placeholder:text-slate-500" required
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Technical Description</Label>
+                                <Label htmlFor="description" className="dark:text-slate-300">Technical Description</Label>
                                 <Textarea
                                     id="description" placeholder="Processor, RAM, identifying marks..."
                                     value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     disabled={isRemoveMode}
-                                    className="bg-slate-50 focus-visible:ring-blue-600 resize-none h-24"
+                                    className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus-visible:ring-blue-600 placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none h-24"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="category">Classification</Label>
+                                    <Label htmlFor="category" className="dark:text-slate-300">Classification</Label>
                                     <Input
                                         id="category" placeholder="e.g. Electronics"
                                         value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        disabled={isRemoveMode} className="bg-slate-50" required
+                                        disabled={isRemoveMode}
+                                        className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500" required
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="color">Hardware Color</Label>
+                                    <Label htmlFor="color" className="dark:text-slate-300">Hardware Color</Label>
                                     <Input
                                         id="color" placeholder="e.g. Matte Black"
                                         value={formData.color} onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                                        disabled={isRemoveMode} className="bg-slate-50" required
+                                        disabled={isRemoveMode}
+                                        className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500" required
                                     />
                                 </div>
                             </div>
@@ -222,23 +224,24 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
 
                         {/* QR Code Sidebar Display */}
                         <div className="flex flex-col items-center justify-start pt-6">
-                            <div className="border border-slate-200 p-3 rounded-xl bg-slate-50 shadow-sm flex flex-col items-center">
-                                <div className="flex items-center gap-2 text-slate-500 font-mono text-sm mb-3">
+                            <div className="border border-slate-200 dark:border-slate-700/50 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 shadow-sm flex flex-col items-center w-full">
+                                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-mono text-sm mb-3">
                                     <QrCode className="w-4 h-4" />
                                     {generatedId}
                                 </div>
-                                <img src={generateQrCode(generatedId)} alt="Asset QR Code" className="w-32 h-32 rounded-md bg-white border border-slate-100 mix-blend-multiply" />
-                                <span className="text-[10px] text-slate-400 mt-3 text-center uppercase tracking-widest">CDIIS Registry Tag</span>
+                                {/* Removed mix-blend-multiply and added p-1 to ensure QR is always scannable */}
+                                <img src={generateQrCode(generatedId)} alt="Asset QR Code" className="w-32 h-32 rounded-md bg-white p-1 border border-slate-200 dark:border-slate-600" />
+                                <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-3 text-center uppercase tracking-widest">CDIIS Registry Tag</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Hardware Components Section */}
-                    <div className="pt-4 border-t border-slate-100">
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                         <div className="flex items-center justify-between mb-4">
-                            <Label className="text-base">Peripheral Components</Label>
+                            <Label className="text-base dark:text-slate-200">Peripheral Components</Label>
                             {!isRemoveMode && (
-                                <Button type="button" variant="outline" size="sm" onClick={addComponent} className="h-8 text-blue-600 border-blue-200 hover:bg-blue-50">
+                                <Button type="button" variant="outline" size="sm" onClick={addComponent} className="h-8 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 dark:hover:text-blue-300 bg-transparent">
                                     <Plus className="w-4 h-4 mr-1" /> Add Part
                                 </Button>
                             )}
@@ -246,25 +249,27 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
 
                         <div className="space-y-3">
                             {formData.components.length === 0 && !isRemoveMode && (
-                                <div className="text-sm text-slate-400 italic text-center p-4 border border-dashed border-slate-200 rounded-lg">
+                                <div className="text-sm text-slate-400 dark:text-slate-500 italic text-center p-4 border border-dashed border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50">
                                     No peripheral components added.
                                 </div>
                             )}
 
                             {formData.components.map((comp, idx) => (
-                                <div key={idx} className="flex items-center gap-3 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                <div key={idx} className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                     <Input
                                         placeholder="Component Name (e.g. Power Adapter)"
                                         value={comp.name} onChange={(e) => updateComponent(idx, 'name', e.target.value)}
-                                        disabled={isRemoveMode} className="flex-1 bg-white"
+                                        disabled={isRemoveMode}
+                                        className="flex-1 bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                                     />
                                     <Input
                                         type="number" min="1" placeholder="Qty"
                                         value={comp.quantity} onChange={(e) => updateComponent(idx, 'quantity', e.target.value)}
-                                        disabled={isRemoveMode} className="w-24 bg-white text-center"
+                                        disabled={isRemoveMode}
+                                        className="w-24 bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-100 text-center placeholder:text-slate-400 dark:placeholder:text-slate-500"
                                     />
                                     {!isRemoveMode && (
-                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeComponent(idx)} className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0">
+                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeComponent(idx)} className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 shrink-0">
                                             <Trash2 className="w-4 h-4" />
                                         </Button>
                                     )}
@@ -273,8 +278,8 @@ const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
                         </div>
                     </div>
 
-                    <DialogFooter className="pt-4 border-t border-slate-100 sm:justify-between">
-                        <Button type="button" variant="ghost" onClick={onClose} disabled={isSubmitting}>
+                    <DialogFooter className="pt-4 border-t border-slate-100 dark:border-slate-800 sm:justify-between">
+                        <Button type="button" variant="ghost" onClick={onClose} disabled={isSubmitting} className="dark:text-slate-300 dark:hover:bg-slate-800">
                             Cancel
                         </Button>
                         <Button type="submit" variant={ui.btnVariant} disabled={isSubmitting} className="min-w-[140px]">

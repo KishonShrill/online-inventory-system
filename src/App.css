@@ -14,4 +14,25 @@
     .container-icon {
         color: #4b5563;
     }
+
+    /* Override browser autofill styles for light mode */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+        -webkit-text-fill-color: #0f172a !important;
+        /* Slate-900 */
+        -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Override browser autofill styles for dark mode */
+    .dark input:-webkit-autofill,
+    .dark input:-webkit-autofill:hover,
+    .dark input:-webkit-autofill:focus {
+        -webkit-text-fill-color: #f1f5f9 !important;
+        /* Slate-100 */
+        -webkit-box-shadow: 0 0 0px 1000px #020617 inset !important;
+        /* Slate-950 */
+        transition: background-color 5000s ease-in-out 0s;
+    }
 }

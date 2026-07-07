@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { ResultAsync } from "neverthrow";
 import {
@@ -80,7 +80,6 @@ const RecordModal = ({ isOpen, onClose }) => {
         e.preventDefault();
         setError("");
 
-        // Frontend Validation
         const validatedRecord = validateRecord(userName, userContact, date);
         if (!validatedRecord.isFullyValid) {
             if (!validatedRecord.validUserName) return setError(`User Name must be formatted properly (e.g., Juan Dela Cruz).`);
@@ -110,7 +109,6 @@ const RecordModal = ({ isOpen, onClose }) => {
             return;
         }
 
-        // Success Path
         dispatch(addRecord(apiResult.value.data.result));
         dispatch(editInventory(apiResult.value.data.result.item._id, { status: "Reserved" }));
 
@@ -120,7 +118,6 @@ const RecordModal = ({ isOpen, onClose }) => {
 
     const canBorrow = itemDetails && itemDetails.status === 'Available' && userName && userContact && date && !isSubmitting;
 
-    // Reset state when closed
     useEffect(() => {
         if (!isOpen) {
             setItemId(''); setUserName(''); setUserContact(''); setDate('');
@@ -130,131 +127,112 @@ const RecordModal = ({ isOpen, onClose }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto bg-white">
+            <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 transition-colors">
                 <DialogHeader>
                     <div className="flex items-center gap-2 mb-1">
-                        <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
+                        <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                             <CalendarPlus className="w-5 h-5" />
                         </div>
-                        <DialogTitle className="text-xl">Log Asset Reservation</DialogTitle>
+                        <DialogTitle className="text-xl dark:text-slate-100">Log Asset Reservation</DialogTitle>
                     </div>
-                    <DialogDescription>
+                    <DialogDescription className="dark:text-slate-400">
                         Search for an asset and assign it to authorized personnel.
                     </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleBorrow} className="space-y-6 mt-2">
                     {error && (
-                        <div className="p-3 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md flex items-start gap-2">
-                            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" /> {error}
+                        <div className="p-3 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-md flex items-center gap-2">
+                            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
                         </div>
                     )}
 
-                    {/* Item Identification Section */}
                     <div className="space-y-3">
-                        <Label htmlFor="itemId" className="text-slate-700">Asset Identifier</Label>
+                        <Label htmlFor="itemId" className="text-slate-700 dark:text-slate-300">Asset Identifier</Label>
                         <div className="flex items-center gap-2">
                             <div className="relative flex-1">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 dark:text-slate-500">
                                     <Search className="w-4 h-4" />
                                 </div>
                                 <Input
                                     type="text" id="itemId" list="itemIDs"
                                     value={itemId} onChange={(e) => setItemId(e.target.value)}
-                                    placeholder="Type or scan item ID (e.g., EQP-0001)"
-                                    className="pl-10 h-11 bg-slate-50 focus-visible:ring-blue-600 uppercase font-mono"
-                                    autoFocus
+                                    placeholder="e.g., EQP-0001"
+                                    className="pl-10 h-11 bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-700 focus-visible:ring-blue-600 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 uppercase font-mono"
                                 />
                                 {isLoading && <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin" />}
                                 <CustomDatalist id="itemIDs" items={filteredItems} />
                             </div>
-                            <Button type="button" variant="outline" className="h-11 w-11 p-0 border-slate-300 text-slate-600 hover:text-blue-600 hover:bg-blue-50" onClick={() => setIsQROpen(prev => !prev)} title="Scan QR code">
+                            <Button type="button" variant="outline" className="h-11 w-11 p-0 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 bg-transparent" onClick={() => setIsQROpen(prev => !prev)}>
                                 <ScanLine className="w-5 h-5" />
                             </Button>
                         </div>
 
                         {isQROpen && (
-                            <div className="p-2 border border-slate-200 rounded-lg bg-slate-50">
+                            <div className="p-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-950/50">
                                 <QRScannerModal onDetected={(scannedText) => { setItemId(scannedText); setIsQROpen(false); }} />
                             </div>
                         )}
 
-                        {/* Item Preview Card */}
                         {itemDetails && (
-                            <div className={`p-4 rounded-lg border transition-colors ${itemDetails.status === 'Available' ? 'bg-emerald-50/50 border-emerald-100' : 'bg-red-50/50 border-red-100'}`}>
+                            <div className={`p-4 rounded-lg border transition-colors ${itemDetails.status === 'Available' ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/50' : 'bg-red-50/50 dark:bg-red-950/20 border-red-100 dark:border-red-900/50'}`}>
                                 <div className="flex justify-between items-start mb-3">
                                     <div>
-                                        <h4 className="font-bold text-slate-900">{itemDetails.name}</h4>
-                                        <p className="text-xs text-slate-500 font-medium">{itemDetails.category}</p>
+                                        <h4 className="font-bold text-slate-900 dark:text-slate-100">{itemDetails.name}</h4>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{itemDetails.category}</p>
                                     </div>
-                                    <Badge variant="outline" className={itemDetails.status === 'Available' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-red-100 text-red-700 border-red-200'}>
+                                    <Badge variant="outline" className={itemDetails.status === 'Available' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800'}>
                                         {itemDetails.status === 'Available' ? <PackageCheck className="w-3 h-3 mr-1" /> : <PackageX className="w-3 h-3 mr-1" />}
                                         {itemDetails.status}
                                     </Badge>
-                                </div>
-                                <div className="text-sm text-slate-600">
-                                    <span className="font-semibold text-slate-700">Sub-components: </span>
-                                    {itemDetails.items?.length > 0
-                                        ? itemDetails.items.map(i => `${i.name} (${i.quantity})`).join(', ')
-                                        : <span className="italic">None listed</span>
-                                    }
                                 </div>
                             </div>
                         )}
 
                         {notFound && (
-                            <div className="p-4 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-sm flex items-center gap-2">
-                                <AlertTriangle className="w-4 h-4 shrink-0" />
-                                Asset <span className="font-bold">{itemId}</span> not found in registry.
+                            <div className="p-4 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-400 text-sm flex items-center gap-2">
+                                <AlertTriangle className="w-4 h-4 shrink-0" /> Asset <span className="font-bold">{itemId}</span> not found.
                             </div>
                         )}
                     </div>
 
-                    <div className="border-t border-slate-100 my-4"></div>
+                    <div className="border-t border-slate-100 dark:border-slate-800 my-4"></div>
 
-                    {/* Personnel Information Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="userName" className="text-slate-700">Personnel Name</Label>
-                            <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                    type="text" id="userName"
-                                    value={userName} onChange={(e) => setUserName(e.target.value)}
-                                    placeholder="Juan Dela Cruz"
-                                    className="pl-9 bg-slate-50 focus-visible:ring-blue-600"
-                                />
-                            </div>
+                            <Label htmlFor="userName" className="text-slate-700 dark:text-slate-300">Personnel Name</Label>
+                            <Input
+                                type="text" id="userName"
+                                value={userName} onChange={(e) => setUserName(e.target.value)}
+                                placeholder="Juan Dela Cruz"
+                                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus-visible:ring-blue-600"
+                            />
                         </div>
-
                         <div className="space-y-2">
-                            <Label htmlFor="userContact" className="text-slate-700">Contact Information</Label>
-                            <div className="relative">
-                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                    type="text" id="userContact"
-                                    value={userContact} onChange={(e) => setUserContact(e.target.value)}
-                                    placeholder="Email or Phone #"
-                                    className="pl-9 bg-slate-50 focus-visible:ring-blue-600"
-                                />
-                            </div>
+                            <Label htmlFor="userContact" className="text-slate-700 dark:text-slate-300">Contact Information</Label>
+                            <Input
+                                type="text" id="userContact"
+                                value={userContact} onChange={(e) => setUserContact(e.target.value)}
+                                placeholder="Email or Phone #"
+                                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus-visible:ring-blue-600"
+                            />
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="reserveDate" className="text-slate-700">Deployment Date</Label>
+                        <Label htmlFor="reserveDate" className="text-slate-700 dark:text-slate-300">Deployment Date</Label>
                         <Input
                             type="date" id="reserveDate"
                             value={date} onChange={(e) => setDate(e.target.value)}
-                            className="bg-slate-50 focus-visible:ring-blue-600 w-full md:w-1/2"
+                            className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus-visible:ring-blue-600 w-full md:w-1/2"
                         />
                     </div>
 
-                    <DialogFooter className="pt-4 border-t border-slate-100">
-                        <Button type="button" variant="ghost" onClick={onClose} disabled={isSubmitting}>
+                    <DialogFooter className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <Button type="button" variant="ghost" onClick={onClose} disabled={isSubmitting} className="dark:text-slate-300">
                             Cancel
                         </Button>
-                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white min-w-[140px]" disabled={!canBorrow}>
+                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white min-w-[140px]" disabled={!canBorrow}>
                             {isSubmitting ? "Processing..." : "Confirm Reservation"}
                         </Button>
                     </DialogFooter>
