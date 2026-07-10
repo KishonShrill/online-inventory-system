@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
 import recordRoutes from './routes/recordRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
+import userRoutes from './routes/userRoutes.js'
 
 
 config();
@@ -24,42 +25,20 @@ const allowedOrigins = process.env.DEVELOPMENT
     ]
     : `https://cdiis-ois.vercel.app`;
 
-// const corsOptions = {
-//     origin: function (origin, callback) {
-//         console.log("Origin Requests: " + origin);
-//         console.log("Non-browser: " + !origin);
-
-//         // Allow requests with no origin (like mobile apps or curl requests)
-//         // Check if the origin is in the allowed origins list
-//         if (
-//             !origin ||
-//             allowedOrigins.includes(origin) ||
-//             /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/.test(origin) // matches LAN IPs
-//         ) {
-//         callback(null, true);
-//         } else {
-//             callback(new Error('Not allowed by CORS'));
-//         }
-//     },
-//     methods: ["POST", "GET", "PUT", "DELETE"],
-//     credentials: true, // Allow cookies, authorization headers if needed
-//     allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
-// };
-
 const corsOptions = {
-    origin: function (origin, callback) {
+    origin: function(origin, callback) {
         console.log("Origin Requests: " + origin);
         console.log("Non-browser: " + !origin);
 
         // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-
         // Check if the origin is in the allowed origins list
-        if (allowedOrigins.includes(origin)) {
-            // ✅ Origin is allowed
+        if (
+            !origin ||
+            allowedOrigins.includes(origin) ||
+            /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/.test(origin) // matches LAN IPs
+        ) {
             callback(null, true);
         } else {
-            // ❌ Origin not allowed
             callback(new Error('Not allowed by CORS'));
         }
     },
@@ -68,6 +47,28 @@ const corsOptions = {
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
 };
 
+// const corsOptions = {
+//    origin: function (origin, callback) {
+//        console.log("Origin Requests: " + origin);
+//        console.log("Non-browser: " + !origin);
+//
+//        // Allow requests with no origin (like mobile apps or curl requests)
+//        if (!origin) return callback(null, true);
+//
+//        // Check if the origin is in the allowed origins list
+//        if (allowedOrigins.includes(origin)) {
+//            // ✅ Origin is allowed
+//            callback(null, true);
+//        } else {
+//            // ❌ Origin not allowed
+//            callback(new Error('Not allowed by CORS'));
+//        }
+//    },
+//    methods: ["POST", "GET", "PUT", "DELETE"],
+//    credentials: true, // Allow cookies, authorization headers if needed
+//    allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
+//};
+
 const app = express();
 app.set('trust proxy', 1);
 app.use(express.json());
@@ -75,7 +76,7 @@ app.use(cors(corsOptions));
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // limit each IP to 100 requests per windowMs
+    max: 50, // limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes.',
 });
 app.use([
@@ -88,6 +89,7 @@ app.use(authRoutes);
 app.use(itemRoutes);
 app.use(recordRoutes);
 app.use(attendanceRoutes);
+app.use(userRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Endpoint not found' });

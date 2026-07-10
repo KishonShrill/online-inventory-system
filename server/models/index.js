@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         // required: [true, "Please provide this user a role!"],
+    },
+    isApproved: {
+        type: Boolean,
+        default: false
     }
 });
 

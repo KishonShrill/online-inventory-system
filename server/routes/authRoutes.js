@@ -1,3 +1,4 @@
+import { ResultAsync, okAsync, errAsync } from "neverthrow";
 import e from "express";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -8,96 +9,115 @@ import { User } from '../models/index.js';
 const router = e.Router();
 
 router.post('/api/register', async (req, res) => {
-    if (!req.body || !req.body.email || !req.body.password) {
-        return res.status(400).json({ message: "Email and password required" });
+    const { name, email, password, secret_code } = req.body;
+
+    if (!name || !email || !password || !secret_code) {
+        return res.status(400).json({ message: "All fields are required." });
     }
 
-    const existing = await User.findOne({ email });
-    if (existing) {
-        return res.status(400).json({ message: "Email already registered" });
-    }
-
-    // Determine role based on secret code
     const SECRET_CODES = {
         [process.env.SECRET_CODE_ADMIN]: 'admin',
         [process.env.SECRET_CODE_MANAGER]: 'manager',
-        [process.env.SECRET_CODE_EMPLOYEE]: 'employee',
+        [process.env.SECRET_CODE_EMPLOYEE]: 'employee', // Updated to match CDIIS roles
     };
 
     const role = SECRET_CODES[secret_code];
     if (!role) {
-        return res.status(400).json({ message: "Invalid secret code. Contact the administrator." });
+        return res.status(400).json({ message: "Invalid authorization code. Clearance denied." });
     }
 
-    try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const user = new User({
-            name: req.body.name,
-            email: req.body.email,
-            password: hashedPassword,
-            role,
-        });
+    await ResultAsync.fromPromise(
+        User.findOne({ email }).exec(),
+        (error) => ({ status: 500, message: "Database error during clearance check.", error: error.message })
+    )
+        .andThen((existingUser) => {
+            if (existingUser) return errAsync({ status: 400, message: "Email already registered in the system." });
 
-        const result = await user.save();
-        res.status(201).json({
-            message: "User Created Successfully",
-            result,
-        });
+            // If clear, move to hashing
+            return ResultAsync.fromPromise(
+                bcrypt.hash(password, 10),
+                (error) => ({ status: 500, message: "Internal error securing credentials.", error: error.message })
+            );
+        })
+        .andThen((hashedPassword) => {
+            // Create user with isApproved explicitly false (though the schema default handles this too)
+            const user = new User({
+                name,
+                email,
+                password: hashedPassword,
+                role,
+                isApproved: false // Explicitly pending approval
+            });
 
-    } catch (error) {
-        res.status(500).json({
-            error: "Error creating user",
-            message: error.message,
-        });
-    }
+            return ResultAsync.fromPromise(
+                user.save(),
+                (error) => ({ status: 500, message: "Error provisioning user workspace.", error: error.message })
+            );
+        })
+        .match(
+            (savedUser) => res.status(201).json({
+                message: "Registration successful. Account is pending administrative approval.",
+                result: { _id: savedUser._id, name: savedUser.name, email: savedUser.email }
+            }),
+            (error) => res.status(error.status || 500).json(error)
+        );
 });
 
-
 router.post('/api/login', async (req, res) => {
-    try {
-        // check if email exists
-        const user = await User.findOne({ email: req.body.email });
+    const { email, password } = req.body;
 
-        if (!user) {
-            return res.status(404).json({
-                message: "Email not found",
-            });
-        }
-
-        // compare the password entered and the hashed password found
-        const passwordCheck = await bcrypt.compare(req.body.password, user.password);
-
-        if (!passwordCheck) {
-            return res.status(400).json({
-                message: "Password does not match",
-            });
-        }
-
-        //   create JWT token
-        const token = jwt.sign(
-            {
-                userId: user._id,
-                userName: user.name,
-                userEmail: user.email,
-                userRole: user.role,
-            },
-            process.env.JWT_SECRET || "RANDOM-TOKEN", // Use env variable for secret
-            { expiresIn: "24h" }
-        );
-
-        //   return success res
-        res.status(200).json({
-            message: "Login Successful",
-            email: user.email,
-            token,
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Error during login",
-            error: error.message,
-        });
+    if (!email || !password) {
+        return res.status(400).json({ message: "Email and password required" });
     }
-})
+
+    await ResultAsync.fromPromise(
+        User.findOne({ email }).exec(),
+        (error) => ({ status: 500, message: "Database error during user lookup.", error: error.message })
+    )
+        .andThen((user) => {
+            // If user doesn't exist, derail to the error track
+            if (!user) return errAsync({ status: 404, message: "Email not found" });
+
+            // Otherwise, return the next ResultAsync (bcrypt)
+            return ResultAsync.fromPromise(
+                bcrypt.compare(password, user.password),
+                (error) => ({ status: 500, message: "Internal error verifying credentials.", error: error.message })
+            ).andThen((isValid) => {
+                if (!isValid) {
+                    return errAsync({ status: 400, message: "Password does not match." });
+                }
+
+                // NEW: Check for administrative approval
+                if (!user.isApproved) {
+                    return errAsync({ status: 403, message: "Account pending administrative approval. Please contact a manager." });
+                }
+
+                return okAsync(user);
+            });
+        })
+        .andThen((user) => {
+            // jwt.sign is synchronous but can throw, so we wrap it
+            try {
+                const token = jwt.sign(
+                    { userId: user._id, userName: user.name, userEmail: user.email, userRole: user.role },
+                    process.env.JWT_SECRET,
+                    { expiresIn: "24h" }
+                );
+                return okAsync({ user, token }); // Pass both down the chain
+            } catch (error) {
+                return errAsync({ status: 500, message: "Error generating token", error: error.message });
+            }
+        })
+        .match(
+            // The Happy Path End
+            ({ user, token }) => res.status(200).json({
+                message: "System clearance granted. Login Successful",
+                email: user.email,
+                token
+            }),
+            // The Error Track End (Catches EVERYTHING)
+            (error) => res.status(error.status || 500).json(error)
+        );
+});
 
 export default router;

@@ -1,20 +1,20 @@
-import { TOGGLE_DARK_MODE, SET_DARK_MODE } from "../actions/darkModeActions";
+import { TOGGLE_DARK_MODE } from "../actions/darkModeActions";
 
 const initialState = {
-    enabled: localStorage.getItem('theme') === 'dark',
+    enabled: localStorage.getItem('theme') === 'dark' ? true : false,
 };
 
-const darkModeReducer = (state = initialState, action) => {
+export const darkModeReducer = (state = initialState, action) => {
     switch (action.type) {
         case TOGGLE_DARK_MODE:
-            const toggled = !state.enabled;
-            localStorage.setItem('theme', toggled ? 'dark' : 'light');
-            return {...state, enabled: toggled};
+            const newMode = !state.enabled;
+            // Save the new preference to local storage immediately
+            localStorage.setItem('theme', newMode ? 'dark' : 'light');
 
-        case SET_DARK_MODE:
-            localStorage.setItem('theme', action.playload ? 'dark' : 'light');
-            return {...state, enabled: action.payload};
-        
+            return {
+                ...state,
+                enabled: newMode
+            };
         default:
             return state;
     }

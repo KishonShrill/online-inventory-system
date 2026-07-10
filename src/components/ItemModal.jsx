@@ -1,387 +1,298 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import {
-    addInventory,
-    editInventory,
-    removeInventory,
-} from "../redux/actions/inventoryActions";
 import axios from "axios";
-import { Trash2 } from "lucide-react";
+import { ResultAsync } from "neverthrow";
+import { Trash2, Plus, QrCode, AlertTriangle, PackagePlus, Edit3, Save } from "lucide-react";
+
+import { addInventory, editInventory, removeInventory } from "../redux/actions/inventoryActions";
 import { Mode } from "../helpers/_variables";
 
+// Shadcn UI Components
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const ItemModal = ({ onClose, initialInventory, itemId, mode, dispatch }) => {
-    const [removeMode, setRemoveMode] = useState(false);
-    const [components, setComponents] = useState([]);
-    const nameRef = useRef();
-    const descRef = useRef();
-    const colorRef = useRef();
-    const categoryRef = useRef();
+    const item = useSelector((state) => state.inventory.find((i) => i._id === itemId));
+    const isRemoveMode = mode === Mode.DELETE;
 
-    const item = useSelector((state) =>
-        state.inventory.find((i) => i._id === itemId)
-    );
-    const isItemNumber = String(itemId || ""); // Ensure password is a string and handle null/undefined
-
-    let title = "Add New Item"; // default
-    let submitBtnText = "Add Item";
-
-    let initialData = {
+    // --- State Management ---
+    const [formData, setFormData] = useState({
         name: "",
         description: "",
         color: "",
         category: "",
-        components: '',
-    };
+        components: [],
+    });
 
-    useEffect(() => {
-        if (mode === Mode.DELETE) {
-            setRemoveMode(true);
-        }
-    }, [mode]);
+    const [generatedId, setGeneratedId] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState("");
 
-    // OPTIONAL: Pre-fill components on edit
-    useEffect(() => {
-        if ((mode === Mode.UPDATE || mode === Mode.DELETE) && item?.items) {
-            setComponents(item.items.map(({ name, quantity }) => ({ name, quantity })));
-        }
-    }, [item, mode]);
+    // --- Helper Functions ---
+    const toProperCase = (str) =>
+        str.toLowerCase().split(' ').filter(Boolean).map(word => word[0].toUpperCase() + word.slice(1)).join(' ');
 
-    // A real implementation would use a proper QR code library
-    const generateQrCode = (id) =>
-        `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${id}`;
+    const generateQrCode = (id) => `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${id}`;
 
     const getEQPId = (state) => {
-        if (typeof state == "string") {
-            return state;
-        }
-
-        if (!state.length) {
-            return 'EQP-0001';
-        }
+        if (typeof state === "string") return state;
+        if (!state || !state.length) return 'EQP-0001';
 
         const sorted = [...state].sort((a, b) => {
             const numA = parseInt(a.id?.split('-')[1] || '0', 10);
             const numB = parseInt(b.id?.split('-')[1] || '0', 10);
-            return numB - numA; // descending
+            return numB - numA;
         });
 
         const highestId = parseInt(sorted[0].id?.split('-')[1] || '0', 10);
-        const nextIdNum = highestId + 1;
-
-        return `EQP-${String(nextIdNum).padStart(4, '0')}`;
+        return `EQP-${String(highestId + 1).padStart(4, '0')}`;
     };
 
-    let newItemId = '';
-
-    // Initialize Modal
-    switch (mode) {
-        case Mode.ADD:
-            title = "Add New Item";
-            submitBtnText = "Create";
-
-            newItemId = `${String(getEQPId(initialInventory))}`
-
-            break;
-
-        case Mode.UPDATE:
-            if (isItemNumber.length <= 0) {
-                alert("No Item# is given...");
-                return;
-            }
-
-            if (!item) {
-                alert("Item not found");
-                return null;
-            }
-
-            title = "Update Item";
-            submitBtnText = "Edit";
-            initialData = {
-                name: item.name,
-                description: item.description,
-                color: item.color ?? "",
-                category: item.category,
-                components: item.items.map(({ name, quantity }) => ({ name, quantity })),
-            };
-            newItemId = `${String(getEQPId(item.id))}`
-            break;
-
-        case Mode.DELETE:
-            title = "Delete Item";
-            submitBtnText = "Delete";
-            initialData = {
-                name: item.name,
-                description: item.description,
-                color: item.color ?? "",
-                category: item.category,
-            };
-            newItemId = `${String(getEQPId(item.id))}`
-            break;
-
-        default:
-            alert("'mode' should either be ADD or EDIT");
-            return;
-    }
-
-    const toProperCase = (str) =>
-        str
-            .toLowerCase()
-            .split(' ')
-            .filter(Boolean)
-            .map(word => word[0].toUpperCase() + word.slice(1))
-            .join(' ');
-
-    const handleAddComponent = () => {
-        setComponents([...components, { name: '', quantity: '' }]);
-    };
-
-    const handleRemoveComponent = (index) => {
-        const newComponents = [...components];
-        newComponents.splice(index, 1);
-        setComponents(newComponents);
-    };
-
-    const handleComponentChange = (index, field, value) => {
-        const newComponents = [...components];
-        newComponents[index][field] = field === 'quantity' ? parseInt(value) || '' : value;
-        setComponents(newComponents);
-    };
-
-    function handleSubmit(e) {
-        e.preventDefault();
-
-        const name = toProperCase(nameRef.current.value.trim());
-        const description = toProperCase(descRef.current.value.trim());
-        const color = toProperCase(colorRef.current.value.trim());
-        const category = toProperCase(categoryRef.current.value.trim());
-        const validComponents = components
-            .filter(comp => comp.name.trim() && comp.quantity > 0)
-            .map(comp => ({ ...comp, name: toProperCase(comp.name) }));
-
-        if (!name || !color || !category) {
-            alert("Name, Color, and Category are required.");
-            return;
-        }
-
-        if (
-            mode === Mode.UPDATE &&
-            name === initialData.name &&
-            description === initialData.description &&
-            color === initialData.color &&
-            category === initialData.category &&
-            JSON.stringify(validComponents) === JSON.stringify(initialData.components)
-        ) {
-            alert("No changes were made.");
-            return;
-        }
-
-        const postURL =
-            import.meta.env.VITE_DEVELOPMENT === "true"
-                ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/items`
-                : `https://cdiis-ois-server.vercel.app/api/items`;
-
-        const confirguation = removeMode
-            ? {
-                method: "delete",
-                url: postURL,
-                data: {
-                    id: itemId,
-                    type: mode,
-                },
-            }
-            : {
-                method: "post",
-                url: postURL,
-                data: {
-                    _id: itemId,
-                    id: newItemId,
-                    name: name,
-                    description: description,
-                    category: category,
-                    color: color,
-                    date_added: new Date().toISOString(),
-                    type: mode,
-                    items: validComponents,
-                },
-            };
-
-        axios(confirguation)
-            .then((res) => {
-                // console.log(res.data)
-                console.log(JSON.stringify(res.data.result))
-                if (res.data.type === Mode.ADD) dispatch(addInventory(res.data.result));
-                if (res.data.type === Mode.UPDATE)
-                    dispatch(editInventory(res.data.result._id, res.data.result));
-                if (res.data.type === Mode.DELETE)
-                    dispatch(removeInventory(res.data.result));
-                alert(res.data.message);
-                onClose();
-            })
-            .catch((err) => {
-                console.log(err);
-                alert(err.response.data.message);
+    // --- Initialization Effect ---
+    useEffect(() => {
+        if (mode === Mode.ADD) {
+            setGeneratedId(getEQPId(initialInventory));
+        } else if (item) {
+            setGeneratedId(item.id);
+            setFormData({
+                name: item.name || "",
+                description: item.description || "",
+                color: item.color || "",
+                category: item.category || "",
+                components: item.items ? item.items.map(c => ({ name: c.name, quantity: c.quantity })) : [],
             });
-    }
+        }
+    }, [mode, item, initialInventory]);
+
+    // --- Component Array Handlers ---
+    const addComponent = () => setFormData(prev => ({ ...prev, components: [...prev.components, { name: '', quantity: '' }] }));
+    const removeComponent = (idx) => setFormData(prev => ({ ...prev, components: prev.components.filter((_, i) => i !== idx) }));
+    const updateComponent = (idx, field, value) => {
+        setFormData(prev => {
+            const newComps = [...prev.components];
+            newComps[idx][field] = field === 'quantity' ? (parseInt(value) || '') : value;
+            return { ...prev, components: newComps };
+        });
+    };
+
+    // --- API Logic via neverthrow ---
+    const submitItemAPI = (configuration) => {
+        return ResultAsync.fromPromise(
+            axios(configuration),
+            (err) => err.response?.data?.message || "An unexpected server error occurred."
+        );
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setIsSubmitting(true);
+
+        const cleanData = {
+            name: toProperCase(formData.name.trim()),
+            description: toProperCase(formData.description.trim()),
+            color: toProperCase(formData.color.trim()),
+            category: toProperCase(formData.category.trim()),
+            components: formData.components
+                .filter(c => c.name.trim() && c.quantity > 0)
+                .map(c => ({ ...c, name: toProperCase(c.name) }))
+        };
+
+        if (!cleanData.name || !cleanData.color || !cleanData.category) {
+            setError("Name, Color, and Category are required.");
+            setIsSubmitting(false);
+            return;
+        }
+
+        const postURL = import.meta.env.VITE_DEVELOPMENT === "true"
+            ? `http://${import.meta.env.VITE_LOCALHOST}:5000/api/items`
+            : `https://cdiis-ois-server.vercel.app/api/items`;
+
+        const configuration = isRemoveMode ? {
+            method: "delete", url: postURL, data: { id: itemId, type: mode }
+        } : {
+            method: "post", url: postURL, data: {
+                _id: itemId,
+                id: generatedId,
+                name: cleanData.name,
+                description: cleanData.description,
+                category: cleanData.category,
+                color: cleanData.color,
+                date_added: new Date().toISOString(),
+                type: mode,
+                items: cleanData.components,
+            }
+        };
+
+        const apiResult = await submitItemAPI(configuration);
+
+        if (apiResult.isErr()) {
+            setError(apiResult.error);
+            setIsSubmitting(false);
+            return;
+        }
+
+        // Success Path
+        const responseData = apiResult.value.data;
+        if (responseData.type === Mode.ADD) dispatch(addInventory(responseData.result));
+        if (responseData.type === Mode.UPDATE) dispatch(editInventory(responseData.result._id, responseData.result));
+        if (responseData.type === Mode.DELETE) dispatch(removeInventory(responseData.result));
+
+        onClose();
+    };
+
+    // --- Dynamic UI Variables ---
+    const ui = {
+        title: mode === Mode.ADD ? "Provision New Asset" : mode === Mode.UPDATE ? "Update Asset Details" : "Revoke Asset",
+        icon: mode === Mode.ADD ? PackagePlus : mode === Mode.UPDATE ? Edit3 : AlertTriangle,
+        iconColor: isRemoveMode ? "text-red-600 dark:text-red-400" : "text-blue-600 dark:text-blue-400",
+        btnText: isRemoveMode ? "Confirm Deletion" : "Save Asset Record",
+        btnVariant: isRemoveMode ? "destructive" : "default"
+    };
 
     return (
-        <>
-            <div className="inventory__modal-container">
-                <div className="inventory__modal">
-                    <h3 className="inventory__modal-title">{title}</h3>
-                    <form onSubmit={handleSubmit}>
-                        <div className="modal-input-container">
-                            <label className="inventory__modal-label" htmlFor="name">
-                                Item Name
-                            </label>
-                            <input
-                                ref={nameRef}
-                                className="inventory__modal-input input"
-                                id="name"
-                                type="text"
-                                placeholder="e.g. MacBook Pro"
-                                defaultValue={initialData.name}
-                                autoComplete="false"
-                                required
-                                readOnly={removeMode || mode === Mode.UPDATE}
-                                style={
-                                    mode === Mode.UPDATE || removeMode
-                                        ? { cursor: "not-allowed" }
-                                        : null
-                                }
-                            />
+        <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent className="sm:max-w-[650px] max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900 dark:border-slate-800 transition-colors">
+                <DialogHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className={`p-2 rounded-lg bg-slate-100 dark:bg-slate-800 ${ui.iconColor}`}>
+                            <ui.icon className="w-5 h-5" />
                         </div>
-                        <div className="modal-input-container">
-                            <label className="inventory__modal-label" htmlFor="description">
-                                Description
-                            </label>
-                            <textarea
-                                ref={descRef}
-                                className="inventory__modal-input input"
-                                id="description"
-                                placeholder="Any relevant details"
-                                defaultValue={initialData.description}
-                                readOnly={removeMode}
-                                style={mode === Mode.DELETE ? { cursor: "not-allowed" } : null}
-                            ></textarea>
+                        <DialogTitle className="text-2xl dark:text-slate-100">{ui.title}</DialogTitle>
+                    </div>
+                    <DialogDescription className="dark:text-slate-400">
+                        {isRemoveMode
+                            ? "Warning: This action will permanently remove this asset from the CDIIS network."
+                            : "Enter the specifications and components for this hardware asset."}
+                    </DialogDescription>
+                </DialogHeader>
+
+                <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+                    {error && (
+                        <div className="p-3 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-md flex items-center gap-2">
+                            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
                         </div>
-                        <div className="grid-2-cols modal-input-container">
-                            <div>
-                                <label className="inventory__modal-label" htmlFor="color">
-                                    Color
-                                </label>
-                                <input
-                                    ref={colorRef}
-                                    className="inventory__modal-input"
-                                    list="colors"
-                                    id="color"
-                                    type="text"
-                                    placeholder="e.g. Silver"
-                                    defaultValue={initialData.color}
-                                    required
-                                    readOnly={removeMode}
-                                    style={
-                                        mode === Mode.DELETE ? { cursor: "not-allowed" } : null
-                                    }
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Main Inputs */}
+                        <div className="md:col-span-2 space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="name" className="dark:text-slate-300">Asset Nomenclature (Name)</Label>
+                                <Input
+                                    id="name" placeholder="e.g. ThinkPad T14 Gen 3"
+                                    value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    disabled={isRemoveMode || mode === Mode.UPDATE}
+                                    className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus-visible:ring-blue-600 placeholder:text-slate-400 dark:placeholder:text-slate-500" required
                                 />
-                                <datalist id="colors">
-                                    <option value="Red" />
-                                    <option value="Green" />
-                                    <option value="Blue" />
-                                    <option value="Yellow" />
-                                    <option value="Black" />
-                                </datalist>
                             </div>
-                            <div>
-                                <label className="inventory__modal-label" htmlFor="category">
-                                    Category
-                                </label>
-                                <input
-                                    ref={categoryRef}
-                                    className="inventory__modal-input"
-                                    id="category"
-                                    type="text"
-                                    placeholder="e.g. Electronics"
-                                    defaultValue={initialData.category}
-                                    required
-                                    readOnly={removeMode}
-                                    style={
-                                        mode === Mode.DELETE ? { cursor: "not-allowed" } : null
-                                    }
+
+                            <div className="space-y-2">
+                                <Label htmlFor="description" className="dark:text-slate-300">Technical Description</Label>
+                                <Textarea
+                                    id="description" placeholder="Processor, RAM, identifying marks..."
+                                    value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    disabled={isRemoveMode}
+                                    className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus-visible:ring-blue-600 placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none h-24"
                                 />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="category" className="dark:text-slate-300">Classification</Label>
+                                    <Input
+                                        id="category" placeholder="e.g. Electronics"
+                                        value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        disabled={isRemoveMode}
+                                        className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500" required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="color" className="dark:text-slate-300">Hardware Color</Label>
+                                    <Input
+                                        id="color" placeholder="e.g. Matte Black"
+                                        value={formData.color} onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                                        disabled={isRemoveMode}
+                                        className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500" required
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        <div className="modal-input-container">
-                            <label className="inventory__modal-label">Item Components</label>
-                            {components.map((comp, index) => (
-                                <div key={index} className="grid-5-cols modal-input-container">
-                                    <input
-                                        type="text"
-                                        placeholder="Component Name"
-                                        value={comp.name}
-                                        onChange={(e) => handleComponentChange(index, 'name', e.target.value)}
-                                        className="inventory__modal-input input"
-                                        style={{ gridColumnStart: 1, gridColumnEnd: 4, ...(mode === Mode.DELETE ? { cursor: "not-allowed" } : null) }}
-                                        required={comp.quantity > 0}
+                        {/* QR Code Sidebar Display */}
+                        <div className="flex flex-col items-center justify-start pt-6">
+                            <div className="border border-slate-200 dark:border-slate-700/50 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 shadow-sm flex flex-col items-center w-full">
+                                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-mono text-sm mb-3">
+                                    <QrCode className="w-4 h-4" />
+                                    {generatedId}
+                                </div>
+                                {/* Removed mix-blend-multiply and added p-1 to ensure QR is always scannable */}
+                                <img src={generateQrCode(generatedId)} alt="Asset QR Code" className="w-32 h-32 rounded-md bg-white p-1 border border-slate-200 dark:border-slate-600" />
+                                <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-3 text-center uppercase tracking-widest">CDIIS Registry Tag</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Hardware Components Section */}
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center justify-between mb-4">
+                            <Label className="text-base dark:text-slate-200">Peripheral Components</Label>
+                            {!isRemoveMode && (
+                                <Button type="button" variant="outline" size="sm" onClick={addComponent} className="h-8 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 dark:hover:text-blue-300 bg-transparent">
+                                    <Plus className="w-4 h-4 mr-1" /> Add Part
+                                </Button>
+                            )}
+                        </div>
+
+                        <div className="space-y-3">
+                            {formData.components.length === 0 && !isRemoveMode && (
+                                <div className="text-sm text-slate-400 dark:text-slate-500 italic text-center p-4 border border-dashed border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                                    No peripheral components added.
+                                </div>
+                            )}
+
+                            {formData.components.map((comp, idx) => (
+                                <div key={idx} className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
+                                    <Input
+                                        placeholder="Component Name (e.g. Power Adapter)"
+                                        value={comp.name} onChange={(e) => updateComponent(idx, 'name', e.target.value)}
+                                        disabled={isRemoveMode}
+                                        className="flex-1 bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                                     />
-                                    <input
-                                        type="number"
-                                        placeholder="##"
-                                        min="1"
-                                        value={comp.quantity}
-                                        onChange={(e) => handleComponentChange(index, 'quantity', e.target.value)}
-                                        className="inventory__modal-input input"
-                                        style={mode === Mode.DELETE ? { cursor: "not-allowed" } : null}
-                                        required={comp.name.trim() !== ''}
+                                    <Input
+                                        type="number" min="1" placeholder="Qty"
+                                        value={comp.quantity} onChange={(e) => updateComponent(idx, 'quantity', e.target.value)}
+                                        disabled={isRemoveMode}
+                                        className="w-24 bg-white dark:bg-slate-950 dark:border-slate-700 dark:text-slate-100 text-center placeholder:text-slate-400 dark:placeholder:text-slate-500"
                                     />
-                                    {!removeMode && (
-                                        <button
-                                            type="button"
-                                            className="modal-actions-danger"
-                                            onClick={() => handleRemoveComponent(index)}
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
+                                    {!isRemoveMode && (
+                                        <Button type="button" variant="ghost" size="icon" onClick={() => removeComponent(idx)} className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 shrink-0">
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
                                     )}
                                 </div>
                             ))}
-                            <button type="button" className="modal-actions-add justify-self-end" onClick={handleAddComponent}>
-                                + Add Component
-                            </button>
                         </div>
+                    </div>
 
-                        <div className="modal-qr-container">
-                            <p className="modal-qr-description">
-                                Generated QR Code for ID: {newItemId}
-                            </p>
-                            <img
-                                src={generateQrCode(newItemId)}
-                                alt="QR Code"
-                                className="modal-qr-image"
-                            />
-                        </div>
-
-                        <div className="modal-actions-container">
-                            <button
-                                onClick={onClose}
-                                type="button"
-                                className="modal-actions-cancel"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="modal-actions-add"
-                                style={removeMode ? { backgroundColor: "red" } : undefined}
-                            >
-                                {submitBtnText}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </>
+                    <DialogFooter className="pt-4 border-t border-slate-100 dark:border-slate-800 sm:justify-between">
+                        <Button type="button" variant="ghost" onClick={onClose} disabled={isSubmitting} className="dark:text-slate-300 dark:hover:bg-slate-800">
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant={ui.btnVariant} disabled={isSubmitting} className="min-w-[140px]">
+                            {isSubmitting ? (
+                                <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Processing...</span>
+                            ) : (
+                                <span className="flex items-center gap-2"><Save className="w-4 h-4" /> {ui.btnText}</span>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 };
 
