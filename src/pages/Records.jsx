@@ -21,7 +21,7 @@ const Records = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
-        <div className="container mx-auto min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-transparent p-6 md:p-10 font-sans transition-colors duration-200">
+        <div className="container mx-auto bg-slate-50 dark:bg-transparent p-6 md:p-10 font-sans transition-colors duration-200">
             <title>CDIIS OIS - Asset Transactions</title>
 
             {/* Page Header */}

@@ -30,7 +30,7 @@ const Settings = () => {
     };
 
     return (
-        < div className="container mx-auto min-h-[calc(100vh-64px)] p-6 md:p-10 font-sans transition-colors duration-200" >
+        < div className="container mx-auto p-6 md:p-10 font-sans transition-colors duration-200" >
             <title>CDIIS OIS - System Preferences</title>
 
             <div className="max-w-4xl mx-auto">

@@ -169,7 +169,7 @@ const ItemCheck = () => {
         : "text-indigo-500 bg-indigo-50 border-indigo-200 dark:bg-indigo-950/30 dark:border-indigo-800/50 dark:text-indigo-400";
 
     return (
-        <div className="container mx-auto min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-transparent p-6 md:p-10 font-sans flex justify-center items-start transition-colors duration-200">
+        <div className="container mx-auto bg-slate-50 dark:bg-transparent p-6 md:p-10 font-sans flex justify-center items-start transition-colors duration-200">
             <title>CDIIS OIS - Asset Verification</title>
 
             <div className="w-full max-w-3xl space-y-6">

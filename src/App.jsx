@@ -17,6 +17,7 @@ const ItemCheck = lazy(() => import('./pages/ItemCheck'));
 const Records = lazy(() => import('./pages/Records'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Signup = lazy(() => import('./pages/Signup'));
+const Users = lazy(() => import('./pages/Users'));
 
 const queryClient = new QueryClient()
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === 'true'
@@ -39,6 +40,7 @@ function App() {
                             <Route path='item-check' element={<ItemCheck />} />
                             <Route path='records' element={<Records />} />
                             <Route path='settings' element={<Settings />} />
+                            <Route path='users' element={<Users />} />
                         </Route>
                     </Routes>
                 </BrowserRouter>
