@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Home, Package, CheckSquare, Users, Settings } from "lucide-react";
+import { Home, Package, CheckSquare, Users, Settings, LibraryBig } from "lucide-react";
 import { Role } from "../helpers/_variables";
 
 const Navigation = ({ decoded }) => {
@@ -10,7 +10,10 @@ const Navigation = ({ decoded }) => {
         ...(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER
             ? [{ name: 'Verification', link: '/app/item-check', icon: CheckSquare }]
             : []),
-        { name: 'Records', link: '/app/records', icon: Users },
+        { name: 'Records', link: '/app/records', icon: LibraryBig },
+        ...(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER
+            ? [{ name: 'Users', link: '/app/users', icon: Users }]
+            : []),
         { name: 'Settings', link: '/app/settings', icon: Settings },
     ];
 

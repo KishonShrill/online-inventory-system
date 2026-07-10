@@ -172,7 +172,7 @@ const Signup = () => {
                                     id="name" name="name" type="text"
                                     placeholder="Juan Dela Cruz"
                                     value={formData.name} onChange={handleChange}
-                                    className="pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
+                                    className="text-black pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
                                 />
                             </div>
                         </div>
@@ -187,7 +187,7 @@ const Signup = () => {
                                     id="email" name="email" type="email"
                                     placeholder="name@iligan.gov.ph"
                                     value={formData.email} onChange={handleChange}
-                                    className="pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
+                                    className="text-black pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
                                 />
                             </div>
                         </div>
@@ -204,7 +204,7 @@ const Signup = () => {
                                         type={showPassword ? 'text' : 'password'}
                                         placeholder="••••••••"
                                         value={formData.password} onChange={handleChange}
-                                        className="pl-10 pr-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
+                                        className="text-black pl-10 pr-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
                                     />
                                     <button
                                         type="button"
@@ -227,7 +227,7 @@ const Signup = () => {
                                         type={showConfirm ? 'text' : 'password'}
                                         placeholder="••••••••"
                                         value={formData.confirmPassword} onChange={handleChange}
-                                        className="pl-10 pr-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
+                                        className="text-black pl-10 pr-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
                                     />
                                     <button
                                         type="button"
@@ -250,7 +250,7 @@ const Signup = () => {
                                     id="secretCode" name="secretCode" type="password"
                                     placeholder="Enter system admin code"
                                     value={formData.secretCode} onChange={handleChange}
-                                    className="pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
+                                    className="text-black pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
                                 />
                             </div>
                             <p className="text-xs text-slate-500 mt-1.5">

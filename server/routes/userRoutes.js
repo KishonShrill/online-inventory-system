@@ -127,6 +127,47 @@ router.put('/api/users/:id/role', user_verify, requireRole('manager'), async (re
 });
 
 // ==========================================
+// PUT /api/users/:id/approve - Approve a pending user
+// ==========================================
+router.put('/api/users/:id/approve', user_verify, requireRole('manager'), async (req, res) => {
+    const targetUserId = req.params.id;
+
+    await ResultAsync.fromPromise(
+        User.findById(targetUserId).exec(),
+        (error) => new Error(`Database error: ${error.message}`)
+    )
+        .andThen((targetUser) => {
+            if (!targetUser) return errAsync(new Error("NOT_FOUND"));
+
+            targetUser.isApproved = true; // Grant access
+
+            return ResultAsync.fromPromise(
+                targetUser.save(),
+                (error) => new Error(`Failed to save approval status: ${error.message}`)
+            );
+        })
+        .match(
+            (savedUser) => {
+                res.status(200).json({
+                    message: "User approved for system access.",
+                    user: {
+                        _id: savedUser._id,
+                        name: savedUser.name,
+                        isApproved: savedUser.isApproved
+                    }
+                });
+            },
+            (error) => {
+                if (error.message === "NOT_FOUND") {
+                    return res.status(404).json({ message: "Target personnel not found." });
+                }
+                console.error('Error approving user:', error);
+                res.status(500).json({ message: 'Internal server error.', error: error.message });
+            }
+        );
+});
+
+// ==========================================
 // DELETE /api/users/:id - Revoke Access / Delete User
 // ==========================================
 router.delete('/api/users/:id', user_verify, requireRole('admin'), async (req, res) => {

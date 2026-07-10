@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { ChevronRight, ChevronLeft, Home, Package, Users, Settings, CheckSquare } from "lucide-react";
+import { ChevronRight, ChevronLeft, Home, Package, Users, Settings, CheckSquare, LibraryBig } from "lucide-react";
 import { openSidebar, closeSidebar } from "../redux/actions/sidebarActions";
 import { Role } from "../helpers/_variables";
 
@@ -22,10 +22,13 @@ const Sidebar = ({ decoded }) => {
         ...(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER
             ? [{ name: 'Item Check', link: '/app/item-check', icon: CheckSquare }]
             : []),
-        { name: 'Borrow Records', link: '/app/records', icon: Users },
+        { name: 'Borrow Records', link: '/app/records', icon: LibraryBig },
     ];
 
     const managementItems = [
+        ...(decoded.userRole === Role.ADMIN || decoded.userRole === Role.MANAGER
+            ? [{ name: 'Users', link: '/app/users', icon: Users }]
+            : []),
         { name: 'Settings', link: '/app/settings', icon: Settings },
     ];
 

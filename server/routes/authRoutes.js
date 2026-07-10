@@ -18,7 +18,7 @@ router.post('/api/register', async (req, res) => {
     const SECRET_CODES = {
         [process.env.SECRET_CODE_ADMIN]: 'admin',
         [process.env.SECRET_CODE_MANAGER]: 'manager',
-        [process.env.SECRET_CODE_EMPLOYEE]: 'employee',
+        [process.env.SECRET_CODE_EMPLOYEE]: 'employee', // Updated to match CDIIS roles
     };
 
     const role = SECRET_CODES[secret_code];
@@ -40,8 +40,14 @@ router.post('/api/register', async (req, res) => {
             );
         })
         .andThen((hashedPassword) => {
-            // Create user and return the save promise
-            const user = new User({ name, email, password: hashedPassword, role });
+            // Create user with isApproved explicitly false (though the schema default handles this too)
+            const user = new User({
+                name,
+                email,
+                password: hashedPassword,
+                role,
+                isApproved: false // Explicitly pending approval
+            });
 
             return ResultAsync.fromPromise(
                 user.save(),
@@ -50,8 +56,8 @@ router.post('/api/register', async (req, res) => {
         })
         .match(
             (savedUser) => res.status(201).json({
-                message: "System clearance granted. User created successfully.",
-                result: savedUser
+                message: "Registration successful. Account is pending administrative approval.",
+                result: { _id: savedUser._id, name: savedUser.name, email: savedUser.email }
             }),
             (error) => res.status(error.status || 500).json(error)
         );
@@ -76,10 +82,18 @@ router.post('/api/login', async (req, res) => {
             return ResultAsync.fromPromise(
                 bcrypt.compare(password, user.password),
                 (error) => ({ status: 500, message: "Internal error verifying credentials.", error: error.message })
-            ).andThen((isValid) =>
-                // Check the boolean result of bcrypt
-                isValid ? okAsync(user) : errAsync({ status: 400, message: "Password does not match" })
-            );
+            ).andThen((isValid) => {
+                if (!isValid) {
+                    return errAsync({ status: 400, message: "Password does not match." });
+                }
+
+                // NEW: Check for administrative approval
+                if (!user.isApproved) {
+                    return errAsync({ status: 403, message: "Account pending administrative approval. Please contact a manager." });
+                }
+
+                return okAsync(user);
+            });
         })
         .andThen((user) => {
             // jwt.sign is synchronous but can throw, so we wrap it
@@ -97,7 +111,7 @@ router.post('/api/login', async (req, res) => {
         .match(
             // The Happy Path End
             ({ user, token }) => res.status(200).json({
-                message: "Login Successful",
+                message: "System clearance granted. Login Successful",
                 email: user.email,
                 token
             }),

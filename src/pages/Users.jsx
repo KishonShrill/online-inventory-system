@@ -3,18 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { ResultAsync } from 'neverthrow';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import { Shield, ShieldAlert, User, Loader2, Mail, Search, Trash2, Users as UsersIcon, AlertTriangle } from 'lucide-react';
+import { Shield, ShieldAlert, User, Loader2, Mail, Search, Trash2, Users as UsersIcon, AlertTriangle, UserCheck } from 'lucide-react';
 import { jwtDecode } from 'jwt-decode';
 
 import Pagination from '../components/Pagination';
 
 // Shadcn UI
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from '@/components/ui/badge';
 
 const cookies = new Cookies();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
@@ -26,7 +27,8 @@ const baseURL = DEVELOPMENT
 
 // CDIIS Clearance Hierarchy
 const ROLE_WEIGHTS = {
-    employee: 1,
+    viewer: 1,
+    employee: 2,
     manager: 5,
     admin: 10
 };
@@ -72,7 +74,25 @@ export default function Users() {
         setIsLoading(false);
     };
 
-    // Triggered by the confirmation modal
+    const handleApproveUser = async (userId, username) => {
+        if (!window.confirm(`Grant system access to ${username}?`)) return;
+
+        setIsProcessing(true);
+        const apiResult = await ResultAsync.fromPromise(
+            axios.put(`${baseURL}/${userId}/approve`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            }),
+            (err) => err.response?.data?.message || "Failed to approve user."
+        );
+
+        if (apiResult.isOk()) {
+            setUsers(prev => prev.map(u => u._id === userId ? { ...u, isApproved: true } : u));
+        } else {
+            alert(apiResult.error);
+        }
+        setIsProcessing(false);
+    };
+
     const executeRoleUpdate = async () => {
         const { user, newRole } = roleModal;
         setIsProcessing(true);
@@ -88,7 +108,7 @@ export default function Users() {
             setUsers(prev => prev.map(u => u._id === user._id ? { ...u, role: newRole } : u));
             setRoleModal({ isOpen: false, user: null, newRole: '' });
         } else {
-            alert(apiResult.error); // Replace with Toast later
+            alert(apiResult.error);
         }
         setIsProcessing(false);
     };
@@ -114,15 +134,12 @@ export default function Users() {
 
     // --- RBAC HELPER LOGIC ---
     const canManageUser = (targetRole, targetId) => {
-        if (targetId === currentUser.userId) return false; // Never manage yourself here
-        // Admins can manage anyone (including other admins)
+        if (targetId === currentUser.userId) return false;
         if (currentUser.userRole === 'admin') return true;
-        // Managers can only manage people strictly below them
         return ROLE_WEIGHTS[currentUser.userRole] > ROLE_WEIGHTS[targetRole];
     };
 
     const getAssignableRoles = () => {
-        // Admins can assign any role. Everyone else can only assign roles strictly below theirs.
         if (currentUser.userRole === 'admin') return Object.keys(ROLE_WEIGHTS);
         return Object.keys(ROLE_WEIGHTS).filter(
             (role) => ROLE_WEIGHTS[role] < ROLE_WEIGHTS[currentUser.userRole]
@@ -138,6 +155,9 @@ export default function Users() {
                 user.email?.toLowerCase().includes(searchQuery.toLowerCase())
             )
             .sort((a, b) => {
+                // Keep pending users at the top, then sort by self
+                if (a.isApproved === false && b.isApproved !== false) return -1;
+                if (b.isApproved === false && a.isApproved !== false) return 1;
                 if (a._id === currentUser.userId) return -1;
                 if (b._id === currentUser.userId) return 1;
                 return 0;
@@ -204,27 +224,29 @@ export default function Users() {
                                     <TableRow className="dark:border-slate-700">
                                         <TableHead className="font-semibold text-slate-600 dark:text-slate-300">Identity</TableHead>
                                         <TableHead className="font-semibold text-slate-600 dark:text-slate-300 w-[200px]">Clearance Level</TableHead>
-                                        <TableHead className="font-semibold text-slate-600 dark:text-slate-300 text-right w-[80px]">Actions</TableHead>
+                                        <TableHead className="font-semibold text-slate-600 dark:text-slate-300 text-right w-[120px]">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {paginatedUsers.map((user) => {
                                         const isManageable = canManageUser(user.role, user._id);
                                         const isSelf = user._id === currentUser.userId;
+                                        const isPending = user.isApproved === false;
 
                                         return (
-                                            <TableRow key={user._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 dark:border-slate-800 transition-colors">
+                                            <TableRow key={user._id} className={`hover:bg-slate-50/50 dark:hover:bg-slate-800/50 dark:border-slate-800 transition-colors ${isPending ? 'bg-amber-50/30 dark:bg-amber-950/10' : ''}`}>
                                                 <TableCell className="align-middle py-4">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50 flex items-center justify-center flex-shrink-0">
+                                                        <div className={`h-10 w-10 rounded-full border flex items-center justify-center flex-shrink-0 ${isPending ? 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800/50 text-amber-500' : 'bg-blue-50 dark:bg-blue-900/30 border-blue-100 dark:border-blue-800/50 text-slate-500'}`}>
                                                             {user.role === 'admin' ? <ShieldAlert className="text-blue-600 dark:text-blue-400 h-5 w-5" /> :
                                                                 user.role === 'manager' ? <Shield className="text-blue-500 dark:text-blue-400 h-5 w-5" /> :
-                                                                    <User className="text-slate-500 dark:text-slate-400 h-5 w-5" />}
+                                                                    <User className="h-5 w-5" />}
                                                         </div>
                                                         <div>
                                                             <h3 className="font-semibold text-slate-900 dark:text-slate-100 capitalize flex items-center gap-2">
                                                                 {user.name.toLowerCase()}
                                                                 {isSelf && <span className="text-[10px] uppercase tracking-wider bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 px-1.5 py-0.5 rounded-sm">You</span>}
+                                                                {isPending && <Badge variant="outline" className="bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800 ml-1">Pending</Badge>}
                                                             </h3>
                                                             <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5">
                                                                 <Mail className="h-3 w-3" />
@@ -235,7 +257,6 @@ export default function Users() {
                                                 </TableCell>
 
                                                 <TableCell className="align-middle">
-                                                    {/* Changed from direct API call to opening the modal */}
                                                     <Select
                                                         disabled={!isManageable || isProcessing}
                                                         value={user.role}
@@ -260,15 +281,28 @@ export default function Users() {
                                                 </TableCell>
 
                                                 <TableCell className="align-middle text-right pr-4">
-                                                    <Button
-                                                        variant="ghost" size="icon"
-                                                        className="text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
-                                                        disabled={!isManageable || isProcessing}
-                                                        onClick={() => handleDeleteUser(user._id, user.name)}
-                                                        title={isManageable ? "Revoke Access" : "Insufficient Clearance"}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
+                                                    <div className="flex justify-end gap-1">
+                                                        {isPending && isManageable && (
+                                                            <Button
+                                                                variant="ghost" size="icon"
+                                                                className="text-emerald-600 dark:text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors disabled:opacity-30"
+                                                                disabled={isProcessing}
+                                                                onClick={() => handleApproveUser(user._id, user.name)}
+                                                                title="Approve Access"
+                                                            >
+                                                                <UserCheck className="h-5 w-5" />
+                                                            </Button>
+                                                        )}
+                                                        <Button
+                                                            variant="ghost" size="icon"
+                                                            className="text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors disabled:opacity-30"
+                                                            disabled={!isManageable || isProcessing}
+                                                            onClick={() => handleDeleteUser(user._id, user.name)}
+                                                            title={isManageable ? "Revoke Access" : "Insufficient Clearance"}
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
                                                 </TableCell>
                                             </TableRow>
                                         );

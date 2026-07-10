@@ -38,10 +38,10 @@ const Dashboard = () => {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-10">
                 {DASHBOARD_STATS.map((stat, idx) => (
                     <Card key={idx} className="border-slate-200 dark:border-slate-800 dark:bg-slate-900 shadow-sm hover:shadow-md transition-shadow">
-                        <CardContent className="px-6 flex items-center justify-between pt-6">
+                        <CardContent className="my-auto px-6 flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">{stat.label}</p>
                                 <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{stat.value}</h3>

@@ -165,7 +165,7 @@ const Login = () => {
                                     id="email" name="email" type="email"
                                     placeholder="name@iligan.gov.ph"
                                     value={formData.email} onChange={handleChange}
-                                    className="pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
+                                    className="text-black pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
                                 />
                             </div>
                         </div>
@@ -182,7 +182,7 @@ const Login = () => {
                                     id="password" name="password" type="password"
                                     placeholder="••••••••"
                                     value={formData.password} onChange={handleChange}
-                                    className="pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
+                                    className="text-black pl-10 h-11 bg-white border-slate-200 focus-visible:ring-blue-600" required
                                 />
                             </div>
                             <div className="flex mt-8 items-center justify-between">
